@@ -1,6 +1,14 @@
 @import 'tailwindcss';
 
+@theme {
+  --color-primary: #203343;
+  --color-secondary: #9333ea;
+  --font-sans: 'Poppins', sans-serif;
+}
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
+
+  
