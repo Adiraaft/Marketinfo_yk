@@ -16,3 +16,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('home.index');
 });
+Route::get('/pasar', function () {
+    return view('pasar.pasar');
+});
+Route::get('/dashboard', function () {
+    return view('dashboard.komoditas');
+});

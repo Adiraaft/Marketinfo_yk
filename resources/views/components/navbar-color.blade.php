@@ -5,7 +5,7 @@
             <ul class="flex gap-16 text-white">
                 <li>Beranda</li>
                 <li>Pasar</li>
-                <li>berita</li>
+                <li>Berita</li>
             </ul>
         </nav>
     </div>
