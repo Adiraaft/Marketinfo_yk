@@ -8,13 +8,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100 ">
 
     {{-- Tempat untuk navbar --}}
     @yield('navbar')
+    
+    {{-- Jumbotron di luar container --}}
+    @yield('jumbotron')
 
     {{-- Konten halaman --}}
-    <main class="container mx-auto p-6">
+    <main class="w-full mx-auto">
         @yield('content')
     </main>
 
