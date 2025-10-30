@@ -20,5 +20,8 @@ Route::get('/pasar', function () {
     return view('pasar.pasar');
 });
 Route::get('/dashboard', function () {
+    return view('dashboard.dashboard');
+});
+Route::get('/komoditas', function () {
     return view('dashboard.komoditas');
 });

@@ -20,7 +20,7 @@
         <x-navbar-dashboard/>
 
         {{-- Konten halaman --}}
-        <main class="flex-1 p-6">
+        <main class="flex-1">
             @yield('content')
         </main>
 

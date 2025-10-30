@@ -77,7 +77,7 @@
                     <div class="ml-4 mt-4">
                         <p class="font-bold">Tomat</p>
                         <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 16.012 - 21.500 /Kg</p>
+                            <p class="text-sm">Rp. 11.000/kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
                         </span>
                     </div>
@@ -94,7 +94,7 @@
                     <div class="ml-4 mt-4">
                         <p class="font-bold">Bawang Putih</p>
                         <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 16.012 - 21.500 /Kg</p>
+                            <p class="text-sm">Rp. 16.012/Kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
                         </span>
                     </div>
@@ -145,7 +145,7 @@
                     <div class="ml-4 mt-4">
                         <p class="font-bold">Bawang Putih</p>
                         <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 16.012 - 21.500 /Kg</p>
+                            <p class="text-sm">Rp. 16.012/Kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
                         </span>
                     </div>
@@ -196,7 +196,7 @@
                     <div class="ml-4 mt-4">
                         <p class="font-bold">Bawang Putih</p>
                         <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 16.012 - 21.500 /Kg</p>
+                            <p class="text-sm">Rp. 16.012/Kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
                         </span>
                     </div>

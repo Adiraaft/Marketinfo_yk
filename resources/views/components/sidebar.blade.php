@@ -1,4 +1,4 @@
-<div class="bg-secondary pt-8 px-9 gap-14 flex flex-col items-center">
+<div class="bg-primary pt-8 px-9 gap-14 flex flex-col items-center">
     <img src="{{ asset('images/logo.png')}}" class="w-14" alt="logo">
     <div class="space-y-3">
         <div class="flex py-3 px-7 gap-2 text-secondary bg-white items-center rounded-lg">
