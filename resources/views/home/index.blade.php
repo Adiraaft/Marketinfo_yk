@@ -7,7 +7,7 @@
 @endsection
 
 @section('jumbotron')
-    <div class="relative w-screen h-screen bg-center bg-cover bg-no-repeat"
+    <div class="relative w-full h-screen bg-center bg-cover bg-no-repeat"
         style="background-image: url('{{ asset('images/jumbotron.png') }}')">
         <div class="absolute inset-0 bg-black/50"></div>
         <div class="relative z-10 flex flex-col items-start justify-center h-full text-white pl-15">
@@ -280,7 +280,7 @@
             </div>
         </div>
         <div class="flex mx-12 mt-6 justify-self-end">
-            <a href="#" class="bg-[#FB7A29] py-3 px-12 text-white rounded-lg">
+            <a href="{{ route('berita.berita') }}" class="bg-[#FB7A29] py-3 px-12 text-white rounded-lg">
                 Berita Lainnya
             </a>
         </div>
