@@ -2,8 +2,6 @@
 
 @section('title', 'Dashboard')
 
-
-
 @section('content')
 
     <div class="mt-7 px-15">
@@ -20,7 +18,7 @@
                     <option value="telur">Telur</option>
                 </select>
             </div>
-            
+
             <div class="text-sm">
                 <label for="kategori" class="block mb-1 text-gray-700">Pilih Komoditas</label>
                 <select id="kategori" name="kategori"
@@ -57,10 +55,10 @@
                 </button>
             </div>
             <div class="flex w-full gap-2 items-end justify-end">
-                <button class="py-1.5 px-3 rounded-md bg-green-900 cursor-pointer">
+                <button class="py-1.5 px-3 rounded-md bg-green-500 cursor-pointer">
                     <p class="text-white text-xs font-medium">Export Excel</p>
                 </button>
-                <button class="py-1.5 px-3 rounded-md bg-red-900 cursor-pointer">
+                <button class="py-1.5 px-3 rounded-md bg-red-500 cursor-pointer">
                     <p class="text-white text-xs font-medium">Export PDF</p>
                 </button>
             </div>

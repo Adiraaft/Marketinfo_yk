@@ -2,8 +2,6 @@
 
 @section('title', 'Dashboard')
 
-
-
 @section('content')
 
     <div class="mt-7 px-15">
@@ -77,11 +75,6 @@
                 </tbody>
             </table>
         </div>
-
-
-
-
-
     </div>
 
 

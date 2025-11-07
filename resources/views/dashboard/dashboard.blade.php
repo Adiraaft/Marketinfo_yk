@@ -60,7 +60,7 @@
                 </div>
             </div>
             <div class="col-span-2 flex items-center gap-10 bg-white pl-10 py-7 rounded-lg">
-                
+
             </div>
             <div class="col-span-3 flex flex-col justify-center items-center py-32 gap-2 text-gray-300 bg-white rounded-lg">
                 <i data-lucide="upload" class="h-12 w-12"></i>
@@ -68,6 +68,18 @@
             </div>
         </div>
     </div>
+
+    <!-- SweetAlert Success (optional) -->
+    @if (session('success'))
+        <script type="module">
+            Swal.fire({
+                title: "Berhasil!",
+                text: "{{ session('success') }}",
+                icon: "success",
+                confirmButtonText: "Ok",
+            });
+        </script>
+    @endif
 
     <script>
         const monthYear = document.getElementById("monthYear");

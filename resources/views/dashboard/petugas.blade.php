@@ -2,8 +2,6 @@
 
 @section('title', 'Dashboard')
 
-
-
 @section('content')
 
     <div class="mt-7 px-15">
@@ -11,13 +9,14 @@
             <div>
                 <h3 class="font-bold text-2xl text-secondary">Daftar Petugas</h3>
             </div>
-            <button class="gap-1 px-4 py-2 rounded-lg bg-secondary cursor-pointer flex items-center justify-center">
-                <i data-lucide="plus" class="w-4 h-4 text-white"></i>
-                <p class="text-white">Tambah</p>
-            </button>
-            
+            <a href="{{ route('superadmin.petugas.create') }}">
+                <button class="gap-1 px-4 py-2 rounded-lg bg-secondary cursor-pointer flex items-center justify-center">
+                    <i data-lucide="plus" class="w-4 h-4 text-white"></i>
+                    <p class="text-white">Tambah</p>
+                </button>
+            </a>
         </div>
-        
+
         <div class="mt-6 bg-white rounded-lg shadow-md overflow-hidden">
             <table class="w-full text-left border-collapse">
                 <thead class="text-gray-400 border-b border-gray-200">
@@ -32,27 +31,31 @@
                 </thead>
 
                 <tbody class="text-gray-700">
-                    <tr class="border-t border-gray-200 hover:bg-gray-50 text-sm font-medium">
-                        <td class="py-2 px-4">1</td>
-                        <td class="py-2 px-4">Rosita Kurnia Larasati</td>
-                        <td class="py-2 px-4">syiita12@gmail.com</td>
-                        <td class="py-2 px-4">Prawirotaman</td>
-                         <td class="py-2 px-4">Aktif</td>            
-                        <td class="gap-1 items-end py-2 px-4">
-                            <button class="text-black">
-                                Edit
-                            </button>
-                           
-                        </td>
-                    </tr>
+                    @foreach ($petugas as $index => $p)
+                        <tr class="border-t border-gray-200 hover:bg-gray-50 text-sm font-medium">
+                            <td class="py-2 px-4">{{ $index + 1 }}</td>
+                            <td class="py-2 px-4">{{ $p->name }}</td>
+                            <td class="py-2 px-4">{{ $p->email }}</td>
+                            <td class="py-2 px-4">{{ $p->market ? $p->market->name_market : '-' }}</td>
+                            <td class="py-2 px-4">{{ ucfirst($p->status) }}</td>
+                            <td class="gap-1 items-end py-2 px-4">
+                                <a href="{{ route('superadmin.petugas.edit', $p->id_user) }}" class="text-blue-500">Edit</a>
+                            </td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
-
-
     </div>
-
-
-
-
+    @if (session('success'))
+        <script type="module">
+            Swal.fire({
+                title: "Berhasil!",
+                text: "{{ session('success') }}",
+                icon: "success",
+                confirmButtonText: "OK"
+            });
+        </script>
+    @endif
+    
 @endsection

@@ -42,12 +42,12 @@
                         <div class="flex items-center">
                             <div class="flex overflow-hidden border-3 border-secondary">
                                 <button
-                                    class="w-10 py-1 text-primary bg-white hover:bg-primary hover:text-white transition">
-                                    ☀️
+                                    class="w-10 py-1 text-primary bg-white hover:bg-primary hover:text-white transition place-content-center flex">
+                                    <i data-lucide="sun"></i>
                                 </button>
                                 <button
-                                    class="w-10 py-1 text-primary bg-white hover:bg-primary hover:text-white transition border-l-3">
-                                    🌙
+                                    class="w-10 py-1 text-primary bg-white hover:bg-primary hover:text-white transition border-l-3 flex place-content-center">
+                                    <i data-lucide="moon"></i>
                                 </button>
                             </div>
                         </div>
