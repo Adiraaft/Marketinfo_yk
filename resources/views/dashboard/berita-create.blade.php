@@ -16,7 +16,7 @@
                 {{ isset($berita) ? 'Edit Informasi Berita' : 'Tambah Informasi Berita' }}
             </p>
 
-            {{-- FORM UTAMA (TAMBAH / EDIT) --}}
+            {{-- FORM UTAMA --}}
             <form
                 action="{{ isset($berita) ? route('superadmin.berita.update', $berita->id) : route('superadmin.berita.store') }}"
                 enctype="multipart/form-data" method="POST" class="space-y-6 mt-8">
@@ -117,9 +117,34 @@
         </div>
     </div>
 
-    {{-- Script Preview Gambar --}}
+    {{-- Script Preview Gambar + Tombol Hapus --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Tombol Hapus
+            const deleteBtn = document.getElementById('deleteButton');
+            const deleteForm = document.getElementById('deleteForm');
+
+            if (deleteBtn && deleteForm) {
+                deleteBtn.addEventListener('click', function() {
+                    Swal.fire({
+                        title: 'Apakah kamu yakin?',
+                        text: "Berita ini akan dihapus permanen!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Ya, hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            deleteForm.submit();
+                        }
+                    });
+                });
+            }
+
+            // Preview gambar
             for (let i = 1; i <= 4; i++) {
                 const imageInput = document.getElementById('image' + i);
                 const imagePreview = document.getElementById('imagePreview' + i);
@@ -135,37 +160,15 @@
                                     `<img src="${e.target.result}" class="h-full w-full object-cover rounded-xl">`;
                             }
                             reader.readAsDataURL(file);
+                        } else if (currentImage) {
+                            imagePreview.innerHTML =
+                                `<img src="${currentImage.src}" class="h-full w-full object-cover rounded-xl">`;
                         } else {
-                            if (currentImage) {
-                                imagePreview.innerHTML =
-                                    `<img src="${currentImage.src}" class="h-full w-full object-cover rounded-xl">`;
-                            } else {
-                                imagePreview.innerHTML =
-                                    `<i data-lucide="camera" class="text-gray-400 h-8 w-8"></i>`;
-                            }
+                            imagePreview.innerHTML =
+                                `<i data-lucide="camera" class="text-gray-400 h-8 w-8"></i>`;
                         }
                     });
                 }
-            }
-
-            // Tombol Hapus dengan SweetAlert
-            const deleteBtn = document.getElementById('deleteButton');
-            if (deleteBtn) {
-                deleteBtn.addEventListener('click', function() {
-                    Swal.fire({
-                        title: 'Apakah kamu yakin?',
-                        text: "Berita ini akan dihapus permanen!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#3085d6',
-                        confirmButtonText: 'Ya, hapus!'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            document.getElementById('deleteForm').submit();
-                        }
-                    });
-                });
             }
         });
     </script>
