@@ -15,12 +15,9 @@
         <h2 class="text-4xl font-bold mt-4 text-center">Grafik Harga</h2>
         <h2 class="text-4xl font-bold mt-4 text-center">Telur Ayam</h2>
         <div class="grid grid-cols-12 mt-10 gap-8">
-            {{-- kiri (4 kolom) --}}
             <div class="col-span-12 md:col-span-4 space-y-5">
                 <img src="{{ asset('images/telur.jpg') }}" class="w-full h-100 object-cover rounded-lg" alt="berita1">
             </div>
-
-            {{-- kanan (8 kolom) --}}
             <div class="col-span-12 md:col-span-8 space-y-4">
                 <h2 class="text-xl font-bold">Harga Telur Ayam per Hari ini</h2>
                 <div class="mt-2 bg-white rounded-lg shadow-md overflow-hidden inline-block">
@@ -52,9 +49,8 @@
                     </table>
                 </div>
             </div>
-
-
         </div>
+
 
         <div class="flex gap-4 mt-12 justify-center w-full">
             <div class="text-sm">
@@ -163,11 +159,5 @@
 
 
         </div>
-
-
-
-
-
-
     </div>
 @endsection

@@ -62,10 +62,12 @@
             <div class="col-span-2 flex items-center gap-10 bg-white pl-10 py-7 rounded-lg">
 
             </div>
-            <div class="col-span-3 flex flex-col justify-center items-center py-32 gap-2 text-gray-300 bg-white rounded-lg">
+           <a href="{{ route('superadmin.berita.index') }}"
+                class="col-span-3 flex flex-col justify-center items-center py-32 gap-2 text-gray-300 bg-white rounded-lg border-2 border-dashed border-gray-200 hover:bg-gray-50 hover:text-secondary transition cursor-pointer shadow-sm">
                 <i data-lucide="upload" class="h-12 w-12"></i>
-                <p class="font-bold">Upload Berita</p>
-            </div>
+                <p class="font-bold text-gray-500">Upload Berita</p>
+                <p class="text-xs text-gray-400">Klik untuk mengelola berita</p>
+            </a>
         </div>
     </div>
 
