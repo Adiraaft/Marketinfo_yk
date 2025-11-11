@@ -16,7 +16,7 @@
                 {{ isset($petugas) ? 'Edit Informasi Petugas' : 'Tambah Informasi Petugas' }}
             </p>
 
-            <form
+            <form id="petugasForm"
                 action="{{ isset($petugas) ? route('superadmin.petugas.update', $petugas->id_user) : route('superadmin.petugas.store') }}"
                 enctype="multipart/form-data" method="POST" class="space-y-4 mt-10 relative">
                 @csrf
@@ -102,39 +102,14 @@
                                 class="w-57 border text-gray-500 border-gray-300 rounded-xl px-4 py-1 focus:ring-2 focus:ring-blue-500 focus:outline-none">
                         </div>
 
-                        {{-- Buttons --}}
-                        <form
-                            action="{{ isset($petugas) ? route('superadmin.petugas.update', $petugas->id_user) : route('superadmin.petugas.store') }}"
-                            method="POST" enctype="multipart/form-data" class="space-y-4 mt-10 relative">
-                            @csrf
-                            @if (isset($petugas))
-                                @method('PUT')
-                            @endif
-
-                            {{-- semua input form di sini --}}
-
-                            <button type="submit" class="px-13 py-2 bg-secondary text-white font-bold text-sm rounded-lg">
-                                {{ isset($petugas) ? 'Update' : 'Tambah' }}
-                            </button>
-                        </form>
-
-                        @if (isset($petugas))
-                            <form id="deleteForm{{ $petugas->id_user }}"
-                                action="{{ route('superadmin.petugas.destroy', $petugas->id_user) }}" method="POST"
-                                style="display:inline-block;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="button"
-                                    class="deleteBtn px-13 py-2 bg-red-500 text-white font-bold text-sm rounded-lg"
-                                    data-id="{{ $petugas->id_user }}">
-                                    Hapus
-                                </button>
-                            </form>
-                        @endif
-
+                        {{-- Tombol Simpan --}}
+                        <button type="button" id="submitBtn"
+                            class="px-13 py-2 bg-secondary text-white font-bold text-sm rounded-lg">
+                            {{ isset($petugas) ? 'Update' : 'Tambah' }}
+                        </button>
                     </div>
 
-                    {{-- Image --}}
+                    {{-- Gambar --}}
                     <div class="relative mr-16">
                         <label for="image" class="cursor-pointer">
                             <div id="imagePreview"
@@ -156,50 +131,55 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('petugasForm');
+            const submitBtn = document.getElementById('submitBtn');
             const imageInput = document.getElementById('image');
             const imagePreview = document.getElementById('imagePreview');
             const currentImage = document.getElementById('currentImage');
 
-            imageInput.addEventListener('change', function() {
-                const file = this.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        imagePreview.innerHTML =
-                            `<img src="${e.target.result}" class="h-full w-full object-cover rounded-full">`;
-                    }
-                    reader.readAsDataURL(file);
-                } else {
-                    // jika batal, tampilkan image lama atau icon
-                    if (currentImage) {
-                        imagePreview.innerHTML =
-                            `<img src="${currentImage.src}" class="h-full w-full object-cover rounded-full">`;
+            // Preview Gambar
+            if (imageInput) {
+                imageInput.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            imagePreview.innerHTML =
+                                `<img src="${e.target.result}" class="h-full w-full object-cover rounded-full">`;
+                        }
+                        reader.readAsDataURL(file);
                     } else {
-                        imagePreview.innerHTML =
-                            `<i data-lucide="camera" class="text-gray-500 h-8 w-8"></i>`;
-                    }
-                }
-            });
-        });
-    </script>
-    <script>
-        document.querySelectorAll('.deleteBtn').forEach(button => {
-            button.addEventListener('click', function() {
-                const id = this.dataset.id;
-                Swal.fire({
-                    title: 'Apakah kamu yakin?',
-                    text: "Data ini akan dihapus!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Ya, hapus!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        document.getElementById('deleteForm' + id).submit();
+                        if (currentImage) {
+                            imagePreview.innerHTML =
+                                `<img src="${currentImage.src}" class="h-full w-full object-cover rounded-full">`;
+                        } else {
+                            imagePreview.innerHTML =
+                                `<i data-lucide="camera" class="text-gray-500 h-8 w-8"></i>`;
+                        }
                     }
                 });
-            });
+            }
+
+            // SweetAlert Konfirmasi Tambah/Update
+            if (submitBtn) {
+                submitBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: '{{ isset($petugas) ? 'Konfirmasi Perubahan' : 'Konfirmasi Penambahan' }}',
+                        text: '{{ isset($petugas) ? 'Apakah kamu yakin ingin menyimpan perubahan data petugas ini?' : 'Apakah kamu yakin ingin menambahkan petugas baru?' }}',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: '{{ isset($petugas) ? 'Ya, simpan perubahan!' : 'Ya, tambahkan!' }}',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            }
         });
     </script>
 @endsection

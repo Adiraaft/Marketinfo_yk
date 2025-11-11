@@ -10,14 +10,14 @@
         </div>
         <div>
             <a href="{{ route('superadmin.petugas') }}"
-                class="flex gap-2 py-3 px-7 rounded-lg transition-all {{ request()->routeIs('superadmin.petugas','superadmin.petugas.create') ? 'bg-white text-secondary' : 'text-white hover:text-secondary hover:bg-white' }}">
+                class="flex gap-2 py-3 px-7 rounded-lg transition-all {{ request()->routeIs('superadmin.petugas','superadmin.petugas.create','superadmin.petugas.edit') ? 'bg-white text-secondary' : 'text-white hover:text-secondary hover:bg-white' }}">
                 <i data-lucide="user-round-pen"></i>
                 <p class="font-bold text-lg">Petugas</p>
             </a>
         </div>
         <div>
             <a href="{{ route('superadmin.market') }}"
-                class="flex gap-2 py-3 px-7 rounded-lg transition-all {{ request()->routeIs('superadmin.market') ? 'bg-white text-secondary' : 'text-white hover:text-secondary hover:bg-white' }}">
+                class="flex gap-2 py-3 px-7 rounded-lg transition-all {{ request()->routeIs('superadmin.market','superadmin.market.create','superadmin.market.edit') ? 'bg-white text-secondary' : 'text-white hover:text-secondary hover:bg-white' }}">
                 <i data-lucide="store"></i>
                 <p class="font-bold text-lg">Pasar</p>
             </a>

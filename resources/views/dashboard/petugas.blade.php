@@ -39,7 +39,19 @@
                             <td class="py-2 px-4">{{ $p->market ? $p->market->name_market : '-' }}</td>
                             <td class="py-2 px-4">{{ ucfirst($p->status) }}</td>
                             <td class="gap-1 items-end py-2 px-4">
-                                <a href="{{ route('superadmin.petugas.edit', $p->id_user) }}" class="text-blue-500">Edit</a>
+                                <a href="{{ route('superadmin.petugas.edit', $p->id_user) }}" class="text-blue-500">Edit
+                                    <span class="text-black">|</span>
+                                </a>
+                                <form id="deleteForm{{ $p->id_user }}"
+                                    action="{{ route('superadmin.petugas.destroy', $p->id_user) }}" method="POST"
+                                    class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="deleteBtn text-red-500 underline"
+                                        data-id="{{ $p->id_user }}">
+                                        Hapus
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach
@@ -57,5 +69,29 @@
             });
         </script>
     @endif
-    
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.deleteBtn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    Swal.fire({
+                        title: 'Apakah kamu yakin?',
+                        text: "Data ini akan dihapus!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Ya, hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            document.getElementById('deleteForm' + id).submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+
 @endsection

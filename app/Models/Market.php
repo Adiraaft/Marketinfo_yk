@@ -13,8 +13,17 @@ class Market extends Model
     protected $primaryKey = 'id_market';
     public $incrementing = true;
     protected $keyType = 'int';
+    public $timestamps = false;
 
-    protected $fillable = ['name_market', 'location', 'status']; // sesuaikan kolom yang ada di tabel markets
+    protected $fillable = [
+        'name_market',
+        'address',
+        'description',
+        'opening_hours',
+        'maps_link',
+        'status',
+        'image',
+    ]; // sesuaikan kolom yang ada di tabel markets
 
     public function users()
     {
