@@ -2,31 +2,41 @@
 
 @section('title', 'Dashboard')
 
-
-
 @section('content')
-
     <div class="mt-7 px-15">
         <div class="flex gap-4 mt-4 justify-between items-center">
             <div>
                 <h3 class="font-bold text-2xl text-secondary">Setting</h3>
             </div>
-
         </div>
 
         <!-- Wrapper utama -->
         <div class="w-full bg-white rounded-lg shadow-md mt-6 overflow-hidden">
             <!-- Tab Header -->
             <div class="flex bg-gray-200 border-b border-gray-300 text-sm font-medium text-gray-600 rounded-t-lg">
-                <button class="px-6 py-3 border-b-2">
+                <!-- General -->
+                <a href="{{ route('superadmin.setting') }}"
+                    class="px-6 py-3 border-b-2 transition-all duration-200 
+               hover:border-primary hover:text-primary
+               {{ request()->routeIs('superadmin.setting') ? 'border-primary text-primary font-semibold' : 'border-transparent' }}">
                     General
-                </button>
-                <button class="px-6 py-3">
-                    Update
-                </button>
-                <button class="px-6 py-3">
+                </a>
+
+                <!-- Manajemen -->
+                <a href="{{ route('superadmin.kategori') }}"
+                    class="px-6 py-3 border-b-2 transition-all duration-200 
+               hover:border-primary hover:text-primary
+               {{ request()->routeIs('superadmin.kategori') ? 'border-primary text-primary font-semibold' : 'border-transparent' }}">
+                    Manajemen
+                </a>
+
+                <!-- Account -->
+                <a href="{{ route('superadmin.kategori') }}"
+                    class="px-6 py-3 border-b-2 transition-all duration-200 
+               hover:border-primary hover:text-primary
+               {{ request()->routeIs('superadmin.account') ? 'border-primary text-primary font-semibold' : 'border-transparent' }}">
                     Account
-                </button>
+                </a>
             </div>
 
             <!-- Tab Content -->
@@ -52,6 +62,7 @@
                             </div>
                         </div>
                     </div>
+
                     <!-- Language -->
                     <div class="flex items-center gap-4">
                         <label class="w-32 text-secondary flex items-center font-semibold gap-2">
@@ -94,11 +105,5 @@
                 </div>
             </div>
         </div>
-
-
-
-
-
-
     </div>
 @endsection
