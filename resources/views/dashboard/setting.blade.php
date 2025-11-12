@@ -31,7 +31,7 @@
                 </a>
 
                 <!-- Account -->
-                <a href="{{ route('superadmin.kategori') }}"
+                <a href="{{ route('superadmin.account') }}"
                     class="px-6 py-3 border-b-2 transition-all duration-200 
                hover:border-primary hover:text-primary
                {{ request()->routeIs('superadmin.account') ? 'border-primary text-primary font-semibold' : 'border-transparent' }}">

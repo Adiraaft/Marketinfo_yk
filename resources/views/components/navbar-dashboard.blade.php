@@ -10,7 +10,7 @@
 
     <!-- Modal User -->
     <div id="userModal" class="hidden absolute top-16 right-4 bg-white shadow-lg rounded-lg w-48 p-4 z-50">
-        <h3 class="font-semibold mb-2">admin</h3>
+        <h3 class="font-semibold mb-2">Hey, Superadmin</h3>
         <ul class="text-sm text-gray-600 flex-col space-y-2">
             <li class="hover:text-blue-600 cursor-pointer"><span class="flex items-center gap-2"><i
                         data-lucide="settings"></i>Setting</span></li>
