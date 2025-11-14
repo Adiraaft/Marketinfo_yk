@@ -24,7 +24,7 @@
                     <i data-lucide="users-round" class="text-white"></i>
                 </span>
                 <div class="space-y-2">
-                    <h3 class="text-2xl font-bold">10</h3>
+                    <h3 class="text-2xl font-bold">{{ \App\Models\User::where('role', 'admin')->count() }}</h3>
                     <p class="text-xs font-light">Petugas Aktif</p>
                 </div>
             </div>
@@ -62,7 +62,7 @@
             <div class="col-span-2 flex items-center gap-10 bg-white pl-10 py-7 rounded-lg">
 
             </div>
-           <a href="{{ route('superadmin.berita.index') }}"
+            <a href="{{ route('superadmin.berita.index') }}"
                 class="col-span-3 flex flex-col justify-center items-center py-32 gap-2 text-gray-300 bg-white rounded-lg border-2 border-dashed border-gray-200 hover:bg-gray-50 hover:text-secondary transition cursor-pointer shadow-sm">
                 <i data-lucide="upload" class="h-12 w-12"></i>
                 <p class="font-bold text-gray-500">Upload Berita</p>

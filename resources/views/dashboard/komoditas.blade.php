@@ -43,8 +43,10 @@
                         <th class="py-3 px-4 font-medium text-sm">No</th>
                         <th class="py-3 px-4 font-medium text-sm">Nama Barang</th>
                         <th class="py-3 px-4 font-medium text-sm">Kategori</th>
-                        <th class="py-3 px-4 font-medium text-sm">Status</th>
+                        <th class="py-3 px-4 font-medium text-sm">Satuan</th>
                         <th class="py-3 px-4 font-medium text-sm">Rata-Rata Harga</th>
+                        {{-- <th class="py-3 px-4 font-medium text-sm">Jumlah Pasar(Update)</th> --}}
+                        <th class="py-3 px-4 font-medium text-sm">Terakhir Update</th>
                         <th class="py-3 px-4 font-medium text-sm">Aksi</th>
                     </tr>
                 </thead>
@@ -52,23 +54,23 @@
                 <tbody class="text-gray-700">
                     <tr class="border-t border-gray-200 hover:bg-gray-50 text-sm font-medium">
                         <td class="py-2 px-4">1</td>
-
                         <!-- Kolom Nama Barang -->
                         <td class="py-2 px-4">
                             <div class="flex items-center gap-3">
                                 <!-- Gambar lingkaran kecil -->
-                                <img src="{{ asset('images/tomat.png')}}" alt="Cabai Merah"
+                                <img src="{{ asset('images/tomat.png') }}" alt="Cabai Merah"
                                     class="w-8 h-8 rounded-full object-cover border border-gray-300">
                                 <span>Cabai Merah</span>
                             </div>
                         </td>
-
-                        <td class="py-2 px-4">Cabai</td>
-                        <td class="py-2 px-4 text-green-600">Aktif</td>
+                        <td class="py-2 px-4">Sayuran</td>
+                        <td class="py-2 px-4">kg</td>
                         <td class="py-2 px-4">Rp 25.000</td>
+                        {{-- <td class="py-2 px-4">8</td> --}}
+                        <td class="py-2 px-4">11 Nov 2025</td>
                         <td class="gap-1 items-end py-2 px-4">
+                            <button class="text-blue-600 hover:underline">Detail <span class="text-black">|</span></button>
                             <button class="text-blue-600 hover:underline">Edit <span class="text-black">|</span></button>
-        
                             <button class="text-red-600 hove:underline">Hapus</button>
                         </td>
                     </tr>

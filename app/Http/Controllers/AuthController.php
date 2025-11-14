@@ -37,9 +37,8 @@ class AuthController extends Controller
             if ($user->role === 'superadmin') {
                 return redirect()->route('superadmin.dashboard')->with('success', 'Login berhasil!'); // atau superadmin.dashboard jika ada prefix
             } elseif ($user->role === 'admin') {
-                return 'sukses'; // bisa dibedakan route khusus admin jika ada
+                return redirect()->route('admin.dashboard')->with('success', 'Login berhasil!'); // bisa dibedakan route khusus admin jika ada
             }
-
         }
 
         // Jika login gagal
