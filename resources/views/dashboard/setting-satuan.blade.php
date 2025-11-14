@@ -68,7 +68,7 @@
                     @csrf
                     <div>
                         <label class="block text-sm font-medium text-gray-500 mb-1">Nama Satuan</label>
-                        <input type="text" id="nama_satuan" name="nama_satuan" required
+                        <input type="text" id="name" name="name" required
                             class="w-75 border text-gray-600 border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary focus:outline-none">
                     </div>
 
@@ -93,11 +93,10 @@
                             <tbody>
                                 @forelse ($satuans as $satuan)
                                     <tr class="hover:bg-gray-50 transition">
-                                        <td class="py-3 px-6 border-r border-gray-200">{{ $satuan->nama_satuan }}</td>
+                                        <td class="py-3 px-6 border-r border-gray-200">{{ $satuan->name }}</td>
                                         <td class="py-3 px-6 flex justify-center gap-3">
                                             <!-- Tombol Edit -->
-                                            <button
-                                                onclick="openEditModal('{{ $satuan->id }}', '{{ $satuan->nama_satuan }}')"
+                                            <button onclick="openEditModal('{{ $satuan->id }}', '{{ $satuan->name }}')"
                                                 class="text-blue-500 hover:text-blue-700 transition">
                                                 <i data-lucide="edit" class="w-5 h-5"></i>
                                             </button>
@@ -138,7 +137,7 @@
                 @method('PUT')
                 <div class="mb-4">
                     <label class="block text-sm text-gray-500 mb-1">Nama Satuan</label>
-                    <input type="text" id="edit_nama_satuan" name="nama_satuan" required
+                    <input type="text" id="edit_name" name="name" required
                         class="w-full border text-gray-600 border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary focus:outline-none">
                 </div>
                 <div class="flex justify-end gap-2">
@@ -152,13 +151,12 @@
     </div>
 
     <script>
-        function openEditModal(id, nama) {
+        function openEditModal(id, name) {
             const modal = document.getElementById('editModal');
             const form = document.getElementById('editForm');
-            const input = document.getElementById('edit_nama_satuan');
-            // Pastikan URL sesuai dengan prefix superadmin
+            const input = document.getElementById('edit_name');
             form.action = `/superadmin/satuan/${id}`;
-            input.value = nama;
+            input.value = name;
             modal.classList.remove('hidden');
         }
 

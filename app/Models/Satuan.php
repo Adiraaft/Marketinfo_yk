@@ -9,6 +9,8 @@ class Satuan extends Model
 {
     use HasFactory;
 
-    protected $table = 'satuan'; // nama tabel
-    protected $fillable = ['nama_satuan'];
+    protected $table = 'unit'; // nama tabel
+    protected $fillable = ['name'];
+
+    public $timestamps = false; // ← WAJIB
 }

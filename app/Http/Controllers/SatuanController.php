@@ -22,11 +22,11 @@ class SatuanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_satuan' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
         ]);
 
         Satuan::create([
-            'nama_satuan' => $request->nama_satuan,
+            'name' => $request->name,
         ]);
 
         return redirect()
@@ -40,12 +40,12 @@ class SatuanController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nama_satuan' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
         ]);
 
         $satuan = Satuan::findOrFail($id);
         $satuan->update([
-            'nama_satuan' => $request->nama_satuan,
+            'name' => $request->name,
         ]);
 
         return redirect()

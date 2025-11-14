@@ -1,5 +1,7 @@
 import "./bootstrap";
 import { createIcons, icons } from "lucide";
+ import Swal from "sweetalert2";
+    window.Swal = Swal;
 
 createIcons({ icons });
 // Inisialisasi ikon Lucide
@@ -34,5 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
             userModal.classList.add("hidden");
         }
     });
+
+
 });
 
