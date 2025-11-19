@@ -13,7 +13,7 @@
                     <a href="{{ route('pasar.pasar') }}" class="hover:text-[#FB7A29]">Pasar</a>
                 </li>
                 <li>
-                    <a href="{{ route('berita.berita') }}" class="hover:text-[#FB7A29]">Berita</a>
+                    <a href="{{ route('berita.index') }}" class="hover:text-[#FB7A29]">Berita</a>
                 </li>
             </ul>
         </nav>
@@ -35,7 +35,7 @@
         <ul class="flex flex-col px-6 py-3 space-y-3 text-right">
             <li><a href="{{ route('home.index') }}" class="hover:text-[#FB7A29] text-4xl">Beranda</a></li>
             <li><a href="{{ route('pasar.pasar') }}" class="hover:text-[#FB7A29] text-4xl">Pasar</a></li>
-            <li><a href="{{ route('berita.berita') }}" class="hover:text-[#FB7A29] text-4xl">Berita</a></li>
+            <li><a href="{{ route('berita.index') }}" class="hover:text-[#FB7A29] text-4xl">Berita</a></li>
         </ul>
     </div>
 </div>

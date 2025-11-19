@@ -344,7 +344,7 @@
             </div>
         </div>
         <div class="flex mx-12 mt-6 justify-self-end">
-            <a href="{{ route('berita.berita') }}" class="bg-[#FB7A29] py-3 px-12 text-white rounded-lg text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl">
+            <a href="{{ route('berita.index') }}" class="bg-[#FB7A29] py-3 px-12 text-white rounded-lg text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl">
                 Berita Lainnya
             </a>
         </div>
