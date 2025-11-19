@@ -45,4 +45,42 @@ class AuthController extends Controller
             ]
         ]);
     }
+    public function changePassword(Request $request)
+    {
+        // Ambil user dari token Sanctum
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Token tidak valid atau user tidak ditemukan'
+            ], 401);
+        }
+
+        // Validasi input
+        $request->validate([
+            'oldPassword' => 'required|string',
+            'newPassword' => 'required|string|min:6'
+        ]);
+
+        $oldPassword = $request->oldPassword;
+        $newPassword = $request->newPassword;
+
+        // Cek password lama
+        if (!Hash::check($oldPassword, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Password lama salah'
+            ], 400);
+        }
+
+        // Update password baru
+        $user->password = Hash::make($newPassword);
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password berhasil diperbarui'
+        ]);
+    }
 }

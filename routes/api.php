@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserInfoController;
 use App\Http\Controllers\Api\SyncController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\CommodityController;
+use App\Http\Controllers\Api\MarketController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +30,13 @@ Route::middleware('auth:sanctum')->group(function () {
     // endpoint sync
     Route::post('/sync', [SyncController::class, 'syncBatch']);
     Route::post('/sync/price', [SyncController::class, 'syncSingle']);
+    Route::get('/categories', [CategoryController::class, 'index']);
+    Route::get('/categories/{id}', [CategoryController::class, 'show']);
+    Route::get('/commodities', [CommodityController::class, 'index']);
+    Route::get('/commodities/{id}', [CommodityController::class, 'show']);
+    Route::get('/markets', [MarketController::class, 'index']);
+    Route::get('/markets/{id}', [MarketController::class, 'show']);
+     Route::put('/change-password', [AuthController::class, 'changePassword']);
 });
 // endpoint login
 Route::post('/login-mobile', [AuthController::class, 'login']);
