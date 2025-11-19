@@ -15,16 +15,8 @@
         <h2 class="text-5xl font-bold mt-4">Pasar Beringharjo</h2>
         <div class="grid grid-cols-12 sm:grid sm:grid-cols-1 md:grid md:grid-cols-1 lg:grid lg:grid-cols-1 xl:grid xl:gris-cols-1 2xl:grid 2xl:grid-cols-12 mt-6 gap-8">
             {{-- kiri (4 kolom) --}}
-            <div class="col-span-12 md:col-span-4 space-y-5">
-                <img src="{{ asset('images/berita.png') }}" class="w-full h-120 object-cover rounded-lg" alt="berita1">
-
-                <div class="flex gap-3 justify-center">
-                    <img src="{{ asset('images/berita.png') }}" class="w-20 h-20 object-cover rounded-lg" alt="berita1">
-                    <img src="{{ asset('images/berita.png') }}" class="w-20 h-20 object-cover rounded-lg" alt="berita1">
-                    <img src="{{ asset('images/berita.png') }}" class="w-20 h-20 object-cover rounded-lg" alt="berita1">
-                    <img src="{{ asset('images/berita.png') }}" class="w-20 h-20 object-cover rounded-lg" alt="berita1">
-                    <img src="{{ asset('images/berita.png') }}" class="w-20 h-20 object-cover rounded-lg" alt="berita1">
-                </div>
+            <div class="col-span-12 md:col-span-4 space-y-6">
+                <img src="{{ asset('images/berita.png') }}" class="w-full h-135 object-cover rounded-lg" alt="berita1">
             </div>
 
             {{-- kanan (8 kolom) --}}
