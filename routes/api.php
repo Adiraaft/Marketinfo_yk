@@ -2,6 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\UserInfoController;
+use App\Http\Controllers\Api\SyncController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +17,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+    // endpoint userinfo
+    Route::get('/userinfo', [UserInfoController::class, 'index']);
+    // endpoint sync
+    Route::post('/sync', [SyncController::class, 'syncBatch']);
+    Route::post('/sync/price', [SyncController::class, 'syncSingle']);
 });
+// endpoint login
+Route::post('/login-mobile', [AuthController::class, 'login']);
