@@ -21,16 +21,8 @@ class Commodity extends Model
     {
         return $this->belongsTo(Unit::class, 'unit_id', 'id');
     }
-
-    public function category()
+     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id', 'id_category');
-    }
-
-    public function markets()
-    {
-        return $this->belongsToMany(Market::class, 'commodity_market', 'commodity_id', 'market_id')
-            ->withPivot('status')
-            ->withTimestamps();
     }
 }

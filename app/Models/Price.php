@@ -8,7 +8,15 @@ class Price extends Model
 {
     protected $table = 'prices';
     protected $primaryKey = 'id_price';
-    protected $fillable = ['commodity_id', 'market_id', 'price'];
+    public $timestamps = false;
+    protected $fillable = [
+        'commodity_id',
+        'user_id',
+        'market_id',
+        'price',
+        'created_at',
+        'updated_at'
+    ];
 
     public function commodity()
     {
