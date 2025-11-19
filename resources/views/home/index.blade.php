@@ -11,11 +11,11 @@
         style="background-image: url('{{ asset('images/jumbotron.png') }}')">
         <div class="absolute inset-0 bg-black/50"></div>
         <div class="relative z-10 flex flex-col items-start justify-center h-full text-white pl-15">
-            <h1 class="text-4xl font-extrabold">
+            <h1 class="text-4xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:5xl font-extrabold">
                 Harga Komoditas Bahan <br> Pangan
                 <span class="text-[#FB7A29]">Kota Yogyakarta</span>
             </h1>
-            <p class="mt-2 font-semibold">
+            <p class="mt-2 font-medium text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl">
                 Hadirkan data harga pangan terkini dari seluruh pasar Yogyakarta. <br>
                 Bantu masyarakat dan pelaku usaha mengambil keputusan yang lebih bijak.
             </p>
@@ -25,13 +25,13 @@
 
 @section('content')
     <div class="mt-8 px-15">
-        <h3 class="font-bold text-2xl">Harga Barang Komuditas Bahan Pangan Kota Yogyakarta</h3>
+        <h3 class="font-bold text-2xl sm:text-lg md:text-xl lg:2xl xl:3xl 2xl:4xl">Harga Barang Komoditas Bahan Pangan Kota Yogyakarta</h3>
         <div class="my-7 py-6 border rounded-lg border-gray-300">
-            <div class="flex gap-4 mx-12">
+            <div class="flex gap-4 mx-12 text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl">
                 <div>
                     <label for="kategori" class="block">Pilih Kategori</label>
                     <select id="kategori" name="kategori"
-                        class="border border-gray-300 rounded-lg p-1 w-60 focus:ring-blue-500 focus:border-blue-500">
+                        class="border border-gray-300 rounded-lg p-1 md:w-60 w-auto focus:ring-blue-500 focus:border-blue-500">
                         <option value="#">Semua Kategori</option>
                         <option value="beras">Beras</option>
                         <option value="cabai">Cabai</option>
@@ -41,7 +41,7 @@
                 <div>
                     <label for="kategori" class="block">Pilih Bahan Komoditas</label>
                     <select id="kategori" name="kategori"
-                        class="border border-gray-300 rounded-lg p-1 w-60 focus:ring-blue-500 focus:border-blue-500">
+                        class="border border-gray-300 rounded-lg p-1 md:w-60 w-auto focus:ring-blue-500 focus:border-blue-500">
                         <option value="#">Semua Komoditas</option>
                         <option value="beras">Beras</option>
                         <option value="cabai">Cabai</option>
@@ -53,173 +53,236 @@
                 </button>
             </div>
             <hr class="mt-6 opacity-20">
-            <div class="flex my-6 mx-12 gap-5">
-                <button class="py-2 px-6 rounded-lg border-2 border-gray-300 active:bg-gray-300 hover:bg-gray-300">Rata -
+            <div class="flex my-6 mx-12 w-auto gap-5 text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">
+                <button class="py-2 px-6 rounded-lg border-2 border-gray-300 active:bg-gray-300 hover:bg-gray-300 w-auto">Rata -
                     Rata</button>
                 <button
-                    class="py-2 px-6 rounded-lg border-2 active:border-red-200 hover:border-red-200 border-gray-300 text-red-500 active:bg-red-200 hover:bg-red-200">Harga
+                    class="py-2 px-6 rounded-lg border-2 active:border-red-200 hover:border-red-200 border-gray-300 text-red-500 active:bg-red-200 hover:bg-red-200 w-auto">Harga
                     Tertinggi</button>
                 <button
-                    class="py-2 px-6 rounded-lg border-2 active:border-green-200 hover:border-green-200 border-gray-300 text-green-500 active:bg-green-200 hover:bg-green-200">Harga
+                    class="py-2 px-6 rounded-lg border-2 active:border-green-200 hover:border-green-200 border-gray-300 text-green-500 active:bg-green-200 hover:bg-green-200 w-auto">Harga
                     Terendah</button>
             </div>
             {{-- card --}}
-            <div class="mx-12 mb-6 grid grid-cols-3 gap-9">
+            <div class="mx-12 mb-6 grid grid-cols-3 sm:grid md:grid md:grid-cols-2 lg:grid lg:grid-cols-3 xl:grid xl:grid-cols-3 2xl:grid 2xl:grid-cols-3 gap-9 sm:gap-4 md:gap-6 lg:gap-9 xl:gap-9 2xl:gap-9">
                 {{-- card 1 --}}
-                <div class="flex pt-4 pl-4 border border-gray-300 h-auto rounded-2xl  ">
+                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
+                    {{--Bagian Gambar--}}
                     <div>
-                        <img src="{{ asset('images/tomat.png') }}" alt="#">
-                        <div class="flex text-green-500 items-center text-xs mt-4 mb-6 gap-1">
+                        <img src="{{ asset('images/tomat.png') }}" alt="#" class="w-full bg-clip-content p-4">
+                        {{--Tampilan Desktop--}}
+                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
                             <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p>2,5% (Rp 120)</p>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
                         </div>
                     </div>
-                    <div class="ml-4 mt-4">
-                        <p class="font-bold">Tomat</p>
-                        <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 11.000/kg</p>
+                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
+                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Tomat</p>
+                        <div class="flex justify-start md:justify-center gap-2">
+                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </span>
+                        </div>
+                        {{--Tampilan Mobile--}}
+                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
+                            <i data-lucide="move-down" class="h-4 w-4"></i>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
+                        </div>
                     </div>
                 </div>
                 {{-- card 2 --}}
-                <div class="flex pt-4 pl-4 border border-gray-300 h-auto rounded-2xl">
+                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
+                    {{--Bagian Gambar--}}
                     <div>
-                        <img src="{{ asset('images/bawangP.png') }}" alt="#">
-                        <div class="flex text-red-500 items-center text-xs mt-4 mb-6 gap-1">
+                        <img src="{{ asset('images/bawangP.png') }}" alt="#" class="w-full bg-clip-content p-4">
+                        {{--Tampilan Desktop--}}
+                        <div class="md:flex hidden text-red-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
                             <i data-lucide="move-up" class="h-4 w-4"></i>
-                            <p>2,5% (Rp 120)</p>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
                         </div>
                     </div>
-                    <div class="ml-4 mt-4">
-                        <p class="font-bold">Bawang Putih</p>
-                        <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 16.012/Kg</p>
+                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
+                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Bawang</p>
+                        <div class="flex justify-start md:justify-center gap-2">
+                            <p class="w-auto text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </span>
+                        </div>
+                        {{--Tampilan Mobile--}}
+                        <div class="flex md:hidden text-red-500 items-center text-xs mt-4 md:mb-6 gap-1">
+                            <i data-lucide="move-up" class="h-4 w-4"></i>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
+                        </div>
                     </div>
                 </div>
                 {{-- card 3 --}}
-                <div class="flex pt-4 pl-4 border border-gray-300 h-auto rounded-2xl">
+                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
+                    {{--Bagian Gambar--}}
                     <div>
-                        <img src="{{ asset('images/pete.png') }}" alt="#">
-                        <div class="flex text-green-500 items-center text-xs mt-4 mb-6 gap-1">
+                        <img src="{{ asset('images/pete.png') }}" alt="#" class="w-full bg-clip-content p-4">
+                        {{--Tampilan Desktop--}}
+                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
                             <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p>2,5% (Rp 120)</p>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
                         </div>
                     </div>
-                    <div class="ml-4 mt-4">
-                        <p class="font-bold">Pete</p>
-                        <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 11.000/Kg</p>
+                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
+                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Pete</p>
+                        <div class="flex justify-start md:justify-center gap-2">
+                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </span>
+                        </div>
+                        {{--Tampilan Mobile--}}
+                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
+                            <i data-lucide="move-down" class="h-4 w-4"></i>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
+                        </div>
                     </div>
                 </div>
                 {{-- card 4 --}}
-                <div class="flex pt-4 pl-4 border border-gray-300 h-auto rounded-2xl  ">
+                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
+                    {{--Bagian Gambar--}}
                     <div>
-                        <img src="{{ asset('images/tomat.png') }}" alt="#">
-                        <div class="flex text-green-500 items-center text-xs mt-4 mb-6 gap-1">
+                        <img src="{{ asset('images/tomat.png') }}" alt="#" class="w-full bg-clip-content p-4">
+                        {{--Tampilan Desktop--}}
+                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
                             <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p>2,5% (Rp 120)</p>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
                         </div>
                     </div>
-                    <div class="ml-4 mt-4">
-                        <p class="font-bold">Tomat</p>
-                        <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 11.000/Kg</p>
+                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
+                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Tomat</p>
+                        <div class="flex justify-start md:justify-center gap-2">
+                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </span>
+                        </div>
+                        {{--Tampilan Mobile--}}
+                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
+                            <i data-lucide="move-down" class="h-4 w-4"></i>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
+                        </div>
                     </div>
                 </div>
                 {{-- card 5 --}}
-                <div class="flex pt-4 pl-4 border border-gray-300 h-auto rounded-2xl">
+                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
+                    {{--Bagian Gambar--}}
                     <div>
-                        <img src="{{ asset('images/bawangP.png') }}" alt="#">
-                        <div class="flex text-red-500 items-center text-xs mt-4 mb-6 gap-1">
+                        <img src="{{ asset('images/bawangP.png') }}" alt="#" class="w-full bg-clip-content p-4">
+                        {{--Tampilan Desktop--}}
+                        <div class="md:flex hidden text-red-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
                             <i data-lucide="move-up" class="h-4 w-4"></i>
-                            <p>2,5% (Rp 120)</p>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
                         </div>
                     </div>
-                    <div class="ml-4 mt-4">
-                        <p class="font-bold">Bawang Putih</p>
-                        <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 16.012/Kg</p>
+                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
+                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Bawang</p>
+                        <div class="flex justify-start md:justify-center gap-2">
+                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </span>
+                        </div>
+                        {{--Tampilan Mobile--}}
+                        <div class="flex md:hidden text-red-500 items-center text-xs mt-4 md:mb-6 gap-1">
+                            <i data-lucide="move-up" class="h-4 w-4"></i>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
+                        </div>
                     </div>
                 </div>
                 {{-- card 6 --}}
-                <div class="flex pt-4 pl-4 border border-gray-300 h-auto rounded-2xl">
+                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
+                    {{--Bagian Gambar--}}
                     <div>
-                        <img src="{{ asset('images/pete.png') }}" alt="#">
-                        <div class="flex text-green-500 items-center text-xs mt-4 mb-6 gap-1">
+                        <img src="{{ asset('images/pete.png') }}" alt="#" class="w-full bg-clip-content p-4">
+                        {{--Tampilan Desktop--}}
+                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
                             <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p>2,5% (Rp 120)</p>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
                         </div>
                     </div>
-                    <div class="ml-4 mt-4">
-                        <p class="font-bold">Pete</p>
-                        <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 11.000/Kg</p>
+                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
+                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Pete</p>
+                        <div class="flex justify-start md:justify-center gap-2">
+                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </span>
+                        </div>
+                        {{--Tampilan Mobile--}}
+                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
+                            <i data-lucide="move-down" class="h-4 w-4"></i>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
+                        </div>
                     </div>
                 </div>
                 {{-- card 7 --}}
-                <div class="flex pt-4 pl-4 border border-gray-300 h-auto rounded-2xl  ">
+                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
+                    {{--Bagian Gambar--}}
                     <div>
-                        <img src="{{ asset('images/tomat.png') }}" alt="#">
-                        <div class="flex text-green-500 items-center text-xs mt-4 mb-6 gap-1">
+                        <img src="{{ asset('images/tomat.png') }}" alt="#" class="w-full bg-clip-content p-4">
+                        {{--Tampilan Desktop--}}
+                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
                             <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p>2,5% (Rp 120)</p>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
                         </div>
                     </div>
-                    <div class="ml-4 mt-4">
-                        <p class="font-bold">Tomat</p>
-                        <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 11.000/Kg</p>
+                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
+                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Tomat</p>
+                        <div class="flex justify-start md:justify-center gap-2">
+                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </span>
+                        </div>
+                        {{--Tampilan Mobile--}}
+                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
+                            <i data-lucide="move-down" class="h-4 w-4"></i>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
+                        </div>
                     </div>
                 </div>
                 {{-- card 8 --}}
-                <div class="flex pt-4 pl-4 border border-gray-300 h-auto rounded-2xl">
+                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
+                    {{--Bagian Gambar--}}
                     <div>
-                        <img src="{{ asset('images/bawangP.png') }}" alt="#">
-                        <div class="flex text-red-500 items-center text-xs mt-4 mb-6 gap-1">
+                        <img src="{{ asset('images/bawangP.png') }}" alt="#" class="w-full bg-clip-content p-4">
+                        {{--Tampilan Desktop--}}
+                        <div class="md:flex hidden text-red-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
                             <i data-lucide="move-up" class="h-4 w-4"></i>
-                            <p>2,5% (Rp 120)</p>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
                         </div>
                     </div>
-                    <div class="ml-4 mt-4">
-                        <p class="font-bold">Bawang Putih</p>
-                        <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 16.012/Kg</p>
+                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
+                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Bawang</p>
+                        <div class="flex justify-start md:justify-center gap-2">
+                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </span>
+                        </div>
+                        {{--Tampilan Mobile--}}
+                        <div class="flex md:hidden text-red-500 items-center text-xs mt-4 md:mb-6 gap-1">
+                            <i data-lucide="move-up" class="h-4 w-4"></i>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
+                        </div>
                     </div>
                 </div>
                 {{-- card 9 --}}
-                <div class="flex pt-4 pl-4 border border-gray-300 h-auto rounded-2xl">
+                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
+                    {{--Bagian Gambar--}}
                     <div>
-                        <img src="{{ asset('images/pete.png') }}" alt="#">
-                        <div class="flex text-green-500 items-center text-xs mt-4 mb-6 gap-1">
+                        <img src="{{ asset('images/pete.png') }}" alt="#" class="w-full bg-clip-content p-4">
+                        {{--Tampilan Desktop--}}
+                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
                             <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p>2,5% (Rp 120)</p>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
                         </div>
                     </div>
-                    <div class="ml-4 mt-4">
-                        <p class="font-bold">Pete</p>
-                        <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 11.000/Kg</p>
+                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
+                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Pete</p>
+                        <div class="flex justify-start md:justify-center gap-2">
+                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </span>
+                        </div>
+                        {{--Tampilan Mobile--}}
+                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
+                            <i data-lucide="move-down" class="h-4 w-4"></i>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="flex gap-2 justify-center">
+            <div class="flex gap-2 text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs justify-center">
                 <button class="p-2 rounded-lg border-2 border-gray-300 hover:bg-gray-300">Sebelumnya</button>
                 <button
                     class="py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">1</button>
@@ -236,66 +299,67 @@
         </div>
     </div>
 
+    {{-- Berita --}}
     <div class="bg-primary px-12 py-9 mb-7 mx-15 rounded-lg">
-        <p class="text-4xl text-white text-center font-bold">Berita Terbaru</p>
-        <div class="flex gap-6 justify-center mt-10 mx-12 items-stretch">
-            {{-- kiri --}}
+        <p class="text-4xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:5xl text-white text-center font-bold">Berita Terbaru</p>
+        <div class="flex sm:grid sm:grid-cols-1 md:grid md:grid-cols-1 lg:grid lg:grid-cols-2 xl:grid xl:grid-cols-2 2xl:grid 2xl:grid-cols-2 gap-6 justify-center mt-10 mx-12 items-stretch">
+            {{-- Kiri Desktop --}}
             <div class="flex-1 relative">
                 <img src="{{ asset('images/Tberita.png') }}" class="h-full w-full object-cover rounded-lg"
                     alt="#">
                 <div class="absolute inset-0 bg-black/20"></div>
                 <div class="absolute bottom-4 left-4 text-white px-4 py-2">
-                    <h3 class="font-light mb-2 text-2xl">23 Agustus 2025</h3>
-                    <h3 class="font-bold text-2xl">Gibran Tinjau Pasar Rogojampi, <br> Pedagang Harapkan Harga Bahan <br>
+                    <h3 class="font-light mb-2 text-2xl sm:text-lg md:text-xl lg:2xl xl:3xl 2xl:4xl">23 Agustus 2025</h3>
+                    <h3 class="font-bold text-2xl sm:text-lg md:text-xl lg:2xl xl:3xl 2xl:4xl">Gibran Tinjau Pasar Rogojampi, <br> Pedagang Harapkan Harga Bahan <br>
                         Pokok
                         Turun</h3>
                 </div>
 
-                <div class="flex flex-row mt-6 gap-2 justify-center">
+                <div class="hidden sm:hidden md:hidden lg:flex xl:flex 2xl:flex flex-row mt-6 gap-2 justify-center">
                     <button class="bg-secondary/50 active:bg-secondary hover:bg-secondary px-4 py-3 rounded-lg"><i
                             data-lucide="chevron-left" class="text-white w-6 h-6"></i></button>
                     <button class="bg-secondary/50 active:bg-secondary hover:bg-secondary px-4 py-3 rounded-lg"><i
                             data-lucide="chevron-right" class="text-white w-6 h-6"></i></button>
                 </div>
             </div>
-            {{-- kanan --}}
+            {{-- Kanan Desktop --}}
             <div class="flex-1 flex flex-col gap-7">
                 <div class="pt-4 pl-6 pb-5 rounded-lg pr-9 bg-white">
-                    <h3 class="text-2xl font-semibold">Harga Telur di Ambon Rp 3.000 Per Butir, Warga: Hidup Semakin Susah
+                    <h3 class="text-2xl sm:text-lg md:text-xl lg:2xl xl:3xl 2xl:4xl font-semibold">Harga Telur di Ambon Rp 3.000 Per Butir, Warga: Hidup Semakin Susah
                     </h3>
-                    <p class="mt-6 text-xs font-semibold">15 Juli 2025</p>
+                    <p class="mt-6 text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs font-semibold">15 Juli 2025</p>
                 </div>
                 <div class="pt-4 pl-6 pb-5 rounded-lg pr-9 bg-white">
-                    <h3 class="text-2xl font-semibold">Sehari Jelang Idul Adha, Harga Cabai Keriting Naik Rp 20.000, Tomat
+                    <h3 class="text-2xl sm:text-lg md:text-xl lg:2xl xl:3xl 2xl:4xl font-semibold">Sehari Jelang Idul Adha, Harga Cabai Keriting Naik Rp 20.000, Tomat
                         Rp 3.000
                     </h3>
-                    <p class="mt-6 text-xs font-semibold">2 Febuari 2025</p>
+                    <p class="mt-6 text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs font-semibold">2 Febuari 2025</p>
                 </div>
                 <div class="pt-4 pl-6 pb-5 rounded-lg pr-9 bg-white">
-                    <h3 class="text-2xl font-semibold">Harga Daging Capai Rp 140.000 Per Kg, Pedagang Keluhkan Omzet
+                    <h3 class="text-2xl sm:text-lg md:text-xl lg:2xl xl:3xl 2xl:4xl font-semibold">Harga Daging Capai Rp 140.000 Per Kg, Pedagang Keluhkan Omzet
                         Merosot Jelang
                         Lebaran </h3>
-                    <p class="mt-6 text-xs font-semibold">7 Maret 2025</p>
+                    <p class="mt-6 text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs font-semibold">7 Maret 2025</p>
                 </div>
             </div>
         </div>
         <div class="flex mx-12 mt-6 justify-self-end">
-            <a href="{{ route('berita.berita') }}" class="bg-[#FB7A29] py-3 px-12 text-white rounded-lg">
+            <a href="{{ route('berita.berita') }}" class="bg-[#FB7A29] py-3 px-12 text-white rounded-lg text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl">
                 Berita Lainnya
             </a>
         </div>
     </div>
 
     <div class="mt-8 px-15">
-        <h3 class="font-bold text-2xl">Daftar Harga Bahan Pangan Pasar Kota Yogykarta</h3>
+        <h3 class="font-bold text-2xl sm:text-lg md:text-xl lg:2xl xl:3xl 2xl:4xl">Daftar Harga Bahan Pangan Pasar Kota Yogykarta</h3>
         <div class="my-7 py-6 border rounded-lg border-gray-300">
-            <div class="flex items-center justify-between mx-12">
+            <div class="grid grid-rows-2 sm:grid sm:grid-rows-2 md:grid md:grid-rows-2 lg:grid lg:grid-rows-2 xl:flex 2xl:flex items-center justify-between mx-12 mr-8">
                 <!-- Filter dan Search -->
-                <div class="flex gap-4 items-end">
-                    <div>
-                        <label for="pasar" class="block text-sm font-medium">Pilih Pasar</label>
+                <div class="flex max-w-full gap-4 items-end">
+                    <div class="text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl">
+                        <label for="pasar" class="block">Pilih Pasar</label>
                         <select id="pasar" name="pasar"
-                            class="border border-gray-300 rounded-lg p-1 w-60 focus:ring-blue-500 focus:border-blue-500">
+                            class="border border-gray-300 rounded-lg p-1 focus:ring-blue-500 focus:border-blue-500">
                             <option value="#">Semua Pasar</option>
                             <option value="beringharjo">Pasar Beringharjo</option>
                             <option value="kranggan">Pasar Kranggan</option>
@@ -303,10 +367,10 @@
                         </select>
                     </div>
 
-                    <div>
+                    <div class="text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl">
                         <label for="kategori" class="block">Pilih Kategori</label>
                         <select id="kategori" name="kategori"
-                            class="border border-gray-300 rounded-lg p-1 w-60 focus:ring-blue-500 focus:border-blue-500">
+                            class="border border-gray-300 rounded-lg p-1 focus:ring-blue-500 focus:border-blue-500">
                             <option value="#">Semua Kategori</option>
                             <option value="beras">Beras</option>
                             <option value="cabai">Cabai</option>
@@ -314,10 +378,10 @@
                         </select>
                     </div>
 
-                    <div>
-                        <label for="komoditas" class="block text-sm font-medium">Pilih Bahan Komoditas</label>
+                    <div class="text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl">
+                        <label for="komoditas" class="block">Pilih Bahan Komoditas</label>
                         <select id="komoditas" name="komoditas"
-                            class="border border-gray-300 rounded-lg p-1 w-60 focus:ring-blue-500 focus:border-blue-500">
+                            class="border border-gray-300 rounded-lg p-1 focus:ring-blue-500 focus:border-blue-500">
                             <option value="#">Semua Komoditas</option>
                             <option value="beras">Beras</option>
                             <option value="cabai">Cabai</option>
@@ -331,206 +395,269 @@
                 </div>
 
                 <!-- Indikator Harga -->
-                <div class="flex gap-4 items-center">
+                <div class="flex text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg gap-4 items-center justify-center">
                     <div class="flex items-center gap-1 text-red-500">
                         <i data-lucide="move-up" class="w-4 h-4"></i>
-                        <p class="text-sm">Harga Naik</p>
+                        <p>Harga Naik</p>
                     </div>
                     <div class="flex items-center gap-1 text-green-500">
                         <i data-lucide="move-down" class="w-4 h-4"></i>
-                        <p class="text-sm">Harga Turun</p>
+                        <p>Harga Turun</p>
                     </div>
                     <div class="flex items-center gap-1">
                         <i data-lucide="minus" class="w-4 h-4"></i>
-                        <p class="text-sm">Harga Tetap</p>
+                        <p>Harga Tetap</p>
                     </div>
                 </div>
             </div>
 
             <hr class="mt-6 opacity-20">
-            <div class="flex my-6 mx-12 gap-2 p-2 border-2 bg-gray-200 w-fit rounded-lg border-secondary">
+            <div class="flex text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl my-6 mx-12 gap-2 p-2 border-2 bg-gray-200 w-fit rounded-lg border-secondary">
                 <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
                 <p>Menampilkan harga rata-rata di Kota Yogyakarta, pilih pasar dan barang untuk harga yang lebih akurat</p>
             </div>
             {{-- card --}}
-            <div class="mx-12 mb-6 grid grid-cols-3 gap-9">
+            <div class="mx-12 mb-6 grid grid-cols-3 sm:grid md:grid md:grid-cols-2 lg:grid lg:grid-cols-3 xl:grid xl:grid-cols-3 2xl:grid 2xl:grid-cols-3 gap-9 sm:gap-4 md:gap-6 lg:gap-9 xl:gap-9 2xl:gap-9">
                 {{-- card 1 --}}
-                <div class="flex pt-4 pl-4 border border-gray-300 h-auto rounded-2xl  ">
+                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
+                    {{--Bagian Gambar--}}
                     <div>
-                        <img src="{{ asset('images/tomat.png') }}" alt="#">
-                        <div class="flex text-green-500 items-center text-xs mt-4 mb-6 gap-1">
+                        <img src="{{ asset('images/tomat.png') }}" alt="#" class="w-full bg-clip-content p-4">
+                        {{--Tampilan Desktop--}}
+                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
                             <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p>2,5% (Rp 120)</p>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
                         </div>
                     </div>
-                    <div class="ml-4 mt-4">
-                        <p class="font-bold">Tomat</p>
-                        <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 16.012 - 21.500 /Kg</p>
+                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
+                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Tomat</p>
+                        <div class="flex justify-start md:justify-center gap-2">
+                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </span>
+                        </div>
+                        {{--Tampilan Mobile--}}
+                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
+                            <i data-lucide="move-down" class="h-4 w-4"></i>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
+                        </div>
                     </div>
                 </div>
                 {{-- card 2 --}}
-                <div class="flex pt-4 pl-4 border border-gray-300 h-auto rounded-2xl">
+                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
+                    {{--Bagian Gambar--}}
                     <div>
-                        <img src="{{ asset('images/bawangP.png') }}" alt="#">
-                        <div class="flex text-red-500 items-center text-xs mt-4 mb-6 gap-1">
+                        <img src="{{ asset('images/bawangP.png') }}" alt="#" class="w-full bg-clip-content p-4">
+                        {{--Tampilan Desktop--}}
+                        <div class="md:flex hidden text-red-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
                             <i data-lucide="move-up" class="h-4 w-4"></i>
-                            <p>2,5% (Rp 120)</p>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
                         </div>
                     </div>
-                    <div class="ml-4 mt-4">
-                        <p class="font-bold">Bawang Putih</p>
-                        <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 16.012 - 21.500 /Kg</p>
+                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
+                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Bawang</p>
+                        <div class="flex justify-start md:justify-center gap-2">
+                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </span>
+                        </div>
+                        {{--Tampilan Mobile--}}
+                        <div class="flex md:hidden text-red-500 items-center text-xs mt-4 md:mb-6 gap-1">
+                            <i data-lucide="move-up" class="h-4 w-4"></i>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
+                        </div>
                     </div>
                 </div>
                 {{-- card 3 --}}
-                <div class="flex pt-4 pl-4 border border-gray-300 h-auto rounded-2xl">
+                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
+                    {{--Bagian Gambar--}}
                     <div>
-                        <img src="{{ asset('images/pete.png') }}" alt="#">
-                        <div class="flex text-green-500 items-center text-xs mt-4 mb-6 gap-1">
+                        <img src="{{ asset('images/pete.png') }}" alt="#" class="w-full bg-clip-content p-4">
+                        {{--Tampilan Desktop--}}
+                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
                             <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p>2,5% (Rp 120)</p>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
                         </div>
                     </div>
-                    <div class="ml-4 mt-4">
-                        <p class="font-bold">Pete</p>
-                        <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 16.012 - 21.500 /Kg</p>
+                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
+                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Pete</p>
+                        <div class="flex justify-start md:justify-center gap-2">
+                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </span>
+                        </div>
+                        {{--Tampilan Mobile--}}
+                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
+                            <i data-lucide="move-down" class="h-4 w-4"></i>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
+                        </div>
                     </div>
                 </div>
                 {{-- card 4 --}}
-                <div class="flex pt-4 pl-4 border border-gray-300 h-auto rounded-2xl  ">
+                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
+                    {{--Bagian Gambar--}}
                     <div>
-                        <img src="{{ asset('images/tomat.png') }}" alt="#">
-                        <div class="flex text-green-500 items-center text-xs mt-4 mb-6 gap-1">
+                        <img src="{{ asset('images/tomat.png') }}" alt="#" class="w-full bg-clip-content p-4">
+                        {{--Tampilan Desktop--}}
+                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
                             <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p>2,5% (Rp 120)</p>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
                         </div>
                     </div>
-                    <div class="ml-4 mt-4">
-                        <p class="font-bold">Tomat</p>
-                        <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 16.012 - 21.500 /Kg</p>
+                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
+                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Tomat</p>
+                        <div class="flex justify-start md:justify-center gap-2">
+                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </span>
+                        </div>
+                        {{--Tampilan Mobile--}}
+                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
+                            <i data-lucide="move-down" class="h-4 w-4"></i>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
+                        </div>
                     </div>
                 </div>
                 {{-- card 5 --}}
-                <div class="flex pt-4 pl-4 border border-gray-300 h-auto rounded-2xl">
+                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
+                    {{--Bagian Gambar--}}
                     <div>
-                        <img src="{{ asset('images/bawangP.png') }}" alt="#">
-                        <div class="flex text-red-500 items-center text-xs mt-4 mb-6 gap-1">
+                        <img src="{{ asset('images/bawangP.png') }}" alt="#" class="w-full bg-clip-content p-4">
+                        {{--Tampilan Desktop--}}
+                        <div class="md:flex hidden text-red-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
                             <i data-lucide="move-up" class="h-4 w-4"></i>
-                            <p>2,5% (Rp 120)</p>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
                         </div>
                     </div>
-                    <div class="ml-4 mt-4">
-                        <p class="font-bold">Bawang Putih</p>
-                        <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 16.012 - 21.500 /Kg</p>
+                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
+                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Bawang</p>
+                        <div class="flex justify-start md:justify-center gap-2">
+                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </span>
+                        </div>
+                        {{--Tampilan Mobile--}}
+                        <div class="flex md:hidden text-red-500 items-center text-xs mt-4 md:mb-6 gap-1">
+                            <i data-lucide="move-up" class="h-4 w-4"></i>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
+                        </div>
                     </div>
                 </div>
                 {{-- card 6 --}}
-                <div class="flex pt-4 pl-4 border border-gray-300 h-auto rounded-2xl">
+                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
+                    {{--Bagian Gambar--}}
                     <div>
-                        <img src="{{ asset('images/pete.png') }}" alt="#">
-                        <div class="flex text-green-500 items-center text-xs mt-4 mb-6 gap-1">
+                        <img src="{{ asset('images/pete.png') }}" alt="#" class="w-full bg-clip-content p-4">
+                        {{--Tampilan Desktop--}}
+                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
                             <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p>2,5% (Rp 120)</p>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
                         </div>
                     </div>
-                    <div class="ml-4 mt-4">
-                        <p class="font-bold">Pete</p>
-                        <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 16.012 - 21.500 /Kg</p>
+                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
+                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Pete</p>
+                        <div class="flex justify-start md:justify-center gap-2">
+                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </span>
+                        </div>
+                        {{--Tampilan Mobile--}}
+                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
+                            <i data-lucide="move-down" class="h-4 w-4"></i>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
+                        </div>
                     </div>
                 </div>
                 {{-- card 7 --}}
-                <div class="flex pt-4 pl-4 border border-gray-300 h-auto rounded-2xl  ">
+                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
+                    {{--Bagian Gambar--}}
                     <div>
-                        <img src="{{ asset('images/tomat.png') }}" alt="#">
-                        <div class="flex text-green-500 items-center text-xs mt-4 mb-6 gap-1">
+                        <img src="{{ asset('images/tomat.png') }}" alt="#" class="w-full bg-clip-content p-4">
+                        {{--Tampilan Desktop--}}
+                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
                             <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p>2,5% (Rp 120)</p>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
                         </div>
                     </div>
-                    <div class="ml-4 mt-4">
-                        <p class="font-bold">Tomat</p>
-                        <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 16.012 - 21.500 /Kg</p>
+                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
+                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Tomat</p>
+                        <div class="flex justify-start md:justify-center gap-2">
+                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </span>
+                        </div>
+                        {{--Tampilan Mobile--}}
+                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
+                            <i data-lucide="move-down" class="h-4 w-4"></i>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
+                        </div>
                     </div>
                 </div>
                 {{-- card 8 --}}
-                <div class="flex pt-4 pl-4 border border-gray-300 h-auto rounded-2xl">
+                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
+                    {{--Bagian Gambar--}}
                     <div>
-                        <img src="{{ asset('images/bawangP.png') }}" alt="#">
-                        <div class="flex text-red-500 items-center text-xs mt-4 mb-6 gap-1">
+                        <img src="{{ asset('images/bawangP.png') }}" alt="#" class="w-full bg-clip-content p-4">
+                        {{--Tampilan Desktop--}}
+                        <div class="md:flex hidden text-red-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
                             <i data-lucide="move-up" class="h-4 w-4"></i>
-                            <p>2,5% (Rp 120)</p>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
                         </div>
                     </div>
-                    <div class="ml-4 mt-4">
-                        <p class="font-bold">Bawang Putih</p>
-                        <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 16.012 - 21.500 /Kg</p>
+                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
+                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Bawang</p>
+                        <div class="flex justify-start md:justify-center gap-2">
+                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </span>
+                        </div>
+                        {{--Tampilan Mobile--}}
+                        <div class="flex md:hidden text-red-500 items-center text-xs mt-4 md:mb-6 gap-1">
+                            <i data-lucide="move-up" class="h-4 w-4"></i>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
+                        </div>
                     </div>
                 </div>
                 {{-- card 9 --}}
-                <div class="flex pt-4 pl-4 border border-gray-300 h-auto rounded-2xl">
+                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
+                    {{--Bagian Gambar--}}
                     <div>
-                        <img src="{{ asset('images/pete.png') }}" alt="#">
-                        <div class="flex text-green-500 items-center text-xs mt-4 mb-6 gap-1">
+                        <img src="{{ asset('images/pete.png') }}" alt="#" class="w-full bg-clip-content p-4">
+                        {{--Tampilan Desktop--}}
+                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
                             <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p>2,5% (Rp 120)</p>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
                         </div>
                     </div>
-                    <div class="ml-4 mt-4">
-                        <p class="font-bold">Pete</p>
-                        <span class="flex justify-center gap-2">
-                            <p class="text-sm">Rp. 16.012 - 21.500 /Kg</p>
+                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
+                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Pete</p>
+                        <div class="flex justify-start md:justify-center gap-2">
+                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
                             <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </span>
+                        </div>
+                        {{--Tampilan Mobile--}}
+                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
+                            <i data-lucide="move-down" class="h-4 w-4"></i>
+                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="flex gap-2 justify-center">
-                <button class="p-2 rounded-lg border-2 border-gray-300 hover:bg-gray-300">Sebelumnya</button>
+                <button class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs p-2 rounded-lg border-2 border-gray-300 hover:bg-gray-300">Sebelumnya</button>
                 <button
-                    class="py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">1</button>
+                    class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">1</button>
                 <button
-                    class="py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">2</button>
+                    class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">2</button>
                 <button
-                    class="py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">3</button>
+                    class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">3</button>
                 <button
-                    class="py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">...</button>
+                    class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">...</button>
                 <button
-                    class="py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">10</button>
-                <button class="p-2 rounded-lg border-2 border-gray-300 hover:bg-gray-300">Selanjutnya</button>
+                    class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">10</button>
+                <button class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs p-2 rounded-lg border-2 border-gray-300 hover:bg-gray-300">Selanjutnya</button>
             </div>
         </div>
     </div>
 
     <div class="bg-white border rounded-lg border-gray-300 py-12 px-16 mx-15 mb-10">
-        <h3 class="text-2xl font-bold mb-10 text-gray-800">
+        <h3 class="text-3xl md:text-2xl font-bold mb-10 text-gray-800">
             Visualisasi Pasar Kota Yogyakarta
         </h3>
 
-        <div class="grid grid-cols-2 gap-8">
+        <div class="flex sm:grid sm:grid-cols-1 md:grid md:grid-cols-1 lg:grid lg:grid-cols-2 xl:grid xl:grid-cols-2 2xl:grid 2xl:grid-cols-2 gap-8">
             <!-- MAP -->
             <div class="rounded-2xl overflow-hidden shadow-lg border border-gray-200">
                 <iframe
@@ -541,38 +668,38 @@
 
             <!-- LIST PASAR -->
             <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-200 overflow-y-auto max-h-[500px]">
-                <h3 class="text-xl font-semibold mb-4">Daftar Pasar</h3>
+                <h3 class="md:text-xl text-2xl font-bold mb-4">Daftar Pasar</h3>
                 <ul class="space-y-4">
                     <!-- Pasar item -->
                     <li class="flex justify-between items-center border-b pb-3">
                         <div>
-                            <p class="font-bold text-gray-800">Pasar Beringharjo</p>
-                            <p class="text-sm text-gray-500">Jl. Margo Mulyo, Yogyakarta</p>
+                            <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4 text-gray-800">Pasar Beringharjo</p>
+                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg text-gray-500">Jl. Margo Mulyo, Yogyakarta</p>
                         </div>
                         <button
-                            class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary/80 flex items-center gap-1">
+                            class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary/80 flex items-center gap-1 text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">
                             <i data-lucide="map-pin" class="w-4 h-4"></i>
                             Detail
                         </button>
                     </li>
                     <li class="flex justify-between items-center border-b pb-3">
                         <div>
-                            <p class="font-bold text-gray-800">Pasar Kranggan</p>
-                            <p class="text-sm text-gray-500">Jl. Poncowinatan No.18, Jetis</p>
+                            <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4 text-gray-800">Pasar Kranggan</p>
+                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg text-gray-500">Jl. Poncowinatan No.18, Jetis</p>
                         </div>
                         <button
-                            class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary/80 flex items-center gap-1">
+                            class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary/80 flex items-center gap-1 text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">
                             <i data-lucide="map-pin" class="w-4 h-4"></i>
                             Detail
                         </button>
                     </li>
                     <li class="flex justify-between items-center border-b pb-3">
                         <div>
-                            <p class="font-bold text-gray-800">Pasar Demangan</p>
-                            <p class="text-sm text-gray-500">Jl. Gejayan, Yogyakarta</p>
+                            <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4 text-gray-800">Pasar Demangan</p>
+                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg text-gray-500">Jl. Gejayan, Yogyakarta</p>
                         </div>
                         <button
-                            class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary/80 flex items-center gap-1">
+                            class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary/80 flex items-center gap-1 text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">
                             <i data-lucide="map-pin" class="w-4 h-4"></i>
                             Detail
                         </button>
