@@ -35,8 +35,9 @@ class User extends Authenticatable
 
     public function market()
     {
-        return $this->belongsTo(Market::class, 'market_id');
+        return $this->belongsTo(\App\Models\Market::class, 'market_id', 'id_market');
     }
+
 
     /**
      * The attributes that should be cast.

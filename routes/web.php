@@ -8,6 +8,7 @@ use App\Http\Controllers\MarketController;
 use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\SatuanController;
 use App\Http\Controllers\SuperAdminController;
+use App\Http\Controllers\PublicBeritaController;
 
 Route::get('/', function () {
     return view('home.index');
@@ -15,16 +16,13 @@ Route::get('/', function () {
 Route::get('/pasar', function () {
     return view('pasar.pasar');
 })->name('pasar.pasar');
-Route::get('/berita', function () {
-    return view('berita.berita');
-})->name('berita.berita');
-Route::get('/detailberita', function () {
-    return view('berita.detailberita');
-})->name('berita.detailberita');
-
 Route::get('/detailkomoditas', function () {
     return view('komoditas.detailkomoditas');
 })->name('detailkomoditas');
+
+
+Route::get('/berita', [PublicBeritaController::class, 'index'])->name('berita.index');
+Route::get('/berita/{id}', [PublicBeritaController::class, 'show'])->name('berita.show');
 
 Route::get('/login', [AuthController::class, 'index'])->name('login');
 Route::post('/login/users', [AuthController::class, 'login'])->name('login.post');
@@ -85,4 +83,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/dashboard', function(){
         return view('dashboardAdmin.dashboard');
     })->name('dashboard');
+
+    Route::get('/manajemen', function(){
+        return view('dashboardAdmin.manajemen');
+    })->name('manajemen');
+
+    Route::get('/laporan', function(){
+        return view('dashboardAdmin.laporan');
+    })->name('laporan');
 });
