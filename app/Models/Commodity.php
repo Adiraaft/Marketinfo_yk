@@ -8,7 +8,14 @@ class Commodity extends Model
 {
     protected $table = 'commodities';
     protected $primaryKey = 'id_commodity';
-    public $timestamps = false;
+    public $incrementing = true;
+
+    protected $fillable = [
+        'name_commodity',
+        'category_id',
+        'unit_id',
+        'status',
+    ];
 
     public function unit()
     {
@@ -19,5 +26,3 @@ class Commodity extends Model
         return $this->belongsTo(Category::class, 'category_id', 'id_category');
     }
 }
-
-

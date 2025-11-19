@@ -13,7 +13,6 @@ class Market extends Model
     protected $primaryKey = 'id_market';
     public $incrementing = true;
     protected $keyType = 'int';
-    public $timestamps = false;
 
     protected $fillable = [
         'name_market',
@@ -28,5 +27,11 @@ class Market extends Model
     public function users()
     {
         return $this->hasMany(User::class, 'market_id');
+    }
+    public function commodities()
+    {
+        return $this->belongsToMany(Commodity::class, 'commodity_market', 'market_id', 'commodity_id')
+            ->withPivot('status')
+            ->withTimestamps();
     }
 }
