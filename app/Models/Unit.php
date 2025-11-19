@@ -9,9 +9,10 @@ class Unit extends Model
 {
     use HasFactory;
 
-    protected $table = 'unit'; // nama tabel
-    protected $primaryKey = 'id'; // nama primary key
+    protected $table = 'unit';
+    protected $primaryKey = 'id';
     protected $fillable = ['name'];
 
-    public $timestamps = false; // ← WAJIB
+    public $timestamps = true; // ← WAJIB karena tabel punya created_at dan updated_at
 }
+

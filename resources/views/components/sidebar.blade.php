@@ -38,6 +38,13 @@
                 </a>
             </div>
             <div>
+                <a href="{{ route('superadmin.berita.index') }}"
+                    class="flex gap-2 py-3 px-7 rounded-lg transition-all {{ request()->routeIs('superadmin.berita.index', 'superadmin.berita.create', 'superadmin.berita.edit') ? 'bg-white text-secondary' : 'text-white hover:text-secondary hover:bg-white' }}">
+                    <i data-lucide="newspaper"></i>
+                    <p class="font-bold text-lg">Berita</p>
+                </a>
+            </div>
+            <div>
                 <a href="{{ route('superadmin.setting') }}"
                     class="flex gap-2 py-3 px-7 rounded-lg transition-all {{ request()->routeIs('superadmin.setting', 'superadmin.kategori', 'superadmin.satuan', 'superadmin.account') ? 'bg-white text-secondary' : 'text-white hover:text-secondary hover:bg-white' }}">
                     <i data-lucide="wrench"></i>
