@@ -1,27 +1,41 @@
+@php
+    $prefix = auth()->user()->role === 'superadmin' ? 'superadmin.' : 'admin.';
+@endphp
+
 <div class="bg-primary pt-8 px-9 gap-14 flex flex-col items-center">
     <img src="{{ asset('images/logo.png') }}" class="w-14" alt="logo">
     <div class="space-y-3">
         <div>
-            <a href="{{ route('superadmin.dashboard') }}"
-                class="flex gap-2 py-3 px-7 rounded-lg transition-all {{ request()->routeIs('superadmin.dashboard') ? 'bg-white text-secondary' : 'text-white hover:text-secondary hover:bg-white' }}">
+            <a href="{{ route($prefix . 'dashboard') }}"
+                class="flex gap-2 py-3 px-7 rounded-lg transition-all {{ request()->routeIs('superadmin.dashboard','admin.dashboard') ? 'bg-white text-secondary' : 'text-white hover:text-secondary hover:bg-white' }}">
                 <i data-lucide="layout-dashboard"></i>
                 <p class="font-bold text-lg ">Dashboard</p>
             </a>
         </div>
         <div>
-            <a href="{{ route('superadmin.komoditas') }}"
-                class="flex gap-2 py-3 px-7 rounded-lg transition-all {{ request()->routeIs('superadmin.komoditas') ? 'bg-white text-secondary' : 'text-white hover:text-secondary hover:bg-white' }}">
+            <a href="{{ route($prefix . 'komoditas') }}"
+                class="flex gap-2 py-3 px-7 rounded-lg transition-all {{ request()->routeIs('superadmin.komoditas','admin.komoditas') ? 'bg-white text-secondary' : 'text-white hover:text-secondary hover:bg-white' }}">
                 <i data-lucide="shopping-bag"></i>
                 <p class="font-bold text-lg">Komoditas</p>
             </a>
         </div>
+        @if (auth()->user()->role === 'admin')
+            <div>
+                <a href="{{ route('admin.manajemen') }}"
+                    class="flex gap-2 py-3 px-7 rounded-lg transition-all {{ request()->routeIs('admin.manajemen') ? 'bg-white text-secondary' : 'text-white hover:text-secondary hover:bg-white' }}">
+                    <i data-lucide="settings-2"></i>
+                    <p class="font-bold text-lg">Manajemen</p>
+                </a>
+            </div>
+        @endif
         <div>
-            <a href="{{ route('superadmin.laporan') }}"
-                class="flex gap-2 py-3 px-7 rounded-lg transition-all {{ request()->routeIs('superadmin.laporan') ? 'bg-white text-secondary' : 'text-white hover:text-secondary hover:bg-white' }}">
+            <a href="{{ route($prefix . 'laporan') }}"
+                class="flex gap-2 py-3 px-7 rounded-lg transition-all {{ request()->routeIs('superadmin.laporan','admin.laporan') ? 'bg-white text-secondary' : 'text-white hover:text-secondary hover:bg-white' }}">
                 <i data-lucide="file-chart-line"></i>
                 <p class="font-bold text-lg">Laporan</p>
             </a>
         </div>
+
         @if (auth()->user()->role === 'superadmin')
             <div>
                 <a href="{{ route('superadmin.petugas') }}"
