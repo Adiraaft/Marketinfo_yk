@@ -31,7 +31,7 @@ class Market extends Model
     public function commodities()
     {
         return $this->belongsToMany(Commodity::class, 'commodity_market', 'market_id', 'commodity_id')
-            ->withPivot('status')
+            ->withPivot('id','status')
             ->withTimestamps();
     }
 }

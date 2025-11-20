@@ -34,41 +34,66 @@
         </div>
 
         <div class="mt-6 bg-white rounded-lg shadow-md overflow-hidden">
-            <table class="w-full text-left border-collapse">
-                <thead class="text-gray-400 border-b border-gray-200">
-                    <tr>
-                        <th class="py-3 px-4 font-medium text-sm">No</th>
-                        <th class="py-3 px-4 font-medium text-sm">Nama Barang</th>
-                        <th class="py-3 px-4 font-medium text-sm">Kategori</th>
-                        <th class="py-3 px-4 font-medium text-sm">Satuan</th>
-                        <th class="py-3 px-4 font-medium text-sm">Terakhir Update</th>
-                        <th class="py-3 px-4 font-medium text-sm">Status</th>
-                        <th class="py-3 px-4 font-medium text-sm">Aksi</th>
-                    </tr>
-                </thead>
+            <div class="max-h-[550px] overflow-y-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="text-gray-400 border-b border-gray-200">
+                        <tr>
+                            <th class="py-3 px-4 font-medium text-sm">No</th>
+                            <th class="py-3 px-4 font-medium text-sm">Nama Barang</th>
+                            <th class="py-3 px-4 font-medium text-sm">Kategori</th>
+                            <th class="py-3 px-4 font-medium text-sm">Satuan</th>
+                            <th class="py-3 px-4 font-medium text-sm">Terakhir Update</th>
+                            <th class="py-3 px-4 font-medium text-sm">Status</th>
+                            <th class="py-3 px-4 font-medium text-sm">Aksi</th>
+                        </tr>
+                    </thead>
 
-                <tbody class="text-gray-700">
-                    <tr class="border-t border-gray-200 hover:bg-gray-50 text-sm font-medium">
-                        <td class="py-2 px-4">1</td>
-                        <!-- Kolom Nama Barang -->
-                        <td class="py-2 px-4">
-                            <div class="flex items-center gap-3">
-                                <!-- Gambar lingkaran kecil -->
-                                <img src="{{ asset('images/tomat.png') }}" alt="Cabai Merah"
-                                    class="w-8 h-8 rounded-full object-cover border border-gray-300">
-                                <span>Cabai Merah</span>
-                            </div>
-                        </td>
-                        <td class="py-2 px-4">Sayuran</td>
-                        <td class="py-2 px-4">kg</td>
-                        <td class="py-2 px-4">24 Oktober 2025</td>
-                        <td class="py-2 px-4">Aktif</td>
-                        <td class="gap-1 items-end py-2 px-4">
-                            <button onclick="openStatusModal()" class="text-blue-600 hover:underline">Edit</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                    <tbody class="text-gray-700">
+
+                        @foreach ($commodities as $c)
+                            <tr class="border-t border-gray-200 hover:bg-gray-50 text-sm font-medium">
+                                <td class="py-2 px-4">{{ $loop->iteration }}</td>
+
+                                <td class="py-2 px-4">
+                                    <div class="flex items-center gap-3">
+
+                                        @php
+                                            $img = $c->image ?? 'default.png';
+                                        @endphp
+
+                                        <img src="{{ asset('storage/commodity_images/' . $img) }}"
+                                            class="w-8 h-8 rounded-full object-cover border border-gray-300">
+
+                                        <span>{{ $c->name_commodity }}</span>
+                                    </div>
+                                </td>
+
+                                <td class="py-2 px-4">{{ $c->category->name_category ?? '-' }}</td>
+                                <td class="py-2 px-4">{{ $c->unit->name }}</td>
+
+                                <td class="py-2 px-4">
+                                    {{ $c->updated_at ? $c->updated_at->format('d F Y') : '-' }}
+                                </td>
+
+                                <td class="py-2 px-4">
+                                    <span
+                                        class="px-3 py-1 rounded-lg text-white text-xs
+                                        {{ $c->pivot->status === 'aktif' ? 'bg-green-500' : 'bg-red-500' }}">
+                                        {{ ucfirst($c->pivot->status) }}
+                                    </span>
+                                </td>
+
+                                <td class="py-2 px-4">
+                                    <button onclick="openStatusModal({{ $c->pivot->id }}, '{{ $c->pivot->status }}')"
+                                        class="text-blue-600 hover:underline">
+                                        Edit
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -79,7 +104,10 @@
         <div class="bg-white w-96 rounded-lg shadow-lg p-6">
             <h2 class="text-lg font-bold mb-4 text-gray-800">Ubah Status Komoditas</h2>
 
-            <form id="statusForm">
+            <form method="POST" id="statusForm">
+                @csrf
+                <input type="hidden" id="commodityId" name="commodityId">
+
                 <label class="block mb-2 text-sm font-medium">Status Barang</label>
 
                 <select id="statusSelect"
@@ -103,29 +131,60 @@
     </div>
 
     <script>
-        function openStatusModal() {
-            document.getElementById('statusModal').classList.remove('hidden');
-            document.getElementById('statusModal').classList.add('flex');
+        function openStatusModal(id, currentStatus) {
+            document.getElementById('commodityId').value = id;
+            document.getElementById('statusSelect').value = currentStatus;
+
+            const modal = document.getElementById('statusModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
         }
 
         function closeStatusModal() {
-            document.getElementById('statusModal').classList.add('hidden');
-            document.getElementById('statusModal').classList.remove('flex');
+            const modal = document.getElementById('statusModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }
 
-        // Ketika modal dikirimkan (submit)
+        // Submit status update
         document.getElementById('statusForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const status = document.getElementById('statusSelect').value;
+            let id = document.getElementById('commodityId').value;
+            let status = document.getElementById('statusSelect').value;
 
-            // TEMPORER (bisa ganti AJAX atau form submit ke server)
-            alert("Status berhasil diubah menjadi: " + status);
+            let formData = new FormData();
+            formData.append("status", status);
+            formData.append("_token", "{{ csrf_token() }}");
 
-            closeStatusModal();
+            fetch(`/admin/manajemen/${id}/status`, {
+                    method: "POST",
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        closeStatusModal();
+
+                        Swal.fire({
+                            title: "Berhasil!",
+                            text: "data berhasil diubah",
+                            icon: "success",
+                            confirmButtonText: "OK"
+                        });
+
+                        setTimeout(() => location.reload(), 1400);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Gagal mengirim data ke server.'
+                    });
+                });
         });
     </script>
-
-
 
 @endsection
