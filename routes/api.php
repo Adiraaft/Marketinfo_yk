@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\SyncController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CommodityController;
 use App\Http\Controllers\Api\MarketController;
+use App\Http\Controllers\Api\UnitController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,7 +37,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/commodities/{id}', [CommodityController::class, 'show']);
     Route::get('/markets', [MarketController::class, 'index']);
     Route::get('/markets/{id}', [MarketController::class, 'show']);
-     Route::put('/change-password', [AuthController::class, 'changePassword']);
+    Route::put('/change-password', [AuthController::class, 'changePassword']);
+    Route::get('/units', [UnitController::class, 'index']);
+    Route::get('/units/{id}', [UnitController::class, 'show']);
 });
 // endpoint login
 Route::post('/login-mobile', [AuthController::class, 'login']);
