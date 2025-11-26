@@ -20,8 +20,9 @@ class Price extends Model
 
     public function commodity()
     {
-        return $this->belongsTo(Commodity::class);
+        return $this->belongsTo(Commodity::class, 'commodity_id', 'id_commodity');
     }
+
 
     public function market()
     {

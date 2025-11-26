@@ -15,6 +15,7 @@ class Commodity extends Model
         'category_id',
         'unit_id',
         'status',
+        'image',
     ];
 
     public function unit()

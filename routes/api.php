@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CommodityController;
 use App\Http\Controllers\Api\MarketController;
 use App\Http\Controllers\Api\UnitController;
+use App\Http\Controllers\Api\PriceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/change-password', [AuthController::class, 'changePassword']);
     Route::get('/units', [UnitController::class, 'index']);
     Route::get('/units/{id}', [UnitController::class, 'show']);
+    Route::get('/prices', [PriceController::class, 'index']);
 });
 // endpoint login
 Route::post('/login-mobile', [AuthController::class, 'login']);
