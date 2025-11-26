@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Commodity;
+use App\Models\CommodityMarket;
 use App\Models\Market;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -36,7 +38,7 @@ class MarketController extends Controller
             $imagePath = $request->file('image')->store('market_images', 'public');
         }
 
-        Market::create([
+        $market = Market::create([
             'name_market' => $request->name_market,
             'address' => $request->address,
             'description' => $request->description,
@@ -47,10 +49,23 @@ class MarketController extends Controller
 
         ]);
 
+        $commodities = Commodity::all();
+
+        // 3. Insert otomatis ke tabel commodity_market
+        foreach ($commodities as $commodity) {
+            CommodityMarket::create([
+                'commodity_id' => $commodity->id_commodity,
+                'market_id'    => $market->id_market,
+                'status'       => 'aktif',
+            ]);
+        }
+
         return redirect()->route('superadmin.market')->with('success', 'Data pasar berhasil ditambahkan!');
     }
     public function destroy($id)
     {
+        CommodityMarket::where('market_id', $id)->delete();
+
         $market = Market::findOrFail($id);
 
         // Hapus gambar jika ada
@@ -93,6 +108,9 @@ class MarketController extends Controller
             'status'        => $request->status ?? 'aktif',
             'image'         => $market->image,
         ]);
+
+        CommodityMarket::where('market_id', $id)
+            ->update(['status' => $request->status]);
 
         return redirect()->route('superadmin.market')->with('success', 'Data pasar berhasil diupdate!');
     }

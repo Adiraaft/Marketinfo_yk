@@ -15,6 +15,7 @@ class Commodity extends Model
         'category_id',
         'unit_id',
         'status',
+        'image',
     ];
 
     public function unit()
@@ -30,5 +31,9 @@ class Commodity extends Model
         return $this->belongsToMany(Market::class, 'commodity_market')
             ->withPivot('id', 'status', 'price')
             ->withTimestamps();
+    }
+    public function commodityMarkets()
+    {
+        return $this->hasMany(CommodityMarket::class, 'commodity_id');
     }
 }

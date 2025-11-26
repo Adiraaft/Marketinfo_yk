@@ -49,7 +49,6 @@
                     </thead>
 
                     <tbody class="text-gray-700">
-
                         @foreach ($commodities as $c)
                             <tr class="border-t border-gray-200 hover:bg-gray-50 text-sm font-medium">
                                 <td class="py-2 px-4">{{ $loop->iteration }}</td>
@@ -75,19 +74,26 @@
                                     {{ $c->updated_at ? $c->updated_at->format('d F Y') : '-' }}
                                 </td>
 
+                                @php
+                                    $pivot = $c->commodityMarkets->firstWhere('market_id', auth()->user()->market_id);
+                                @endphp
+
                                 <td class="py-2 px-4">
                                     <span
                                         class="px-3 py-1 rounded-lg text-white text-xs
-                                        {{ $c->pivot->status === 'aktif' ? 'bg-green-500' : 'bg-red-500' }}">
-                                        {{ ucfirst($c->pivot->status) }}
+                                        {{ $pivot && $pivot->status === 'aktif' ? 'bg-green-500' : 'bg-red-500' }}">
+                                        {{ $pivot ? ($pivot->status === 'aktif' ? 'Aktif' : 'Tidak Aktif') : '-' }}
                                     </span>
                                 </td>
-
                                 <td class="py-2 px-4">
-                                    <button onclick="openStatusModal({{ $c->pivot->id }}, '{{ $c->pivot->status }}')"
-                                        class="text-blue-600 hover:underline">
-                                        Edit
-                                    </button>
+                                    @if ($pivot)
+                                        <button onclick="openStatusModal({{ $pivot->id }}, '{{ $pivot->status }}')"
+                                            class="text-blue-600 hover:underline">
+                                            Edit
+                                        </button>
+                                    @else
+                                        <span class="text-gray-400 text-xs">No Data</span>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
@@ -113,7 +119,7 @@
                 <select id="statusSelect"
                     class="border border-gray-300 rounded-lg p-2 w-full focus:ring-blue-500 focus:border-blue-500">
                     <option value="aktif">Aktif</option>
-                    <option value="nonaktif">Nonaktif</option>
+                    <option value="nonaktif">Tidak aktif</option>
                 </select>
 
                 <div class="flex justify-end gap-3 mt-6">
