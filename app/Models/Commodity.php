@@ -32,4 +32,8 @@ class Commodity extends Model
             ->withPivot('id', 'status', 'price')
             ->withTimestamps();
     }
+    public function commodityMarkets()
+    {
+        return $this->hasMany(CommodityMarket::class, 'commodity_id');
+    }
 }

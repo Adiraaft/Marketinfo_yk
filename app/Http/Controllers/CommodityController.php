@@ -9,6 +9,7 @@ use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class CommodityController extends Controller
 {
@@ -41,8 +42,15 @@ class CommodityController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('commodity_images', 'public');
+            $file = $request->file('image');
+            $extension = $file->getClientOriginalExtension();
+            $fileName = Str::slug($request->name_commodity) . '.' . $extension;
+
+            $file->storeAs('commodity_images', $fileName, 'public');
+
+            $imagePath = $fileName; // hanya nama file
         }
+
 
         // 1. Simpan komoditas
         $commodity = Commodity::create([
@@ -108,8 +116,26 @@ class CommodityController extends Controller
 
         // update gambar
         if ($request->hasFile('image')) {
-            $commodity->image = $request->file('image')->store('commodity_images', 'public');
+            // 1️⃣ Hapus gambar lama jika ada
+            if ($commodity->image && Storage::disk('public')->exists('commodity_images/' . $commodity->image)) {
+                Storage::disk('public')->delete('commodity_images/' . $commodity->image);
+            }
+
+            // 2️⃣ Ambil file baru
+            $file = $request->file('image');
+            $extension = $file->getClientOriginalExtension();
+
+            // 3️⃣ Buat nama file rapi dan unik
+            $fileName = Str::slug($request->name_commodity) . '.' . $extension;
+
+            // 4️⃣ Simpan file baru di folder commodity_images
+            $file->storeAs('commodity_images', $fileName, 'public');
+
+            // 5️⃣ Update kolom image di database
+            $commodity->image = $fileName;
         }
+
+
 
         // update data lain
         $commodity->update([

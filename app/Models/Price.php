@@ -15,12 +15,17 @@ class Price extends Model
         'market_id',
         'price',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'date'
     ];
 
     public function commodity()
     {
         return $this->belongsTo(Commodity::class, 'commodity_id', 'id_commodity');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
 
