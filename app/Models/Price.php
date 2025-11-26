@@ -8,7 +8,7 @@ class Price extends Model
 {
     protected $table = 'prices';
     protected $primaryKey = 'id_price';
-    public $timestamps = false;
+
     protected $fillable = [
         'commodity_id',
         'user_id',
@@ -28,9 +28,12 @@ class Price extends Model
         return $this->belongsTo(User::class);
     }
 
-
     public function market()
     {
         return $this->belongsTo(Market::class);
+    }
+    public function commodityMarket()
+    {
+        return $this->belongsTo(CommodityMarket::class, 'commodity_id', 'commodity_id');
     }
 }
