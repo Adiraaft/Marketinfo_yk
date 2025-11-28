@@ -16,22 +16,22 @@
             <div class="flex bg-gray-200 border-b border-gray-300 text-sm font-medium text-gray-600 rounded-t-lg">
                 <a href="{{ route('superadmin.setting') }}"
                     class="px-6 py-3 border-b-2 transition-all duration-200 
-                    hover:border-primary hover:text-primary
-                    {{ request()->routeIs('superadmin.setting') ? 'border-primary text-primary font-semibold' : 'border-transparent' }}">
+                        hover:border-primary hover:text-primary
+                        {{ request()->routeIs('superadmin.setting') ? 'border-primary text-primary font-semibold' : 'border-transparent' }}">
                     General
                 </a>
 
                 <a href="{{ route('superadmin.kategori') }}"
                     class="px-6 py-3 border-b-2 transition-all duration-200 
-                    hover:border-primary hover:text-primary
-                    {{ request()->routeIs('superadmin.kategori') || request()->routeIs('superadmin.satuan') ? 'border-primary text-primary font-semibold' : 'border-transparent' }}">
+                        hover:border-primary hover:text-primary
+                        {{ request()->routeIs('superadmin.kategori') || request()->routeIs('superadmin.satuan') ? 'border-primary text-primary font-semibold' : 'border-transparent' }}">
                     Manajemen
                 </a>
 
                 <a href="{{ route('superadmin.account') }}"
                     class="px-6 py-3 border-b-2 transition-all duration-200 
-                    hover:border-primary hover:text-primary
-                    {{ request()->routeIs('superadmin.account') ? 'border-primary text-primary font-semibold' : 'border-transparent' }}">
+                        hover:border-primary hover:text-primary
+                        {{ request()->routeIs('superadmin.account') ? 'border-primary text-primary font-semibold' : 'border-transparent' }}">
                     Account
                 </a>
             </div>
@@ -42,7 +42,7 @@
                     <a href="{{ route('superadmin.kategori') }}">
                         <button
                             class="py-3 px-5 rounded-md text-sm font-bold transition-all duration-200 
-                            {{ request()->routeIs('superadmin.kategori') ? 'bg-primary text-white' : 'bg-primary/60 text-white hover:bg-gray-400' }}">
+                                {{ request()->routeIs('superadmin.kategori') ? 'bg-primary text-white' : 'bg-primary/60 text-white hover:bg-gray-400' }}">
                             Manajemen Kategori
                         </button>
                     </a>
@@ -50,7 +50,7 @@
                     <a href="{{ route('superadmin.satuan') }}">
                         <button
                             class="py-3 px-5 rounded-md text-sm font-bold transition-all duration-200 
-                            {{ request()->routeIs('superadmin.satuan') ? 'bg-primary text-white' : 'bg-primary/60 text-white hover:bg-gray-400' }}">
+                                {{ request()->routeIs('superadmin.satuan') ? 'bg-primary text-white' : 'bg-primary/60 text-white hover:bg-gray-400' }}">
                             Manajemen Satuan
                         </button>
                     </a>
@@ -66,17 +66,36 @@
                 <!-- FORM TAMBAH KATEGORI -->
                 <p class="text-secondary text-2xl font-medium mb-4">Formulir Penambahan Kategori</p>
 
-                <form action="{{ route('superadmin.kategori.store') }}" method="POST" class="space-y-4">
+                <form action="{{ route('superadmin.kategori.store') }}" method="POST" enctype="multipart/form-data"
+                    class="space-y-6">
                     @csrf
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Nama Kategori</label>
-                        <input type="text" id="nama_kategori" name="nama_kategori" required
-                            placeholder="Masukkan nama kategori"
-                            class="w-75 border text-gray-600 border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary focus:outline-none">
+
+                    <div class="flex gap-4 items-start w-full">
+
+                        <!-- Input Nama -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-1">Nama Kategori</label>
+                            <input type="text" id="nama_kategori" name="nama_kategori" required
+                                placeholder="Masukkan nama kategori"
+                                class="w-75 border text-gray-600 border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary focus:outline-none">
+                        </div>
+
+                        <!-- Input Gambar -->
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Gambar Kategori</label>
+                            <input type="file" name="image" accept="image/*"
+                                class="block w-64 text-sm text-gray-500
+                                file:mr-4 file:py-2 file:px-4
+                                file:rounded-lg file:border-0
+                                file:text-sm file:font-semibold
+                                file:bg-blue-600 file:text-white
+                                hover:file:bg-blue-700">
+                        </div>
+
                     </div>
 
                     <button type="submit"
-                        class="mt-2 bg-primary text-white font-semibold py-3 px-10 rounded-lg hover:bg-primary/80 transition-all duration-200 shadow-sm">
+                        class="bg-primary text-white font-semibold py-3 px-10 rounded-lg hover:bg-primary/80 transition-all duration-200 shadow-sm">
                         Tambah
                     </button>
                 </form>
@@ -96,11 +115,24 @@
                             <tbody class="divide-y divide-gray-200">
                                 @forelse ($kategori as $item)
                                     <tr>
-                                        <td class="py-3 px-6 border-r border-gray-200">{{ $item->name_category }}</td>
+                                        <td class="py-3 px-6 border-r border-gray-200">
+                                            <div class="flex items-center gap-2">
+                                                @if ($item->image)
+                                                    <img src="/images/{{ $item->image }}"
+                                                        class="w-7 h-7 rounded object-cover">
+                                                @endif
+                                                {{ $item->name_category }}
+                                            </div>
+                                        </td>
                                         <td class="py-3 px-6 flex justify-center gap-3">
+
                                             <!-- Tombol Edit (buka modal) -->
                                             <button type="button"
-                                                onclick="openEditModal({{ $item->id_category }}, '{{ $item->name_category }}')"
+                                                onclick="openEditModal(
+                                                    {{ $item->id_category }},
+                                                    '{{ $item->name_category }}',
+                                                    '{{ $item->image }}'
+                                                )"
                                                 class="text-blue-500 hover:text-blue-700 transition">
                                                 <i data-lucide="edit" class="w-5 h-5"></i>
                                             </button>
@@ -135,35 +167,66 @@
     <div id="editModal" class="hidden fixed inset-0 bg-gray-900/40 flex justify-center items-center z-50">
         <div class="bg-white rounded-lg shadow-lg w-96 p-6 relative">
             <h3 class="text-lg font-semibold text-secondary mb-4">Edit Kategori</h3>
-            <form id="editForm" method="POST">
+
+            <form id="editForm" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
+
                 <div class="mb-4">
                     <label class="block text-sm text-gray-500 mb-1">Nama Kategori</label>
                     <input type="text" id="edit_nama_kategori" name="nama_kategori" required
                         class="w-full border text-gray-600 border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary focus:outline-none">
                 </div>
+
+                <!-- Preview Gambar -->
+                <div class="mb-4">
+                    <label class="block text-sm text-gray-500 mb-1">Gambar Saat Ini</label>
+                    <img id="edit_preview_image" src=""
+                        class="w-24 h-24 object-cover rounded-lg border border-gray-300 bg-gray-100">
+                </div>
+
+                <!-- Input Ganti Gambar -->
+                <div class="mb-4">
+                    <label class="block text-sm text-gray-500 mb-1">Ganti Gambar (Opsional)</label>
+                    <input type="file" name="image" id="edit_image" accept="image/*"
+                        class="block w-full text-sm text-gray-500
+                        file:mr-4 file:py-2 file:px-4
+                        file:rounded-lg file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-blue-600 file:text-white
+                        hover:file:bg-blue-700">
+                </div>
+
                 <div class="flex justify-end gap-2">
                     <button type="button" onclick="closeEditModal()"
                         class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400">Batal</button>
                     <button type="submit"
                         class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/80">Simpan</button>
                 </div>
+
             </form>
         </div>
     </div>
 
-
     <script>
-        function openEditModal(id, name) {
-            document.getElementById('editModal').classList.remove('hidden');
+        function openEditModal(id, name, image) {
+
+            // Set action
+            document.getElementById('editForm').action = `/superadmin/kategori/${id}`;
+
+            // Set name
             document.getElementById('edit_nama_kategori').value = name;
-            const form = document.getElementById('editForm');
-            form.action = `/superadmin/kategori/${id}`;
+
+            // Set preview
+            const img = document.getElementById('edit_preview_image');
+            img.src = image ? `/images/${image}` : '/images/no-image.png';
+
+            document.getElementById('editModal').classList.remove('hidden');
         }
 
         function closeEditModal() {
             document.getElementById('editModal').classList.add('hidden');
         }
     </script>
+
 @endsection

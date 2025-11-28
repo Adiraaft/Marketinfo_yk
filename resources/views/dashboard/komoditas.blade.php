@@ -83,7 +83,7 @@
 
                                 {{-- Satuan --}}
                                 <td class="py-2 px-4">
-                                    {{ $c->unit->name ?? '-' }}
+                                    {{ $c->unit->name_unit ?? '-' }}
                                 </td>
 
                                 {{-- Rata-rata Harga (jika belum ada → '-') --}}
