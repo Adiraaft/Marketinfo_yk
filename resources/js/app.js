@@ -1,10 +1,16 @@
 import "./bootstrap";
 import { createIcons, icons } from "lucide";
- import Swal from "sweetalert2";
-    window.Swal = Swal;
+import Swal from "sweetalert2";
+window.Swal = Swal;
+
+import Swiper from "swiper";
+import "swiper/css";
+
+import { Navigation, Autoplay } from "swiper/modules";
+import "swiper/css/navigation";
 
 createIcons({ icons });
-// Inisialisasi ikon Lucide
+
 document.addEventListener("DOMContentLoaded", () => {
 
     // --- Modal Navbar Dashboard ---
@@ -27,7 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Tutup modal ketika klik di luar
     document.addEventListener("click", (e) => {
         if (notifIcon && notifModal && !notifIcon.contains(e.target) && !notifModal.contains(e.target)) {
             notifModal.classList.add("hidden");
@@ -37,6 +42,22 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // --------------------------------------
+    // 🚀 INISIALISASI SWIPER (Slider Otomatis)
+    // --------------------------------------
+    if (document.querySelector(".mySwiper")) {
+        new Swiper(".mySwiper", {
+            modules: [Navigation, Autoplay],
+            loop: true,
+            autoplay: {
+                delay: 3000,
+            },
+            speed: 800,
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+        });
+    }
 
 });
-

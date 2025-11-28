@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="mt-7 px-15">
-        <h3 class="font-bold text-2xl text-secondary">Daftar Komoditas</h3>
+        <h3 class="font-bold text-2xl text-secondary">Manajemen Komoditas Pasar</h3>
         <div class="flex gap-4 mt-4">
             <div>
                 <label for="kategori" class="block">Pilih Kategori</label>

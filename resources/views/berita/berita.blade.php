@@ -44,7 +44,7 @@
                             {{ $item->description }}
                         </p>
 
-                        <a href="{{ route('berita.show', $item->id) }}">
+                        <a href="{{ route('berita.detail', $item->id) }}">
                             Baca Selengkapnya
                         </a>
 
