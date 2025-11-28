@@ -22,20 +22,7 @@ class CategoryController extends Controller
         }
     }
 
-    // GET /api/categories/{id}
-    public function show($id)
-    {
-        try {
-            $category = Category::find($id);
-            if (!$category) {
-                return response()->json(['error' => 'Category not found'], 404);
-            }
-            return response()->json($category);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Server error',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
 }
+
+
+

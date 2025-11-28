@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CommodityMarket extends Model
 {
-    protected $table = 'commodity_market';
+    protected $table = 'commodity_markets';
 
     protected $fillable = [
         'commodity_id',

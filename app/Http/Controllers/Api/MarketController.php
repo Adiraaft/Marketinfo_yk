@@ -21,23 +21,4 @@ class MarketController extends Controller
             ], 500);
         }
     }
-
-    // GET /api/markets/{id}
-    public function show($id)
-    {
-        try {
-            $market = Market::find($id);
-
-            if (!$market) {
-                return response()->json(['error' => 'Market not found'], 404);
-            }
-
-            return response()->json($market);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Server error',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
 }

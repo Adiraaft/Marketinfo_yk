@@ -93,19 +93,21 @@ class AdminController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $request->validate([
+            'pivotId' => 'required|integer|exists:commodity_markets,id',
             'commodityId' => 'required',
             'price'       => 'required|array',
             'price.*'     => 'required|numeric',
             'price_date'  => 'required|date',
         ]);
 
-        $commodityMarket = CommodityMarket::findOrFail($request->commodityId);
+        $pivot = CommodityMarket::findOrFail($request->pivotId);
 
         foreach ($request->price as $p) {
             Price::create([
-                'commodity_id' => $commodityMarket->commodity_id,
-                'market_id'    => $commodityMarket->market_id,
+                'commodity_id' => $pivot->commodity_id,
+                'market_id'    => $pivot->market_id,
                 'user_id'      => auth()->id(),
                 'price'        => $p,
                 'date'         => $request->price_date,

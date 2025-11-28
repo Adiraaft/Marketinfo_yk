@@ -21,23 +21,4 @@ class UnitController extends Controller
             ], 500);
         }
     }
-
-    // GET /api/units/{id}
-    public function show($id)
-    {
-        try {
-            $unit = Unit::find($id);
-
-            if (!$unit) {
-                return response()->json(['error' => 'Unit not found'], 404);
-            }
-
-            return response()->json($unit);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Server error',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
 }

@@ -33,14 +33,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/sync', [SyncController::class, 'syncBatch']);
     Route::post('/sync/price', [SyncController::class, 'syncSingle']);
     Route::get('/categories', [CategoryController::class, 'index']);
-    Route::get('/categories/{id}', [CategoryController::class, 'show']);
-    Route::get('/commodities', [CommodityController::class, 'index']);
-    Route::get('/commodities/{id}', [CommodityController::class, 'show']);
+    Route::get('/commodities', [CommodityController::class, 'index']);;
     Route::get('/markets', [MarketController::class, 'index']);
-    Route::get('/markets/{id}', [MarketController::class, 'show']);
     Route::put('/change-password', [AuthController::class, 'changePassword']);
     Route::get('/units', [UnitController::class, 'index']);
-    Route::get('/units/{id}', [UnitController::class, 'show']);
     Route::get('/prices', [PriceController::class, 'index']);
 });
 // endpoint login

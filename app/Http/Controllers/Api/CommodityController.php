@@ -36,32 +36,4 @@ class CommodityController extends Controller
             ], 500);
         }
     }
-
-    // GET /api/commodities/{id}
-    public function show($id)
-    {
-        try {
-            $commodity = Commodity::with('category')->find($id);
-
-            if (!$commodity) {
-                return response()->json(['error' => 'Commodity not found'], 404);
-            }
-
-            return response()->json([
-                'id_commodity' => $commodity->id_commodity,
-                'name_commodity' => $commodity->name_commodity,
-                'unit_id' => $commodity->unit_id,
-                'image' => $item->image 
-                        ? url('storage/commodities/' . $item->image)
-                        : null,
-                'category_id' => $commodity->category_id,
-                'category_name' => $commodity->category ? $commodity->category->name_category : null,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Server error',
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
 }
