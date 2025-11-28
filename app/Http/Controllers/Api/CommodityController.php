@@ -21,6 +21,9 @@ class CommodityController extends Controller
                         'name_commodity' => $item->name_commodity,
                         'unit_id' => $item->unit_id,
                         'category_id' => $item->category_id,
+                        'image' => $item->image 
+                        ? url('storage/commodities/' . $item->image)
+                        : null,
                         'category_name' => $item->category ? $item->category->name_category : null,
                     ];
                 });
@@ -48,6 +51,9 @@ class CommodityController extends Controller
                 'id_commodity' => $commodity->id_commodity,
                 'name_commodity' => $commodity->name_commodity,
                 'unit_id' => $commodity->unit_id,
+                'image' => $item->image 
+                        ? url('storage/commodities/' . $item->image)
+                        : null,
                 'category_id' => $commodity->category_id,
                 'category_name' => $commodity->category ? $commodity->category->name_category : null,
             ]);

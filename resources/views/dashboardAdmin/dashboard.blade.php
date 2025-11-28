@@ -62,15 +62,18 @@
                     Tabel Harga Terbaru
                 </h2>
 
-                <div class="flex items-center text-sm font-semibold text-gray-400">
-                    <div class="px-4 w-12">No</div>
-                    <div class="px-16 text-center">Nama Barang</div>
-                    <div class="px-4 w-36 text-left">Harga Kemarin</div>
-                    <div class="px-4 w-36 text-center">Harga Hari Ini</div>
-                    <div class="px-4 w-28 text-center">Perubahan</div>
-                    <div class="px-4 w-24 text-center">Satuan</div>
-                </div>
-                <div class="border-b border-gray-200 w-full"></div>
+                <table class="w-full text-left border-collapse">
+                    <thead class="text-gray-400 border-b border-gray-200">
+                        <tr>
+                            <th class="py-3 px-4 font-medium text-sm">No</th>
+                            <th class="py-3 px-4 font-medium text-sm">Nama Barang</th>
+                            <th class="py-3 px-4 font-medium text-sm">Harga Kemarin</th>
+                            <th class="py-3 px-4 font-medium text-sm">Harga Hari Ini</th>
+                            <th class="py-3 px-4 font-medium text-sm">Perubahan</th>
+                            <th class="py-3 px-4 font-medium text-sm">Satuan</th>
+                        </tr>
+                    </thead>
+                </table>
 
                 <div class="w-full flex flex-col items-center justify-center py-40 text-center text-gray-400">
                     <i data-lucide="upload" class="h-8 w-8"></i>

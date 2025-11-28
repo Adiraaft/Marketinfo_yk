@@ -2,7 +2,6 @@
 
 @section('title', 'Home')
 
-
 @section('content')
     <div class="my-7 px-15">
         <h3 class="font-bold text-2xl text-secondary">Daftar Komoditas</h3>
@@ -39,28 +38,24 @@
         <div class="w-full bg-white rounded-lg shadow-md mt-6">
             <div class="flex gap-6 bg-gray-200 border-b border-gray-300 text-sm font-medium text-gray-400 rounded-t-lg">
                 <!-- General -->
-                <a href="{{ route('superadmin.setting') }}"
-                    class="px-6 py-4 border-b-2 transition-all duration-200 
-               hover:border-primary hover:text-primary
-               {{ request()->routeIs('admin.komoditas') ? 'border-primary text-primary font-semibold' : 'border-transparent' }}">
-                    Semua 118
+                <a href="{{ route('admin.komoditas', 'all') }}"
+                    class="px-6 py-4 border-b-2 transition-all hover:border-primary hover:text-primary
+                    {{ $activeFilter == 'all' ? 'border-primary text-primary font-semibold' : 'border-transparent' }}">
+                    Semua {{ $countAll }}
                 </a>
 
-                <!-- Manajemen -->
-                <a href=""
-                    class="px-6 py-4 border-b-2 transition-all duration-200 
-               hover:border-primary hover:text-primary
-               {{ request()->routeIs('') ? 'border-primary text-primary font-semibold' : 'border-transparent' }}">
-                    Belum Update 39
+                <a href="{{ route('admin.komoditas', 'belum-update') }}"
+                    class="px-6 py-4 border-b-2 transition-all hover:border-primary hover:text-primary
+                    {{ $activeFilter == 'belum-update' ? 'border-primary text-primary font-semibold' : 'border-transparent' }}">
+                    Belum Update {{ $countBelum }}
                 </a>
 
-                <!-- Account -->
-                <a href=""
-                    class="px-6 py-4 border-b-2 transition-all duration-200 
-               hover:border-primary hover:text-primary
-               {{ request()->routeIs('') ? 'border-primary text-primary font-semibold' : 'border-transparent' }}">
-                    Sudah Update 79
+                <a href="{{ route('admin.komoditas', 'sudah-update') }}"
+                    class="px-6 py-4 border-b-2 transition-all hover:border-primary hover:text-primary
+                    {{ $activeFilter == 'sudah-update' ? 'border-primary text-primary font-semibold' : 'border-transparent' }}">
+                    Sudah Update {{ $countSudah }}
                 </a>
+
             </div>
             <div class="max-h-[550px] overflow-y-auto">
                 <table class="w-full text-left border-collapse">
@@ -82,20 +77,95 @@
                             @endphp
                             <tr class="border-t border-gray-200 hover:bg-gray-50 text-sm font-medium">
                                 <td class="py-2 px-4">{{ $loop->iteration }}</td>
-                                <td class="py-2 px-4">{{ $c->name_commodity }}</td>
+                                <td class="py-2 px-4">
+                                    <div class="flex items-center gap-3">
+
+                                        @php
+                                            $img = $c->image ?? 'default.png';
+                                        @endphp
+
+                                        <img src="{{ asset('storage/commodity_images/' . $img) }}"
+                                            class="w-8 h-8 rounded-full object-cover border border-gray-300">
+
+                                        <span>{{ $c->name_commodity }}</span>
+                                    </div>
+                                </td>
                                 <td class="py-2 px-4">{{ $c->category->name_category ?? '-' }}</td>
-                                <td class="py-2 px-4">{{ $c->unit->name ?? '-' }}</td>
-                                <td class="py-2 px-4">-</td> {{-- nanti diisi rata-rata harga --}}
-                                <td class="py-2 px-4">Belum Update</td>
+                                <td class="py-2 px-4">{{ $c->unit->name_unit ?? '-' }}</td>
+
+                                @php
+                                    // Ambil semua price hari ini
+                                    $todayPrices = optional(optional($pivot)->prices)->where(
+                                        'date',
+                                        now()->toDateString(),
+                                    );
+
+                                    // Hitung rata-rata harga hari ini
+                                    $todayAverage = $todayPrices->avg('price');
+                                @endphp
+                                <td class="py-2 px-4">
+                                    {{ $todayAverage ? number_format($todayAverage, 0, ',', '.') : '-' }}
+                                </td>
+
+
+                                @php
+                                    $todayPrice = optional(optional($pivot)->prices)
+                                        ->where('date', now()->toDateString())
+                                        ->first();
+                                @endphp
+
+                                <td class="py-2 px-4">
+                                    @if ($todayPrice)
+                                        <span class="text-green-400">
+                                            Sudah Update
+                                        </span>
+                                    @else
+                                        <span class="text-red-400">
+                                            Belum Update
+                                        </span>
+                                    @endif
+                                </td>
+
                                 <td class="py-2 px-4">
                                     @if ($pivot)
-                                        <button type="button"
-                                            onclick="openPriceModal({{ $pivot->id }}, '{{ addslashes($c->name_commodity) }}')"
-                                            class="text-blue-600 hover:underline">
-                                            Update
-                                        </button>
+                                        {{-- Jika hari ini sudah ada harga → tombol Edit --}}
+                                        @if ($todayPrice)
+                                            @php
+                                                $todayPricesArray = optional(optional($pivot)->prices)
+                                                    ->where('date', now()->toDateString())
+                                                    ->pluck('price')
+                                                    ->map(fn($p) => (int) $p)
+                                                    ->toArray();
+
+                                                $editPayload = [
+                                                    'id' => $pivot->id, // pivot id
+                                                    'commodityId' => $pivot->commodity_id,
+                                                    'marketId' => $pivot->market_id,
+                                                    'name' => $c->name_commodity,
+                                                    'prices' => $todayPricesArray,
+                                                    'date' => now()->toDateString(),
+                                                ];
+                                            @endphp
+
+                                            <button type="button" class="text-blue-600 hover:underline"
+                                                onclick="openPriceModal('edit', JSON.parse(this.getAttribute('data-item')))"
+                                                data-item='{{ json_encode($editPayload, JSON_UNESCAPED_UNICODE) }}'>
+                                                Edit Harga
+                                            </button>
+                                        @else
+                                            <button type="button"
+                                                onclick="openPriceModal('store', {
+                                                    pivotId: {{ $pivot->id }},
+                                                    commodityId: {{ $pivot->commodity_id }},
+                                                    marketId: {{ $pivot->market_id }},
+                                                    name: '{{ addslashes($c->name_commodity) }}'
+                                                })"
+                                                class="text-blue-600 hover:underline">
+                                                Update Harga
+                                            </button>
+                                        @endif
                                     @else
-                                        -
+                                        <span class="text-gray-400 text-xs">No Data</span>
                                     @endif
                                 </td>
                             </tr>
@@ -116,16 +186,25 @@
 
             <form method="POST" id="priceForm">
                 @csrf
+                <input type="hidden" name="_method" id="methodInput" value="POST">
                 <input type="hidden" id="commodityId" name="commodityId">
+                <input type="hidden" name="market_id" id="marketId">
+
+
+                <div class="mb-4">
+                    <label for="priceDate" class="block text-gray-700 mb-1 text-sm font-medium">Tanggal Harga</label>
+                    <input type="date" id="priceDate" name="price_date" required
+                        class="border border-gray-300 rounded-lg p-2 w-full">
+                </div>
 
                 <div id="priceInputs">
                     <div class="mb-2 flex gap-2 items-center">
-                        <input type="number" name="price[]" placeholder="Harga 1" required
+                        <input type="text" name="price[]" placeholder="Harga 1" required
                             class="border border-gray-300 rounded-lg p-2 w-full">
                     </div>
                 </div>
 
-                <button type="button" onclick="addPriceInput()"
+                <button type="button" id="addPriceBtn" onclick="addPriceInput()"
                     class="mb-4 px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 text-sm">
                     + Tambah Harga
                 </button>
@@ -143,59 +222,135 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
             let priceCount = 1;
 
-            window.openPriceModal = function(pivotId, commodityName) {
-                priceCount = 1;
-                const commodityIdInput = document.getElementById('commodityId');
+            // --- OPEN MODAL ---
+            window.openPriceModal = function(mode, data) {
+                const modal = document.getElementById('priceModal');
                 const commodityNameText = document.getElementById('commodityName');
                 const priceInputs = document.getElementById('priceInputs');
-                const modal = document.getElementById('priceModal');
+                const priceDate = document.getElementById('priceDate');
+                const commodityIdInput = document.getElementById('commodityId');
+                const form = document.getElementById('priceForm');
+                const addBtn = document.getElementById('addPriceBtn');
 
-                if (!commodityIdInput || !commodityNameText || !priceInputs || !modal) {
-                    console.error('Element modal tidak ditemukan!');
-                    return;
+                document.getElementById('methodInput').value = mode === 'edit' ? 'PUT' : 'POST';
+
+
+                // Reset content
+                priceInputs.innerHTML = "";
+                priceCount = 1;
+
+                // Mode store (Tambah Harga)
+                if (mode === 'store') {
+                    form.action = "{{ route('admin.komoditas.store') }}";
+                    document.getElementById('methodInput').value = "POST";
+                    addBtn.classList.remove('hidden'); // tampilkan tombol tambah harga
+                    commodityIdInput.value = data.pivotId;
+                    commodityNameText.textContent = data.name;
+                    commodityIdInput.value = data.commodityId || '';
+                    document.getElementById('marketId').value = data.marketId || '';
+
+                    priceDate.valueAsDate = new Date();
+
+                    priceInputs.innerHTML = `
+                        <div class="mb-2 flex gap-2 items-center">
+                            <input type="text" name="price[]" placeholder="Harga 1"
+                                class="price-input border border-gray-300 rounded-lg p-2 w-full" required>
+                        </div>
+                    `;
                 }
 
-                commodityIdInput.value = pivotId;
-                commodityNameText.innerText = commodityName;
+                // Mode edit (Edit Harga)
+                if (mode === 'edit') {
+                    form.action = "{{ url('admin/komoditas/update') }}/" + data.id;
+                    document.getElementById('methodInput').value = "PUT"; // method spoofing
+                    addBtn.classList.remove('hidden');
+                    commodityNameText.textContent = data.name;
+                    priceDate.value = data.date;
+                    commodityIdInput.value = data.commodityId || '';
+                    document.getElementById('marketId').value = data.marketId || '';
 
-                priceInputs.innerHTML = `
-            <div class="mb-2 flex gap-2 items-center">
-                <input type="number" name="price[]" placeholder="Harga 1" required
-                    class="border border-gray-300 rounded-lg p-2 w-full">
-            </div>
+                    priceInputs.innerHTML = "";
+                    data.prices.forEach((p, index) => {
+                        const div = document.createElement('div');
+                        div.classList.add("mb-2", "flex", "gap-2", "items-center");
+                        div.innerHTML = `
+                            <input type="text" name="price[]" 
+                                value="${formatRupiah(p.toString())}"
+                                class="price-input border border-gray-300 rounded-lg p-2 w-full" required>
+                            <button type="button" onclick="this.parentElement.remove()"
+                                class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm">X</button>
+                        `;
+                        priceInputs.appendChild(div);
+                    });
+                }
+
+
+                modal.classList.remove("hidden");
+                modal.classList.add("flex");
+            };
+
+
+            // --- CLOSE MODAL ---
+            window.closePriceModal = function() {
+                const modal = document.getElementById("priceModal");
+                if (!modal) return;
+                modal.classList.add("hidden");
+                modal.classList.remove("flex");
+            }
+
+            // --- TAMBAH INPUT HARGA ---
+            window.addPriceInput = function() {
+                priceCount++;
+                const container = document.getElementById('priceInputs');
+                const div = document.createElement('div');
+
+                div.classList.add("mb-2", "flex", "gap-2", "items-center");
+                div.innerHTML = `
+            <input type="text" name="price[]" placeholder="Harga ${priceCount}"
+                class="price-input border border-gray-300 rounded-lg p-2 w-full" required>
+
+            <button type="button" onclick="this.parentElement.remove()"
+                class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm">X</button>
         `;
 
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            }
-
-            window.closePriceModal = function() {
-                const modal = document.getElementById('priceModal');
-                if (!modal) return;
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-
-            window.addPriceInput = function() {
-                const container = document.getElementById('priceInputs');
-                // Hitung jumlah input saat ini
-                const currentCount = container.querySelectorAll('input[name="price[]"]').length + 1;
-
-                const div = document.createElement('div');
-                div.classList.add('mb-2', 'flex', 'gap-2', 'items-center');
-                div.innerHTML = `
-        <input type="number" name="price[]" placeholder="Harga ${currentCount}" required
-            class="border border-gray-300 rounded-lg p-2 w-full">
-        <button type="button" onclick="this.parentElement.remove()"
-            class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm">X</button>
-    `;
                 container.appendChild(div);
             }
 
+
+            // =======================
+            //  FORMAT RUPIAH
+            // =======================
+
+            function formatRupiah(angka) {
+                return angka.replace(/\D/g, "")
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+
+            // Format saat mengetik
+            document.addEventListener("input", function(e) {
+                if (e.target.classList.contains("price-input")) {
+
+                    let cursor = e.target.selectionStart;
+                    let before = e.target.value.length;
+
+                    e.target.value = formatRupiah(e.target.value);
+
+                    let after = e.target.value.length;
+                    e.target.selectionEnd = cursor + (after - before);
+                }
+            });
+
+            // Format sebelum submit → hilangkan titik
+            document.getElementById("priceForm").addEventListener("submit", function() {
+                document.querySelectorAll(".price-input").forEach(function(input) {
+                    input.value = input.value.replace(/\./g, "");
+                });
+            });
+
         });
     </script>
-
 
 @endsection

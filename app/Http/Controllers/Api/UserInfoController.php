@@ -33,6 +33,9 @@ class UserInfoController extends Controller
             'user_name' => $user->name,
             'user_email' => $user->email,
             'user_phone' => $user->phone,
+            'user_image' => $user->image
+            ? url('storage/petugas_images/' . $user->image)
+            : null,
             'market_name' => $market ? $market->name_market : 'Tidak diketahui',
             'total_commodities' => $totalCommodities,
         ]);

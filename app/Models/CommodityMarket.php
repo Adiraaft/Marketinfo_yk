@@ -23,4 +23,10 @@ class CommodityMarket extends Model
     {
         return $this->belongsTo(Market::class, 'market_id', 'id_market');
     }
+    public function prices()
+    {
+        return $this->hasMany(Price::class, 'commodity_id', 'commodity_id')
+            ->where('market_id', $this->market_id)
+            ->orderBy('date', 'desc');
+    }
 }
