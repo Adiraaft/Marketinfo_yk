@@ -177,7 +177,7 @@
                         <option value="">Pilih Satuan</option>
                         @foreach ($units as $unit)
                             <option value="{{ $unit->id }}" {{ old('unit_id') == $unit->id ? 'selected' : '' }}>
-                                {{ $unit->name }}
+                                {{ $unit->name_unit }}
                             </option>
                         @endforeach
                     </select>
