@@ -187,6 +187,7 @@
             <form method="POST" id="priceForm">
                 @csrf
                 <input type="hidden" name="_method" id="methodInput" value="POST">
+                <input type="hidden" name="pivotId" id="pivotId">
                 <input type="hidden" id="commodityId" name="commodityId">
                 <input type="hidden" name="market_id" id="marketId">
 
@@ -249,6 +250,7 @@
                     addBtn.classList.remove('hidden'); // tampilkan tombol tambah harga
                     commodityIdInput.value = data.pivotId;
                     commodityNameText.textContent = data.name;
+                    document.getElementById('pivotId').value = data.pivotId || '';
                     commodityIdInput.value = data.commodityId || '';
                     document.getElementById('marketId').value = data.marketId || '';
 
