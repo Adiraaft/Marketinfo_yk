@@ -63,6 +63,9 @@ class SyncController extends Controller
                 'commodity_id' => $item['commodity_id'],
                 'user_id'      => $user->id_user,
                 'price'        => $item['price'],
+                'date'         => now(),
+                'market_id'    => $user->market_id,
+                'updated_at'   => now(),
                 'created_at'   => now()
             ]);
 
@@ -128,6 +131,9 @@ class SyncController extends Controller
             'commodity_id' => $commodity->id_commodity,
             'user_id'      => $user->id_user,
             'price'        => $request->price,
+            'date'         => now(),
+            'market_id'    => $user->market_id,
+            'updated_at'   => now(),
             'created_at'   => now()
         ]);
 
