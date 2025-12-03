@@ -719,6 +719,7 @@
         </div>
     </div>
 
+    <!-- LIST PASAR -->
     <div class="bg-white border rounded-lg border-gray-300 py-12 px-16 mx-15 mb-10">
         <h3 class="text-3xl md:text-2xl font-bold mb-10 text-gray-800">
             Visualisasi Pasar Kota Yogyakarta
@@ -726,65 +727,45 @@
 
         <div
             class="flex sm:grid sm:grid-cols-1 md:grid md:grid-cols-1 lg:grid lg:grid-cols-2 xl:grid xl:grid-cols-2 2xl:grid 2xl:grid-cols-2 gap-8">
+
             <!-- MAP -->
-            <div class="rounded-2xl overflow-hidden shadow-lg border border-gray-200">
-                <iframe
+            <div class="rounded-2xl overflow-hidden shadow-lg border border-gray-200"> <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.0526399756865!2d110.36608747469724!3d-7.784727177294295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a578c00000000%3A0x9e3b99aafab678c7!2sPasar%20Beringharjo!5e0!3m2!1sid!2sid!4v1690800000000!5m2!1sid!2sid"
-                    width="100%" height="500" allowfullscreen="" loading="lazy" class="w-full h-[500px]">
-                </iframe>
+                    width="100%" height="500" allowfullscreen="" loading="lazy" class="w-full h-[500px]"> </iframe>
             </div>
 
-            <!-- LIST PASAR -->
+            <!-- LIST PASAR DINAMIS -->
             <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-200 overflow-y-auto max-h-[500px]">
                 <h3 class="md:text-xl text-2xl font-bold mb-4">Daftar Pasar</h3>
+
                 <ul class="space-y-4">
-                    <!-- Pasar item -->
-                    <li class="flex justify-between items-center border-b pb-3">
-                        <div>
-                            <p
-                                class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4 text-gray-800">
-                                Pasar Beringharjo</p>
-                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg text-gray-500">Jl. Margo
-                                Mulyo, Yogyakarta</p>
-                        </div>
-                        <button
-                            class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary/80 flex items-center gap-1 text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">
-                            <i data-lucide="map-pin" class="w-4 h-4"></i>
-                            Detail
-                        </button>
-                    </li>
-                    <li class="flex justify-between items-center border-b pb-3">
-                        <div>
-                            <p
-                                class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4 text-gray-800">
-                                Pasar Kranggan</p>
-                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg text-gray-500">Jl.
-                                Poncowinatan No.18, Jetis</p>
-                        </div>
-                        <button
-                            class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary/80 flex items-center gap-1 text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">
-                            <i data-lucide="map-pin" class="w-4 h-4"></i>
-                            Detail
-                        </button>
-                    </li>
-                    <li class="flex justify-between items-center border-b pb-3">
-                        <div>
-                            <p
-                                class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4 text-gray-800">
-                                Pasar Demangan</p>
-                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg text-gray-500">Jl. Gejayan,
-                                Yogyakarta</p>
-                        </div>
-                        <button
-                            class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary/80 flex items-center gap-1 text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">
-                            <i data-lucide="map-pin" class="w-4 h-4"></i>
-                            Detail
-                        </button>
-                    </li>
+                    @foreach ($markets as $pasar)
+                        <li class="flex justify-between items-center border-b pb-3">
+                            <div>
+                                <p
+                                    class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl text-gray-800">
+                                    {{ $pasar->name_market }}
+                                </p>
+                                <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg text-gray-500">
+                                    {{ $pasar->address }}
+                                </p>
+                            </div>
+
+                            <a href="{{ route('pasar.detail', $pasar->id_market) }}"
+                                class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-secondary/80 flex items-center gap-1 text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">
+                                <i data-lucide="map-pin" class="w-4 h-4"></i>
+                                Detail
+                            </a>
+                        </li>
+                    @endforeach
                 </ul>
+
             </div>
         </div>
     </div>
+
+
+
 
 
 @endsection
