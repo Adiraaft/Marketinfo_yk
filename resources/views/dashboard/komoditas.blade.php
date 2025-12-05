@@ -6,37 +6,41 @@
 
     <div class="my-7 px-15">
         <h3 class="font-bold text-2xl text-secondary">Daftar Komoditas</h3>
-        <div class="flex gap-4 mt-4">
-            <div>
-                <label for="kategori" class="block">Pilih Kategori</label>
-                <select id="kategori" name="kategori"
-                    class="border border-gray-300 rounded-lg p-1 w-60 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="#">Semua Kategori</option>
-                    <option value="beras">Beras</option>
-                    <option value="cabai">Cabai</option>
-                    <option value="telur">Telur</option>
-                </select>
-            </div>
-            <div class="flex w-full justify-between items-end">
-                <button class="py-2 px-4 rounded-lg bg-secondary self-end cursor-pointer">
-                    <p class="text-white">Tampilkan</p>
-                </button>
-                <div class="flex items-center gap-4">
-                    <button class="border-gray-300 border-2 bg-white rounded-lg py-2 pl-3 pr-45">
-                        search
+        <form action="{{ route('superadmin.komoditas') }}" method="GET" class="w-full">
+            <div class="flex gap-4 mt-4">
+                <div>
+                    <label for="kategori" class="block">Pilih Kategori</label>
+                    <select id="kategori" name="kategori"
+                        class="border bg-white border-gray-300 rounded-lg p-1 w-60 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="#">Semua Kategori</option>
+                        @foreach ($categories as $c)
+                            <option value="{{ $c->id_category }}"
+                                {{ request('kategori') == $c->id_category ? 'selected' : '' }}>
+                                {{ $c->name_category }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex w-full justify-between items-end">
+                    <button class="py-2 px-4 rounded-lg bg-secondary self-end cursor-pointer">
+                        <p class="text-white">Tampilkan</p>
                     </button>
-                    <button class="p-3 rounded-lg bg-secondary cursor-pointer flex items-center justify-center">
-                        <i data-lucide="search" class="w-4 h-4 text-white"></i>
-                    </button>
-                    <button
-                        class="btn-add-commodity gap-1 px-4 py-2 rounded-lg bg-secondary cursor-pointer flex items-center justify-center">
-                        <i data-lucide="plus" class="w-4 h-4 text-white"></i>
-                        <p class="text-white">Tambah</p>
-                    </button>
+                    <div class="flex items-center gap-4">
+                        <button type="button" class="border-gray-300 border-2 bg-white rounded-lg py-2 pl-3 pr-45">
+                            search
+                        </button>
+                        <button class="p-3 rounded-lg bg-secondary cursor-pointer flex items-center justify-center">
+                            <i data-lucide="search" class="w-4 h-4 text-white"></i>
+                        </button>
+                        <button type="button"
+                            class="btn-add-commodity gap-1 px-4 py-2 rounded-lg bg-secondary cursor-pointer flex items-center justify-center">
+                            <i data-lucide="plus" class="w-4 h-4 text-white"></i>
+                            <p class="text-white">Tambah</p>
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-
+        </form>
         <div class="mt-6 bg-white rounded-lg shadow-md overflow-hidden">
             <div class="max-h-[550px] overflow-y-auto">
                 <table class="w-full text-left border-collapse">
@@ -199,7 +203,8 @@
 
                 <!-- Buttons -->
                 <div class="flex justify-end gap-3 mt-6">
-                    <button type="button" id="closeModalCreate" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300">
+                    <button type="button" id="closeModalCreate"
+                        class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300">
                         Batal
                     </button>
 
@@ -337,7 +342,7 @@
                     // unit
                     document.getElementById('edit_unit').innerHTML = data.units.map(u => {
                         const sel = (data.commodity.unit_id == u.id) ? 'selected' : '';
-                        return `<option value="${u.id}" ${sel}>${u.name}</option>`;
+                        return `<option value="${u.id}" ${sel}>${u.name_unit}</option>`;
                     }).join('');
 
                     // open modal

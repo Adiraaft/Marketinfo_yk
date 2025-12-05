@@ -5,175 +5,187 @@
 @section('content')
     <div class="my-7 px-15">
         <h3 class="font-bold text-2xl text-secondary">Daftar Komoditas</h3>
-        <div class="flex gap-4 mt-4">
-            <div>
-                <label for="kategori" class="block">Pilih Kategori</label>
-                <select id="kategori" name="kategori"
-                    class="border bg-white border-gray-300 rounded-lg p-1 w-60 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="#">Semua Kategori</option>
-                    <option value="beras">Beras</option>
-                    <option value="cabai">Cabai</option>
-                    <option value="telur">Telur</option>
-                </select>
-            </div>
-            <div>
-                <label for="" class="block">Pilih Tanggal</label>
-                <input type="date"
-                    class="border bg-white border-gray-300 rounded-lg p-1 w-60 focus:ring-blue-500 focus:border-blue-500">
-            </div>
-            <div class="flex w-full justify-between items-end">
-                <button class="py-2 px-4 rounded-lg bg-secondary self-end cursor-pointer">
-                    <p class="text-white">Tampilkan</p>
-                </button>
-                <div class="flex items-center gap-4">
-                    <button class="border-gray-300 border-2 bg-white rounded-lg py-2 pl-3 pr-45">
-                        search
+        <form action="{{ route('admin.komoditas') }}" method="GET" class="w-full">
+            <div class="flex gap-4 mt-4">
+                <div>
+                    <label for="kategori" class="block">Pilih Kategori</label>
+                    <select id="kategori" name="kategori"
+                        class="border bg-white border-gray-300 rounded-lg p-1 w-60 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="#">Semua Kategori</option>
+                        @foreach ($category as $c)
+                            <option value="{{ $c->id_category }}"
+                                {{ request('kategori') == $c->id_category ? 'selected' : '' }}>
+                                {{ $c->name_category }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label for="tanggal" class="block">Pilih Tanggal</label>
+                    <input type="date" id="tanggal" name="tanggal" value="{{ $selectedDate }}"
+                        class="border bg-white border-gray-300 rounded-lg p-1 w-60 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+
+                <div class="flex w-full justify-between items-end">
+                    <button class="py-2 px-4 rounded-lg bg-secondary self-end cursor-pointer">
+                        <p class="text-white">Tampilkan</p>
                     </button>
-                    <button class="p-3 rounded-lg bg-secondary cursor-pointer flex items-center justify-center">
-                        <i data-lucide="search" class="w-4 h-4 text-white"></i>
-                    </button>
+                    <div class="flex items-center gap-4">
+                        <button class="border-gray-300 border-2 bg-white rounded-lg py-2 pl-3 pr-45">
+                            search
+                        </button>
+                        <button class="p-3 rounded-lg bg-secondary cursor-pointer flex items-center justify-center">
+                            <i data-lucide="search" class="w-4 h-4 text-white"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="w-full bg-white rounded-lg shadow-md mt-6">
-            <div class="flex gap-6 bg-gray-200 border-b border-gray-300 text-sm font-medium text-gray-400 rounded-t-lg">
-                <!-- General -->
-                <a href="{{ route('admin.komoditas', 'all') }}"
-                    class="px-6 py-4 border-b-2 transition-all hover:border-primary hover:text-primary
+            <div class="w-full bg-white rounded-lg shadow-md mt-6">
+                <div class="flex gap-6 bg-gray-200 border-b border-gray-300 text-sm font-medium text-gray-400 rounded-t-lg">
+                    <!-- General -->
+                    <a href="{{ route('admin.komoditas', 'all') }}?kategori={{ request('kategori') }}&tanggal={{ request('tanggal') }}"
+                        class="px-6 py-4 border-b-2 transition-all hover:border-primary hover:text-primary
                     {{ $activeFilter == 'all' ? 'border-primary text-primary font-semibold' : 'border-transparent' }}">
-                    Semua {{ $countAll }}
-                </a>
+                        Semua {{ $countAll }}
+                    </a>
 
-                <a href="{{ route('admin.komoditas', 'belum-update') }}"
-                    class="px-6 py-4 border-b-2 transition-all hover:border-primary hover:text-primary
+                    <a href="{{ route('admin.komoditas', 'belum-update') }}?kategori={{ request('kategori') }}&tanggal={{ request('tanggal') }}"
+                        class="px-6 py-4 border-b-2 transition-all hover:border-primary hover:text-primary
                     {{ $activeFilter == 'belum-update' ? 'border-primary text-primary font-semibold' : 'border-transparent' }}">
-                    Belum Update {{ $countBelum }}
-                </a>
+                        Belum Update {{ $countBelum }}
+                    </a>
 
-                <a href="{{ route('admin.komoditas', 'sudah-update') }}"
-                    class="px-6 py-4 border-b-2 transition-all hover:border-primary hover:text-primary
+                    <a href="{{ route('admin.komoditas', 'sudah-update') }}?kategori={{ request('kategori') }}&tanggal={{ request('tanggal') }}"
+                        class="px-6 py-4 border-b-2 transition-all hover:border-primary hover:text-primary
                     {{ $activeFilter == 'sudah-update' ? 'border-primary text-primary font-semibold' : 'border-transparent' }}">
-                    Sudah Update {{ $countSudah }}
-                </a>
+                        Sudah Update {{ $countSudah }}
+                    </a>
 
-            </div>
-            <div class="max-h-[550px] overflow-y-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead class="text-gray-400 border-b border-gray-200">
-                        <tr>
-                            <th class="py-3 px-4 font-medium text-sm">No</th>
-                            <th class="py-3 px-4 font-medium text-sm">Nama Barang</th>
-                            <th class="py-3 px-4 font-medium text-sm">Kategori</th>
-                            <th class="py-3 px-4 font-medium text-sm">Satuan</th>
-                            <th class="py-3 px-4 font-medium text-sm">Rata-Rata Harga Per Tanggal</th>
-                            <th class="py-3 px-4 font-medium text-sm">Status</th>
-                            <th class="py-3 px-4 font-medium text-sm">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-gray-700">
-                        @foreach ($commodities as $c)
-                            @php
-                                $pivot = $c->commodityMarkets->first(); // ambil pivot market login
-                            @endphp
-                            <tr class="border-t border-gray-200 hover:bg-gray-50 text-sm font-medium">
-                                <td class="py-2 px-4">{{ $loop->iteration }}</td>
-                                <td class="py-2 px-4">
-                                    <div class="flex items-center gap-3">
-
-                                        @php
-                                            $img = $c->image ?? 'default.png';
-                                        @endphp
-
-                                        <img src="{{ asset('storage/commodity_images/' . $img) }}"
-                                            class="w-8 h-8 rounded-full object-cover border border-gray-300">
-
-                                        <span>{{ $c->name_commodity }}</span>
-                                    </div>
-                                </td>
-                                <td class="py-2 px-4">{{ $c->category->name_category ?? '-' }}</td>
-                                <td class="py-2 px-4">{{ $c->unit->name_unit ?? '-' }}</td>
-
+                </div>
+                <div class="max-h-[550px] overflow-y-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="text-gray-400 border-b border-gray-200">
+                            <tr>
+                                <th class="py-3 px-4 font-medium text-sm">No</th>
+                                <th class="py-3 px-4 font-medium text-sm">Nama Barang</th>
+                                <th class="py-3 px-4 font-medium text-sm">Kategori</th>
+                                <th class="py-3 px-4 font-medium text-sm">Satuan</th>
+                                <th class="py-3 px-4 font-medium text-sm">Rata-Rata Harga Per Tanggal</th>
+                                <th class="py-3 px-4 font-medium text-sm">Total Input</th>
+                                <th class="py-3 px-4 font-medium text-sm">Status</th>
+                                <th class="py-3 px-4 font-medium text-sm">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-700">
+                            @foreach ($commodities as $c)
                                 @php
-                                    // Ambil semua price hari ini
-                                    $todayPrices = optional(optional($pivot)->prices)->where(
-                                        'date',
-                                        now()->toDateString(),
-                                    );
-
-                                    // Hitung rata-rata harga hari ini
-                                    $todayAverage = $todayPrices->avg('price');
+                                    $pivot = $c->commodityMarkets->first(); // ambil pivot market login
                                 @endphp
-                                <td class="py-2 px-4">
-                                    {{ $todayAverage ? number_format($todayAverage, 0, ',', '.') : '-' }}
-                                </td>
+                                <tr class="border-t border-gray-200 hover:bg-gray-50 text-sm font-medium">
+                                    <td class="py-2 px-4">{{ $loop->iteration }}</td>
+                                    <td class="py-2 px-4">
+                                        <div class="flex items-center gap-3">
 
-
-                                @php
-                                    $todayPrice = optional(optional($pivot)->prices)
-                                        ->where('date', now()->toDateString())
-                                        ->first();
-                                @endphp
-
-                                <td class="py-2 px-4">
-                                    @if ($todayPrice)
-                                        <span class="text-green-400">
-                                            Sudah Update
-                                        </span>
-                                    @else
-                                        <span class="text-red-400">
-                                            Belum Update
-                                        </span>
-                                    @endif
-                                </td>
-
-                                <td class="py-2 px-4">
-                                    @if ($pivot)
-                                        {{-- Jika hari ini sudah ada harga → tombol Edit --}}
-                                        @if ($todayPrice)
                                             @php
-                                                $todayPricesArray = optional(optional($pivot)->prices)
-                                                    ->where('date', now()->toDateString())
-                                                    ->pluck('price')
-                                                    ->map(fn($p) => (int) $p)
-                                                    ->toArray();
-
-                                                $editPayload = [
-                                                    'id' => $pivot->id, // pivot id
-                                                    'commodityId' => $pivot->commodity_id,
-                                                    'marketId' => $pivot->market_id,
-                                                    'name' => $c->name_commodity,
-                                                    'prices' => $todayPricesArray,
-                                                    'date' => now()->toDateString(),
-                                                ];
+                                                $img = $c->image ?? 'default.png';
                                             @endphp
 
-                                            <button type="button" class="text-blue-600 hover:underline"
-                                                onclick="openPriceModal('edit', JSON.parse(this.getAttribute('data-item')))"
-                                                data-item='{{ json_encode($editPayload, JSON_UNESCAPED_UNICODE) }}'>
-                                                Edit Harga
-                                            </button>
+                                            <img src="{{ asset('storage/commodity_images/' . $img) }}"
+                                                class="w-8 h-8 rounded-full object-cover border border-gray-300">
+
+                                            <span>{{ $c->name_commodity }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-2 px-4">{{ $c->category->name_category ?? '-' }}</td>
+                                    <td class="py-2 px-4">{{ $c->unit->name_unit ?? '-' }}</td>
+
+                                    @php
+                                        // Ambil semua price hari ini
+                                        $todayPrices = optional(optional($pivot)->prices)->where('date', $selectedDate);
+
+                                        // Hitung rata-rata harga hari ini
+                                        $todayAverage = $todayPrices->avg('price');
+                                    @endphp
+                                    <td class="py-2 px-4">
+                                        {{ $todayAverage ? number_format($todayAverage, 0, ',', '.') : '-' }}
+                                    </td>
+
+                                    @php
+                                        $totalInput = optional(optional($pivot)->prices)
+                                            ->where('date', $selectedDate)
+                                            ->count();
+                                    @endphp
+
+                                    <td class="py-2 px-4 ">{{ $totalInput }}</td>
+
+                                    @php
+                                        $todayPrice = optional(optional($pivot)->prices)
+                                            ->where('date', $selectedDate)
+                                            ->first();
+                                    @endphp
+
+                                    <td class="py-2 px-4">
+                                        @if ($todayPrice)
+                                            <span class="text-green-400">
+                                                Sudah Update
+                                            </span>
                                         @else
-                                            <button type="button"
-                                                onclick="openPriceModal('store', {
+                                            <span class="text-red-400">
+                                                Belum Update
+                                            </span>
+                                        @endif
+                                    </td>
+
+                                    <td class="py-2 px-4">
+                                        @if ($pivot)
+                                            {{-- Jika hari ini sudah ada harga → tombol Edit --}}
+                                            @if ($todayPrice)
+                                                @php
+                                                    $todayPricesArray = optional(optional($pivot)->prices)
+                                                        ->where('date', $selectedDate)
+                                                        ->pluck('price')
+                                                        ->map(fn($p) => (int) $p)
+                                                        ->toArray();
+
+                                                    $editPayload = [
+                                                        'id' => $pivot->id, // pivot id
+                                                        'commodityId' => $pivot->commodity_id,
+                                                        'marketId' => $pivot->market_id,
+                                                        'name' => $c->name_commodity,
+                                                        'prices' => $todayPricesArray,
+                                                        'date' => $selectedDate,
+                                                    ];
+                                                @endphp
+
+                                                <button type="button" class="text-blue-600 hover:underline"
+                                                    onclick="openPriceModal('edit', JSON.parse(this.getAttribute('data-item')))"
+                                                    data-item='{{ json_encode($editPayload, JSON_UNESCAPED_UNICODE) }}'>
+                                                    Edit Harga
+                                                </button>
+                                            @else
+                                                <button type="button"
+                                                    onclick="openPriceModal('store', {
                                                     pivotId: {{ $pivot->id }},
                                                     commodityId: {{ $pivot->commodity_id }},
                                                     marketId: {{ $pivot->market_id }},
                                                     name: '{{ addslashes($c->name_commodity) }}'
                                                 })"
-                                                class="text-blue-600 hover:underline">
-                                                Update Harga
-                                            </button>
+                                                    class="text-blue-600 hover:underline">
+                                                    Update Harga
+                                                </button>
+                                            @endif
+                                        @else
+                                            <span class="text-gray-400 text-xs">No Data</span>
                                         @endif
-                                    @else
-                                        <span class="text-gray-400 text-xs">No Data</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 
     <!-- Modal Update Harga -->
@@ -254,7 +266,7 @@
                     commodityIdInput.value = data.commodityId || '';
                     document.getElementById('marketId').value = data.marketId || '';
 
-                    priceDate.valueAsDate = new Date();
+                    priceDate.value = "{{ $selectedDate }}";
 
                     priceInputs.innerHTML = `
                         <div class="mb-2 flex gap-2 items-center">
@@ -281,6 +293,7 @@
                         div.innerHTML = `
                             <input type="text" name="price[]" 
                                 value="${formatRupiah(p.toString())}"
+                                placeholder="Harga ${index + 1}"
                                 class="price-input border border-gray-300 rounded-lg p-2 w-full" required>
                             <button type="button" onclick="this.parentElement.remove()"
                                 class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm">X</button>
@@ -305,26 +318,30 @@
 
             // --- TAMBAH INPUT HARGA ---
             window.addPriceInput = function() {
-                priceCount++;
                 const container = document.getElementById('priceInputs');
+
+                const currentCount = container.querySelectorAll('.price-input').length;
+                const nextNumber = currentCount + 1;
+
                 const div = document.createElement('div');
 
                 div.classList.add("mb-2", "flex", "gap-2", "items-center");
                 div.innerHTML = `
-            <input type="text" name="price[]" placeholder="Harga ${priceCount}"
+                <input type="text" name="price[]" placeholder="Harga ${nextNumber}"
                 class="price-input border border-gray-300 rounded-lg p-2 w-full" required>
 
-            <button type="button" onclick="this.parentElement.remove()"
-                class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm">X</button>
-        `;
+                <button type="button" onclick="this.parentElement.remove(); updatePricePlaceholders()"
+                class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm">X</button>`;
 
                 container.appendChild(div);
             }
 
-
-            // =======================
-            //  FORMAT RUPIAH
-            // =======================
+            window.updatePricePlaceholders = function() {
+                const inputs = document.querySelectorAll('#priceInputs .price-input');
+                inputs.forEach((input, index) => {
+                    input.placeholder = `Harga ${index + 1}`;
+                });
+            };
 
             function formatRupiah(angka) {
                 return angka.replace(/\D/g, "")

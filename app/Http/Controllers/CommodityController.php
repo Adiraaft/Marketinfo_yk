@@ -13,11 +13,15 @@ use Illuminate\Support\Str;
 
 class CommodityController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $commodities = Commodity::with(['category', 'unit'])->get();
         $units = Unit::all();
         $categories = Category::all();
+
+        if ($request->kategori && $request->kategori != '#') {
+            $commodities = $commodities->where('category_id', $request->kategori);
+        }
 
         return view('dashboard.komoditas', compact('commodities', 'categories', 'units'));
     }
@@ -66,7 +70,7 @@ class CommodityController extends Controller
 
         // 3. Insert otomatis ke tabel pivot
         foreach ($markets as $market) {
-            DB::table('commodity_market')->insert([
+            DB::table('commodity_markets')->insert([
                 'commodity_id' => $commodity->id_commodity,
                 'market_id'    => $market->id_market,
                 'status'       => 'aktif', // default aktif

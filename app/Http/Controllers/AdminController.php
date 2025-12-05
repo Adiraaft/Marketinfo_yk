@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Commodity;
 use App\Models\CommodityMarket;
 use App\Models\Market;
 use App\Models\Price;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $marketId = auth()->user()->market_id;
 
@@ -25,6 +27,52 @@ class AdminController extends Controller
         return view('dashboardAdmin.manajemen', compact('commodities'));
     }
 
+    public function dashboard(Request $request)
+    {
+        $marketId = auth()->user()->market_id;
+
+        // Kalau user pilih tanggal → pakai itu, kalau tidak → pakai hari ini
+        $selectedDate = $request->tanggal ?? now()->toDateString();
+        $yesterday = now()->subDay()->toDateString();
+
+        // ====== AMBIL KOMODITAS SESUAI MARKET ======
+        $commodities = Commodity::whereHas('commodityMarkets', function ($q) use ($marketId) {
+            $q->where('market_id', $marketId)->where('status', 'aktif');
+        })
+            ->with([
+                'commodityMarkets' => function ($q) use ($marketId) {
+                    $q->where('market_id', $marketId);
+                },
+                'commodityMarkets.prices' => function ($q) use ($selectedDate, $yesterday) {
+                    $q->whereIn('date', [$selectedDate, $yesterday]);
+                },
+                'unit'
+            ])
+            ->get();
+
+        // ====== SUDAH UPDATE HARI INI ======
+        $latestPrices = $commodities->filter(function ($item) use ($selectedDate) {
+            $pivot = $item->commodityMarkets->first();
+            return optional(optional($pivot)->prices)
+                ->where('date', $selectedDate)
+                ->first();
+        });
+
+        // ====== BELUM UPDATE HARI INI ======
+        $belumUpdate = $commodities->filter(function ($item) use ($selectedDate) {
+            $pivot = $item->commodityMarkets->first();
+            return !optional(optional($pivot)->prices)
+                ->where('date', $selectedDate)
+                ->first();
+        });
+
+        return view('dashboardAdmin.dashboard', [
+            'latestPrices' => $latestPrices,
+            'belumUpdate' => $belumUpdate,
+            'selectedDate' => $selectedDate,
+        ]);
+    }
+
     public function updateStatus(Request $request, $id)
     {
         $pivot = CommodityMarket::findOrFail($id);
@@ -35,52 +83,57 @@ class AdminController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function komoditas($filter = 'all')
+    public function komoditas(Request $request, $filter = 'all')
     {
         $marketId = auth()->user()->market_id;
 
+        // Tanggal dipilih user
+        $selectedDate = $request->tanggal ?? now()->toDateString();
+
         $commodities = Commodity::whereHas('commodityMarkets', function ($q) use ($marketId) {
             $q->where('market_id', $marketId)
-                ->where('status', 'aktif'); // Hanya komoditas aktif di market login
+                ->where('status', 'aktif');
         })
             ->with(['commodityMarkets' => function ($q) use ($marketId) {
-                $q->where('market_id', $marketId); // Ambil pivot market login
+                $q->where('market_id', $marketId);
             }, 'category', 'unit'])
             ->get();
 
+        // ========== FILTER KATEGORI ==========
+        if ($request->kategori && $request->kategori != '#') {
+            $commodities = $commodities->where('category_id', $request->kategori);
+        }
+
+        // ========== HITUNG TOTAL ==========
         $countAll = $commodities->count();
 
-        $countSudah = $commodities->filter(function ($item) {
+        $countSudah = $commodities->filter(function ($item) use ($selectedDate) {
             $pivot = $item->commodityMarkets->first();
-            $todayPrice = optional(optional($pivot)->prices)
-                ->where('date', now()->toDateString())
+            return optional(optional($pivot)->prices)
+                ->where('date', $selectedDate)
                 ->first();
-
-            return $todayPrice;
         })->count();
 
-        $countBelum = $commodities->filter(function ($item) {
+        $countBelum = $commodities->filter(function ($item) use ($selectedDate) {
             $pivot = $item->commodityMarkets->first();
-            $todayPrice = optional(optional($pivot)->prices)
-                ->where('date', now()->toDateString())
+            return !optional(optional($pivot)->prices)
+                ->where('date', $selectedDate)
                 ->first();
-
-            return !$todayPrice;
         })->count();
 
-        // ============================
-        // FILTER DATA UTAMA
-        // ============================
-        $filtered = $commodities->filter(function ($item) use ($filter) {
+        // ========== FILTER STATUS (TAB) ==========
+        $filtered = $commodities->filter(function ($item) use ($filter, $selectedDate) {
             $pivot = $item->commodityMarkets->first();
-            $todayPrice = optional(optional($pivot)->prices)
-                ->where('date', now()->toDateString())
+            $price = optional(optional($pivot)->prices)
+                ->where('date', $selectedDate)
                 ->first();
 
-            if ($filter === 'belum-update') return !$todayPrice;
-            if ($filter === 'sudah-update') return $todayPrice;
+            if ($filter === 'belum-update') return !$price;
+            if ($filter === 'sudah-update') return $price;
             return true;
         });
+
+        $category = Category::all();
 
         return view('dashboardAdmin.komoditas', [
             'commodities' => $filtered,
@@ -88,8 +141,11 @@ class AdminController extends Controller
             'countAll' => $countAll,
             'countSudah' => $countSudah,
             'countBelum' => $countBelum,
+            'category' => $category,
+            'selectedDate' => $selectedDate,
         ]);
     }
+
 
     public function store(Request $request)
     {
