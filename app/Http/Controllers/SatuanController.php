@@ -2,31 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Satuan;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 
 class SatuanController extends Controller
 {
-    /**
-     * Tampilkan semua data satuan.
-     */
     public function index()
     {
-        $satuans = Satuan::latest()->get();
+        $satuans = Unit::latest()->get();
         return view('dashboard.setting-satuan', compact('satuans'));
     }
 
-    /**
-     * Simpan data satuan baru.
-     */
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name_unit' => 'required|string|max:255',
         ]);
 
-        Satuan::create([
-            'name' => $request->name,
+        Unit::create([
+            'name_unit' => $request->name_unit,
         ]);
 
         return redirect()
@@ -34,18 +28,16 @@ class SatuanController extends Controller
             ->with('success', 'Data satuan berhasil ditambahkan.');
     }
 
-    /**
-     * Perbarui data satuan yang sudah ada.
-     */
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name_unit' => 'required|string|max:255',
         ]);
 
-        $satuan = Satuan::findOrFail($id);
+        $satuan = Unit::findOrFail($id);
+
         $satuan->update([
-            'name' => $request->name,
+            'name_unit' => $request->name_unit,
         ]);
 
         return redirect()
@@ -53,12 +45,9 @@ class SatuanController extends Controller
             ->with('success', 'Data satuan berhasil diperbarui.');
     }
 
-    /**
-     * Hapus data satuan.
-     */
     public function destroy($id)
     {
-        $satuan = Satuan::findOrFail($id);
+        $satuan = Unit::findOrFail($id);
         $satuan->delete();
 
         return redirect()

@@ -73,19 +73,49 @@
                             <th class="py-3 px-4 font-medium text-sm">Satuan</th>
                         </tr>
                     </thead>
+
+                    <tbody>
+                        @forelse ($latestPrices as $item)
+                            @php
+                                $pivot = $item->commodityMarkets->first();
+                                $today = $pivot->prices->where('date', now()->toDateString())->first();
+                                $yesterday = $pivot->prices->where('date', now()->subDay()->toDateString())->first();
+                                $change = $today && $yesterday ? $today->price - $yesterday->price : 0;
+                            @endphp
+
+                            <tr class="border-b text-sm">
+                                <td class="py-2 px-4">{{ $loop->iteration }}</td>
+                                <td class="py-2 px-4">{{ $item->name }}</td>
+                                <td class="py-2 px-4">{{ $yesterday->price ?? '-' }}</td>
+                                <td class="py-2 px-4">{{ $today->price ?? '-' }}</td>
+                                <td
+                                    class="py-2 px-4 {{ $change > 0 ? 'text-red-500' : ($change < 0 ? 'text-green-500' : '') }}">
+                                    {{ $change > 0 ? '+' : '' }}{{ $change }}
+                                </td>
+                                <td class="py-2 px-4">{{ $item->unit->name_unit ?? '-' }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-10 text-gray-400">
+                                    Belum ada harga terbaru hari ini
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
                 </table>
-
-                <div class="w-full flex flex-col items-center justify-center py-40 text-center text-gray-400">
-                    <i data-lucide="upload" class="h-8 w-8"></i>
-                    <p class="text-gray-400 text-sm">Belum ada harga terbaru</p>
-                    <p class="text-gray-300 text-xs">(Silahkan update harga di menu komoditas)</p>
-                </div>
             </div>
-            <div class="bg-white px-10 pb-10 pt-3 rounded-lg">
-                <h2 class="text-lg font-bold text-gray-800">History</h2>
+            <div class="bg-white px-10 pb-10 pt-3 rounded-lg max-h-80 overflow-y-auto">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Komoditas Belum Update Hari Ini</h2>
+
+                @forelse ($belumUpdate as $item)
+                    <div class="py-2 border-b">
+                        <p class="font-semibold">{{ $item->name }}</p>
+                        <p class="text-xs text-gray-500">Belum mengisi harga hari ini</p>
+                    </div>
+                @empty
+                    <p class="text-gray-400 text-sm">Semua komoditas sudah diupdate hari ini 🎉</p>
+                @endforelse
             </div>
-
-
         </div>
     </div>
 

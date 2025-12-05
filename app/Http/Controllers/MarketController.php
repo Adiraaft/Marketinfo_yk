@@ -114,4 +114,25 @@ class MarketController extends Controller
 
         return redirect()->route('superadmin.market')->with('success', 'Data pasar berhasil diupdate!');
     }
+
+    public function publicIndex()
+    {
+        $markets = Market::where('status', 'aktif')->get();
+
+        return view('pasar.pasar', compact('markets'));
+    }
+
+    public function detail($id)
+    {
+        $market = Market::findOrFail($id);
+
+        return view('pasar.detailpasar', compact('market'));
+    }
+
+    public function home()
+    {
+        $markets = Market::where('status', 'aktif')->get();
+        return view('home.index', compact('markets'));
+    }
+
 }
