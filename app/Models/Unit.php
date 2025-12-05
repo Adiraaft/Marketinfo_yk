@@ -11,7 +11,7 @@ class Unit extends Model
 
     protected $table = 'unit';
     protected $primaryKey = 'id';
-    protected $fillable = ['name'];
+    protected $fillable = ['name_unit'];
 
     public $timestamps = true; // ← WAJIB karena tabel punya created_at dan updated_at
 }
