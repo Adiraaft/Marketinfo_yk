@@ -22,7 +22,9 @@
                     <i data-lucide="users-round" class="text-white"></i>
                 </span>
                 <div class="space-y-2">
-                    <h3 class="text-2xl font-bold">{{ \App\Models\User::where('role', 'admin')->count() }}</h3>
+                    <h3 class="text-2xl font-bold">
+                        {{ \App\Models\User::where('role', 'admin')->where('market_id', auth()->user()->market_id)->count() }}
+                    </h3>
                     <p class="text-xs font-light">Petugas Pasar</p>
                 </div>
             </div>
@@ -31,7 +33,11 @@
                     <i data-lucide="weight" class="text-white"></i>
                 </span>
                 <div class="space-y-2">
-                    <h3 class="text-2xl font-bold">134</h3>
+                    <h3 class="text-2xl font-bold">
+                        {{ \App\Models\Commodity::whereHas('commodityMarkets', function ($q) {
+                            $q->where('market_id', auth()->user()->market_id)->where('status', 'aktif');
+                        })->count() }}
+                    </h3>
                     <p class="text-xs font-light">Komoditas Aktif</p>
                 </div>
             </div>
@@ -44,7 +50,7 @@
                         <button id="nextMonth" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">→</button>
                     </div>
 
-                    <div class="grid grid-cols-7 text-center font-semibold pb-2 mb-2">
+                    <div class="grid grid-cols-7 text-center font-semibold pb-2 mb-2 text-xs">
                         <div>Min</div>
                         <div>Sen</div>
                         <div>Sel</div>
@@ -57,10 +63,18 @@
                     <div id="calendarGrid" class="grid grid-cols-7 text-center gap-2"></div>
                 </div>
             </div>
+
+
+            <!-- Tabel Harga Terbaru -->
             <div class="col-span-2 row-span-2 flex flex-col gap-6 bg-white pl-10 py-7 pr-10 rounded-lg shadow">
-                <h2 class="text-lg font-bold text-gray-800">
-                    Tabel Harga Terbaru
-                </h2>
+                <div class="flex justify-between items-center">
+                    <h2 class="text-lg font-bold text-gray-800">
+                        Tabel Harga Terbaru
+                    </h2>
+                    <div class="text-sm text-gray-500">
+                        📅 {{ \Carbon\Carbon::parse($selectedDate)->isoFormat('D MMMM YYYY') }}
+                    </div>
+                </div>
 
                 <table class="w-full text-left border-collapse">
                     <thead class="text-gray-400 border-b border-gray-200">
@@ -77,39 +91,44 @@
                     <tbody>
                         @forelse ($latestPrices as $item)
                             @php
-                                $pivot = $item->commodityMarkets->first();
-                                $today = $pivot->prices->where('date', now()->toDateString())->first();
-                                $yesterday = $pivot->prices->where('date', now()->subDay()->toDateString())->first();
-                                $change = $today && $yesterday ? $today->price - $yesterday->price : 0;
+                                $commodity = $item['commodity'];
+                                $todayPrice = $item['today_price'];
+                                $yesterdayPrice = $item['yesterday_price'];
+                                $change = $item['change'];
                             @endphp
-
-                            <tr class="border-b text-sm">
-                                <td class="py-2 px-4">{{ $loop->iteration }}</td>
-                                <td class="py-2 px-4">{{ $item->name }}</td>
-                                <td class="py-2 px-4">{{ $yesterday->price ?? '-' }}</td>
-                                <td class="py-2 px-4">{{ $today->price ?? '-' }}</td>
-                                <td
-                                    class="py-2 px-4 {{ $change > 0 ? 'text-red-500' : ($change < 0 ? 'text-green-500' : '') }}">
-                                    {{ $change > 0 ? '+' : '' }}{{ $change }}
+                            <tr class="border-t border-gray-200 hover:bg-gray-50">
+                                <td class="py-3 px-4">{{ $loop->iteration }}</td>
+                                <td class="py-3 px-4">{{ $commodity->name_commodity }}</td>
+                                <td class="py-3 px-4">
+                                    {{ $yesterdayPrice ? 'Rp ' . number_format($yesterdayPrice, 0, ',', '.') : '-' }}
                                 </td>
-                                <td class="py-2 px-4">{{ $item->unit->name_unit ?? '-' }}</td>
+                                <td class="py-3 px-4">
+                                    Rp {{ number_format($todayPrice, 0, ',', '.') }}
+                                </td>
+                                <td
+                                    class="py-3 px-4 {{ $change > 0 ? 'text-red-500' : ($change < 0 ? 'text-green-500' : '') }}">
+                                    {{ $change > 0 ? '+' : '' }}{{ $change ? 'Rp ' . number_format($change, 0, ',', '.') : '-' }}
+                                </td>
+                                <td class="py-3 px-4">{{ $commodity->unit->name_unit ?? '-' }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center py-10 text-gray-400">
-                                    Belum ada harga terbaru hari ini
+                                <td colspan="6" class="py-8 text-center text-gray-400">
+                                    Belum ada komoditas yang diupdate pada tanggal ini
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Komoditas Belum Update -->
             <div class="bg-white px-10 pb-10 pt-3 rounded-lg max-h-80 overflow-y-auto">
                 <h2 class="text-lg font-bold text-gray-800 mb-4">Komoditas Belum Update Hari Ini</h2>
 
                 @forelse ($belumUpdate as $item)
                     <div class="py-2 border-b">
-                        <p class="font-semibold">{{ $item->name }}</p>
+                        <p class="font-semibold">{{ $item['name'] }}</p>
                         <p class="text-xs text-gray-500">Belum mengisi harga hari ini</p>
                     </div>
                 @empty
@@ -142,13 +161,20 @@
             "Juli", "Agustus", "September", "Oktober", "November", "Desember"
         ];
 
-        let currentDate = new Date();
+        // Ambil tanggal yang dipilih dari URL atau gunakan hari ini
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedDateFromUrl = urlParams.get('tanggal');
+        let currentDate = selectedDateFromUrl ? new Date(selectedDateFromUrl) : new Date();
 
         function renderCalendar(date) {
             calendarGrid.innerHTML = "";
 
             const year = date.getFullYear();
             const month = date.getMonth();
+            const today = new Date();
+
+            // Ambil tanggal yang sedang dipilih dari URL
+            const selectedDate = selectedDateFromUrl ? new Date(selectedDateFromUrl) : today;
 
             monthYear.textContent = `${monthNames[month]} ${year}`;
 
@@ -165,11 +191,29 @@
             for (let i = 1; i <= totalDays; i++) {
                 const day = document.createElement("div");
                 day.textContent = i;
-                day.className =
-                    "p-2 rounded-lg cursor-pointer hover:bg-blue-100 " +
-                    (i === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear() ?
-                        "bg-secondary text-white font-bold" :
-                        "");
+                
+                // Check apakah ini tanggal yang sedang dipilih
+                const isSelected = i === selectedDate.getDate() && 
+                                 month === selectedDate.getMonth() && 
+                                 year === selectedDate.getFullYear();
+                
+                // Check apakah ini hari ini
+                const isToday = i === today.getDate() && 
+                               month === today.getMonth() && 
+                               year === today.getFullYear();
+                
+                day.className = "p-2 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors text-sm " +
+                    (isSelected ? "bg-secondary text-white font-bold" : 
+                     isToday ? "bg-blue-200 text-blue-800 font-semibold" : "");
+                
+                // Event listener untuk klik tanggal
+                day.addEventListener("click", () => {
+                    const clickedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                    
+                    // Redirect ke URL dengan parameter tanggal
+                    window.location.href = `{{ route('admin.dashboard') }}?tanggal=${clickedDate}`;
+                });
+                
                 calendarGrid.appendChild(day);
             }
         }

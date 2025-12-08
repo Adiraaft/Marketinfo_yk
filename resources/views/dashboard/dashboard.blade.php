@@ -15,7 +15,7 @@
                     <i data-lucide="map-pinned" class="text-white"></i>
                 </span>
                 <div class="space-y-2">
-                    <h3 class="text-2xl font-bold">11</h3>
+                    <h3 class="text-2xl font-bold">{{ \App\Models\Market::where('status', 'aktif')->count() }}</h3>
                     <p class="text-xs font-light">Pasar Aktif</p>
                 </div>
             </div>
@@ -33,7 +33,7 @@
                     <i data-lucide="weight" class="text-white"></i>
                 </span>
                 <div class="space-y-2">
-                    <h3 class="text-2xl font-bold">134</h3>
+                    <h3 class="text-2xl font-bold">{{ \App\Models\Commodity::where('status', 'aktif')->count() }}</h3>
                     <p class="text-xs font-light">Komoditas Aktif</p>
                 </div>
             </div>

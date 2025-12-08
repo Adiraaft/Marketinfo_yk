@@ -68,7 +68,7 @@
                                 </td>
 
                                 <td class="py-2 px-4">{{ $c->category->name_category ?? '-' }}</td>
-                                <td class="py-2 px-4">{{ $c->unit->name }}</td>
+                                <td class="py-2 px-4">{{ $c->unit->name_unit }}</td>
 
                                 <td class="py-2 px-4">
                                     {{ $c->updated_at ? $c->updated_at->format('d F Y') : '-' }}

@@ -30,41 +30,58 @@ class AdminController extends Controller
     public function dashboard(Request $request)
     {
         $marketId = auth()->user()->market_id;
-
-        // Kalau user pilih tanggal → pakai itu, kalau tidak → pakai hari ini
         $selectedDate = $request->tanggal ?? now()->toDateString();
-        $yesterday = now()->subDay()->toDateString();
+        $yesterdayDate = \Carbon\Carbon::parse($selectedDate)->subDay()->toDateString();
 
-        // ====== AMBIL KOMODITAS SESUAI MARKET ======
+        // Ambil semua komoditas aktif di market (SAMA seperti komoditas.blade.php)
         $commodities = Commodity::whereHas('commodityMarkets', function ($q) use ($marketId) {
             $q->where('market_id', $marketId)->where('status', 'aktif');
         })
-            ->with([
-                'commodityMarkets' => function ($q) use ($marketId) {
-                    $q->where('market_id', $marketId);
-                },
-                'commodityMarkets.prices' => function ($q) use ($selectedDate, $yesterday) {
-                    $q->whereIn('date', [$selectedDate, $yesterday]);
-                },
-                'unit'
-            ])
-            ->get();
+        ->with([
+            'commodityMarkets' => function ($q) use ($marketId) {
+                $q->where('market_id', $marketId);
+            }, 
+            'category', 
+            'unit'
+        ])
+        ->get();
 
-        // ====== SUDAH UPDATE HARI INI ======
-        $latestPrices = $commodities->filter(function ($item) use ($selectedDate) {
-            $pivot = $item->commodityMarkets->first();
-            return optional(optional($pivot)->prices)
-                ->where('date', $selectedDate)
-                ->first();
-        });
+        $latestPrices = [];
+        $belumUpdate = [];
 
-        // ====== BELUM UPDATE HARI INI ======
-        $belumUpdate = $commodities->filter(function ($item) use ($selectedDate) {
+        foreach ($commodities as $item) {
             $pivot = $item->commodityMarkets->first();
-            return !optional(optional($pivot)->prices)
-                ->where('date', $selectedDate)
-                ->first();
-        });
+            
+            if (!$pivot) continue;
+
+            // ✅ Filter di collection (SAMA seperti komoditas.blade.php)
+            $todayPrices = optional($pivot->prices)->where('date', $selectedDate);
+            $yesterdayPrices = optional($pivot->prices)->where('date', $yesterdayDate);
+
+            // Hitung rata-rata
+            $todayAvg = $todayPrices->avg('price');
+            $yesterdayAvg = $yesterdayPrices->avg('price');
+
+            if ($todayAvg) {
+                // Hitung perubahan harga
+                $change = 0;
+                if ($yesterdayAvg) {
+                    $change = $todayAvg - $yesterdayAvg;
+                }
+
+                $latestPrices[] = [
+                    'commodity' => $item,
+                    'pivot' => $pivot,
+                    'today_price' => $todayAvg,
+                    'yesterday_price' => $yesterdayAvg,
+                    'change' => $change,
+                ];
+            } else {
+                $belumUpdate[] = [
+                    'name' => $item->name_commodity,
+                ];
+            }
+        }
 
         return view('dashboardAdmin.dashboard', [
             'latestPrices' => $latestPrices,
