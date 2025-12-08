@@ -28,7 +28,7 @@ class Commodity extends Model
     }
     public function markets()
     {
-        return $this->belongsToMany(Market::class, 'commodity_market')
+        return $this->belongsToMany(Market::class, 'commodity_markets')
             ->withPivot('id', 'status', 'price')
             ->withTimestamps();
     }
