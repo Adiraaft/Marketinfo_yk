@@ -10,34 +10,34 @@
 @section('content')
     <div class="mt-7 mx-15 mb-10">
         <div class="grid grid-cols-3 gap-6">
-            <div class="flex items-center gap-10 bg-white pl-10 py-7 rounded-lg">
+            <div class="flex items-center gap-10 bg-white pl-10 py-7 rounded-lg shadow-sm">
                 <span class="p-3 bg-secondary rounded-full">
                     <i data-lucide="map-pinned" class="text-white"></i>
                 </span>
                 <div class="space-y-2">
-                    <h3 class="text-2xl font-bold">{{ \App\Models\Market::where('status', 'aktif')->count() }}</h3>
+                    <h3 class="text-2xl font-bold">{{ $totalPasar }}</h3>
                     <p class="text-xs font-light">Pasar Aktif</p>
                 </div>
             </div>
-            <div class="flex items-center gap-10 bg-white pl-10 py-7 rounded-lg">
+            <div class="flex items-center gap-10 bg-white pl-10 py-7 rounded-lg shadow-sm">
                 <span class="p-3 bg-secondary rounded-full">
                     <i data-lucide="users-round" class="text-white"></i>
                 </span>
                 <div class="space-y-2">
-                    <h3 class="text-2xl font-bold">{{ \App\Models\User::where('role', 'admin')->count() }}</h3>
+                    <h3 class="text-2xl font-bold">{{ $totalPetugas }}</h3>
                     <p class="text-xs font-light">Petugas Aktif</p>
                 </div>
             </div>
-            <div class="flex items-center gap-10 bg-white pl-10 py-7 rounded-lg">
+            <div class="flex items-center gap-10 bg-white pl-10 py-7 rounded-lg shadow-sm">
                 <span class="p-3 bg-secondary rounded-full">
                     <i data-lucide="weight" class="text-white"></i>
                 </span>
                 <div class="space-y-2">
-                    <h3 class="text-2xl font-bold">{{ \App\Models\Commodity::where('status', 'aktif')->count() }}</h3>
+                    <h3 class="text-2xl font-bold">{{ $totalKomoditas }}</h3>
                     <p class="text-xs font-light">Komoditas Aktif</p>
                 </div>
             </div>
-            <div class="bg-white px-10 pb-10 pt-3 rounded-lg">
+            <div class="bg-white px-10 pb-10 pt-3 rounded-lg shadow-sm">
                 <p class="text-sm font-bold text-center">Tanggalan</p>
                 <div id="date-calendar" class="max-w-md mx-auto mt-4 bg-white rounded-2xl p-6">
                     <div class="flex justify-between items-center mb-4">
@@ -59,15 +59,36 @@
                     <div id="calendarGrid" class="grid grid-cols-7 text-center gap-2"></div>
                 </div>
             </div>
-            <div class="col-span-2 flex items-center gap-10 bg-white pl-10 py-7 rounded-lg">
+            <div class="col-span-2 flex items-center gap-10 bg-white pl-10 py-7 rounded-lg shadow-sm">
 
             </div>
-            <a href="{{ route('superadmin.berita.index') }}"
-                class="col-span-3 flex flex-col justify-center items-center py-32 gap-2 text-gray-300 bg-white rounded-lg border-2 border-dashed border-gray-200 hover:bg-gray-50 hover:text-secondary transition cursor-pointer shadow-sm">
-                <i data-lucide="upload" class="h-12 w-12"></i>
-                <p class="font-bold text-gray-500">Upload Berita</p>
-                <p class="text-xs text-gray-400">Klik untuk mengelola berita</p>
-            </a>
+            <div class="col-span-3 grid grid-cols-3 gap-6">
+
+                <!-- CARD 1: MANAJEMEN PASAR -->
+                <a href='{{ route('superadmin.market') }}'
+                    class="flex flex-col justify-center items-center py-16 gap-2 text-gray-400 bg-white rounded-lg border border-gray-200 hover:bg-gray-50 hover:text-secondary transition cursor-pointer shadow-sm">
+                    <i data-lucide="map" class="h-10 w-10"></i>
+                    <p class="font-bold text-gray-600 text-lg">Manajemen Pasar</p>
+                    <p class="text-xs text-gray-400">Kelola daftar dan status pasar</p>
+                </a>
+
+                <!-- CARD 2: MANAJEMEN KOMODITAS -->
+                <a href='{{ route('superadmin.komoditas') }}'
+                    class="flex flex-col justify-center items-center py-16 gap-2 text-gray-400 bg-white rounded-lg border border-gray-200 hover:bg-gray-50 hover:text-secondary transition cursor-pointer shadow-sm">
+                    <i data-lucide="package" class="h-10 w-10"></i>
+                    <p class="font-bold text-gray-600 text-lg">Manajemen Komoditas</p>
+                    <p class="text-xs text-gray-400">Tambah & kelola komoditas aktif</p>
+                </a>
+
+                <!-- CARD 3: LAPORAN HARGA -->
+                <a href='{{ route('superadmin.laporan') }}'
+                    class="flex flex-col justify-center items-center py-16 gap-2 text-gray-400 bg-white rounded-lg border border-gray-200 hover:bg-gray-50 hover:text-secondary transition cursor-pointer shadow-sm">
+                    <i data-lucide="bar-chart-3" class="h-10 w-10"></i>
+                    <p class="font-bold text-gray-600 text-lg">Laporan Harga</p>
+                    <p class="text-xs text-gray-400">Lihat laporan bulanan</p>
+                </a>
+
+            </div>
         </div>
     </div>
 
