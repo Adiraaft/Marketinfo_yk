@@ -36,7 +36,7 @@
                         <tr class="border-t border-gray-200 hover:bg-gray-50 text-sm font-medium">
                             <td class="py-2 px-4">{{ $index + 1 }}</td>
                             <td class="py-2 px-4">{{ $m->name_market }}</td>
-                            <td class="py-2 px-4">{{ $m->address }}</td>
+                            <td class="py-2 px-4 max-w-[250px] truncate block">{{ $m->address }}</td>
                             <td class="py-2 px-4">12</td>
                             <td class="py-2 px-4">12-09-2025 | 09.40</td>
                             <td class="py-2 px-4">{{ ucfirst($m->status) }}</td>
@@ -62,7 +62,7 @@
             </table>
         </div>
     </div>
-    
+
     @if (session('success'))
         <script type="module">
             Swal.fire({
