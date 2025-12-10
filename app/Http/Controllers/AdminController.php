@@ -8,7 +8,10 @@ use App\Models\CommodityMarket;
 use App\Models\Market;
 use App\Models\Price;
 use App\Models\Unit;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -37,21 +40,21 @@ class AdminController extends Controller
         $commodities = Commodity::whereHas('commodityMarkets', function ($q) use ($marketId) {
             $q->where('market_id', $marketId)->where('status', 'aktif');
         })
-        ->with([
-            'commodityMarkets' => function ($q) use ($marketId) {
-                $q->where('market_id', $marketId);
-            }, 
-            'category', 
-            'unit'
-        ])
-        ->get();
+            ->with([
+                'commodityMarkets' => function ($q) use ($marketId) {
+                    $q->where('market_id', $marketId);
+                },
+                'category',
+                'unit'
+            ])
+            ->get();
 
         $latestPrices = [];
         $belumUpdate = [];
 
         foreach ($commodities as $item) {
             $pivot = $item->commodityMarkets->first();
-            
+
             if (!$pivot) continue;
 
             // ✅ Filter di collection (SAMA seperti komoditas.blade.php)
@@ -162,8 +165,6 @@ class AdminController extends Controller
             'selectedDate' => $selectedDate,
         ]);
     }
-
-
     public function store(Request $request)
     {
         // dd($request->all());
@@ -222,5 +223,54 @@ class AdminController extends Controller
         }
 
         return redirect()->back()->with('success', 'Harga berhasil diupdate.');
+    }
+    public function editProfile()
+    {
+        $user = auth()->user(); // ambil akun admin yang sedang login
+
+        return view('dashboardAdmin.setting', [
+            'petugas' => $user
+        ]);
+    }
+    public function updateProfile(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        // VALIDASI hanya untuk field yang boleh diubah admin
+        $request->validate([
+            'first_name'    => 'required|string|max:100',
+            'last_name'     => 'required|string|max:100',
+            'date_of_birth' => 'required|date',
+            'phone'         => 'required|string|max:20',
+            'password'      => 'nullable|string|min:6',
+            'image'         => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        // Update nama lengkap
+        $user->name = ucfirst(strtolower($request->first_name)) . ' ' . ucfirst(strtolower($request->last_name));
+
+        $user->date_of_birth = $request->date_of_birth;
+        $user->phone = $request->phone;
+
+        // Password (opsional)
+        if ($request->password) {
+            $user->password = Hash::make($request->password);
+        }
+        
+        // Upload Foto jika ada
+        if ($request->hasFile('image')) {
+
+            // Hapus foto lama jika ada
+            if ($user->image && Storage::exists('public/' . $user->image)) {
+                Storage::delete('public/' . $user->image);
+            }
+
+            // Simpan foto baru
+            $user->image = $request->file('image')->store('petugas_images', 'public');
+        }
+
+        $user->save();
+
+        return redirect()->back()->with('success', 'Akun berhasil diperbarui.');
     }
 }
