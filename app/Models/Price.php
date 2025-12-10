@@ -30,7 +30,7 @@ class Price extends Model
 
     public function market()
     {
-        return $this->belongsTo(Market::class);
+        return $this->belongsTo(Market::class, 'market_id', 'id_market');
     }
     public function commodityMarket()
     {

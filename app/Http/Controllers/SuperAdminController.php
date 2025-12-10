@@ -13,7 +13,11 @@ class SuperAdminController extends Controller
     {
         $superadmin = User::where('role', 'superadmin')->first();
 
-        return view('dashboard.dashboard', compact('superadmin'));
+        return view('dashboard.dashboard', [
+            'totalPasar'      => \App\Models\Market::count(),
+            'totalPetugas'    => \App\Models\User::where('role', 'admin')->count(),
+            'totalKomoditas'  => \App\Models\Commodity::count(),
+        ], compact('superadmin'));
     }
     public function edit()
     {

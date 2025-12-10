@@ -189,7 +189,7 @@
 
                 <!-- Upload Gambar -->
                 <div class="mb-4">
-                    <label class="block text-sm font-medium font-medium mb-1">Gambar Komoditas</label>
+                    <label class="block text-sm font-medium mb-1">Gambar Komoditas</label>
                     <div class="flex items-center gap-4">
                         <input type="file" name="image" id="create_image" accept="image/*"
                             class="block w-full text-sm text-gray-500
