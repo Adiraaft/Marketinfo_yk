@@ -10,7 +10,6 @@ use App\Models\Price;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use App\Exports\PricesExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -22,6 +21,13 @@ class ReportController extends Controller
         $markets = Market::all();
 
         return view('dashboard.laporan', compact('categories', 'markets'));
+    }
+    public function indexAdmin()
+    {
+        $categories = Category::all();
+        $markets = auth()->user()->market;
+
+        return view('dashboardAdmin.laporan', compact('categories', 'markets'));
     }
     public function getCommoditiesByCategory($categoryId)
     {
@@ -432,6 +438,365 @@ class ReportController extends Controller
         if ($export) return $data;
         return response()->json($data);
     }
+
+    public function filterAdmin(Request $r)
+    {
+        $export = filter_var($r->export, FILTER_VALIDATE_BOOLEAN);
+
+        // MARKET HANYA 1 SESUAI USER LOGIN
+        $marketId = auth()->user()->market_id;
+        $marketAll = false; // admin TIDAK BISA pilih semua pasar
+
+
+        // ============================
+        // FILTER TODAY
+        // ============================
+        if ($r->date == 'today') {
+
+            $today = Carbon::today()->format('Y-m-d');
+            $marketName = auth()->user()->market->name_market ?? '-';
+
+            // Ambil nama komoditas
+            $commodityName = '-';
+            if ($r->komoditas) {
+                $commodity = \App\Models\Commodity::find($r->komoditas);
+                $commodityName = $commodity?->name_commodity ?? '-';
+            }
+
+            // Ambil data harga hari ini
+            $price = Price::query()
+                ->whereDate('prices.date', $today)
+                ->where('prices.market_id', $marketId)
+                ->when($r->komoditas, fn($q) => $q->where('prices.commodity_id', $r->komoditas))
+                ->when($r->category, fn($q) => $q->whereHas(
+                    'commodity',
+                    fn($q2) =>
+                    $q2->where('category_id', $r->category)
+                ))
+                ->join('users', 'users.id_user', '=', 'prices.user_id')
+                ->select(
+                    DB::raw("DATE(prices.date) as tanggal"),
+                    DB::raw("ROUND(AVG(prices.price)) as harga_rata"),
+                    DB::raw("MAX(users.name) as admin")
+                )
+                ->groupBy('tanggal')
+                ->first();
+
+            // Jika tidak ada harga → tetap tampil dengan '-'
+            $data = [
+                (object)[
+                    'tanggal'       => $today,
+                    'nama_commodity' => $commodityName,
+                    'nama_pasar'    => $marketName,
+                    'harga_rata'    => $price->harga_rata ?? null,
+                    'perubahan'     => 0,
+                    'admin'         => $price->admin ?? '-',
+                ]
+            ];
+
+            if ($export) return collect($data);
+            return response()->json($data);
+        }
+
+        // =====================================================================
+        // KHUSUS FILTER 7 DAYS
+        // =====================================================================
+        if ($r->date == '7days') {
+
+            $startDate = Carbon::today()->subDays(6);
+            $endDate = Carbon::today();
+
+            // generate array tanggal
+            $period = [];
+            for ($date = $startDate->copy(); $date <= $endDate; $date->addDay()) {
+                $period[] = $date->format('Y-m-d');
+            }
+
+            // nama komoditas
+            $commodityName = '-';
+            if ($r->komoditas) {
+                $commodity = Commodity::find($r->komoditas);
+                $commodityName = $commodity?->name_commodity ?? '-';
+            }
+
+            // nama pasar otomatis
+            $marketName = Market::find($marketId)?->name_market ?? '-';
+
+            // AMBIL HARGA
+            $pricesQuery = Price::query()
+                ->whereBetween('prices.date', [$startDate, $endDate])
+                ->where('prices.market_id', $marketId)
+                ->when($r->komoditas, fn($q) => $q->where('prices.commodity_id', $r->komoditas))
+                ->when($r->category, fn($q) => $q->whereHas('commodity', fn($q2) => $q2->where('category_id', $r->category)));
+
+            $prices = $pricesQuery
+                ->join('users', 'users.id_user', '=', 'prices.user_id')
+                ->select(
+                    DB::raw('DATE(prices.date) as tanggal'),
+                    DB::raw('ROUND(AVG(prices.price)) as harga_rata'),
+                    DB::raw('MAX(users.name) as admin')
+                )
+                ->groupBy('tanggal')
+                ->get()
+                ->keyBy('tanggal');
+
+            // MERGE
+            $data = collect();
+            foreach ($period as $tanggal) {
+                $rowPrice = $prices[$tanggal] ?? null;
+                $data->push((object)[
+                    'tanggal' => $tanggal,
+                    'nama_commodity' => $commodityName,
+                    'nama_pasar' => $marketName,
+                    'harga_rata' => $rowPrice->harga_rata ?? null,
+                    'perubahan' => 0,
+                    'admin' => $rowPrice->admin ?? '-'
+                ]);
+            }
+
+            // HITUNG PERUBAHAN
+            $prev = null;
+            foreach ($data as $row) {
+                if ($row->harga_rata === null) {
+                    $row->perubahan = 0;
+                } else {
+                    if ($prev === null) {
+                        $row->perubahan = 0;
+                    } else {
+                        $row->perubahan = round((($row->harga_rata - $prev) / $prev) * 100, 2);
+                    }
+                    $prev = $row->harga_rata;
+                }
+            }
+
+            if ($export) return $data;
+            return response()->json($data);
+        }
+
+        // =====================================================================
+        // 30 DAYS
+        // =====================================================================
+        if ($r->date == '30days') {
+
+            $startDate = Carbon::today()->subDays(29);
+            $endDate = Carbon::today();
+
+            $period = [];
+            for ($date = $startDate->copy(); $date <= $endDate; $date->addDay()) {
+                $period[] = $date->format('Y-m-d');
+            }
+
+            $commodityName = '-';
+            if ($r->komoditas) {
+                $commodity = Commodity::find($r->komoditas);
+                $commodityName = $commodity?->name_commodity ?? '-';
+            }
+
+            $marketName = Market::find($marketId)?->name_market ?? '-';
+
+            // Query harga
+            $pricesQuery = Price::query()
+                ->whereBetween('prices.date', [$startDate, $endDate])
+                ->where('prices.market_id', $marketId)
+                ->when($r->komoditas, fn($q) => $q->where('prices.commodity_id', $r->komoditas))
+                ->when($r->category, fn($q) => $q->whereHas('commodity', fn($q2) => $q2->where('category_id', $r->category)));
+
+            $prices = $pricesQuery
+                ->join('users', 'users.id_user', '=', 'prices.user_id')
+                ->select(
+                    DB::raw('DATE(prices.date) as tanggal'),
+                    DB::raw('ROUND(AVG(prices.price)) as harga_rata'),
+                    DB::raw('MAX(users.name) as admin')
+                )
+                ->groupBy('tanggal')
+                ->get()
+                ->keyBy('tanggal');
+
+            $data = collect();
+            foreach ($period as $tanggal) {
+                $rowPrice = $prices[$tanggal] ?? null;
+                $data->push((object)[
+                    'tanggal' => $tanggal,
+                    'nama_commodity' => $commodityName,
+                    'nama_pasar' => $marketName,
+                    'harga_rata' => $rowPrice->harga_rata ?? null,
+                    'perubahan' => 0,
+                    'admin' => $rowPrice->admin ?? '-'
+                ]);
+            }
+
+            // Hitung perubahan
+            $prev = null;
+            foreach ($data as $row) {
+                if ($row->harga_rata === null) {
+                    $row->perubahan = 0;
+                } else {
+                    if ($prev === null) {
+                        $row->perubahan = 0;
+                    } else {
+                        $row->perubahan = round((($row->harga_rata - $prev) / $prev) * 100, 2);
+                    }
+                    $prev = $row->harga_rata;
+                }
+            }
+
+            if ($export) return $data;
+            return response()->json($data);
+        }
+
+
+        // =====================================================================
+        // 1 YEAR
+        // =====================================================================
+        if ($r->date == '1year') {
+
+            $startMonth = Carbon::now()->subMonths(11)->startOfMonth();
+            $endMonth = Carbon::now()->endOfMonth();
+
+            // Buat array 12 bulan terakhir
+            $period = [];
+            for ($date = $startMonth->copy(); $date <= $endMonth; $date->addMonth()) {
+                $period[] = $date->format('Y-m');
+            }
+
+            // Ambil nama komoditas
+            $commodityName = '-';
+            if ($r->komoditas) {
+                $commodity = \App\Models\Commodity::find($r->komoditas);
+                $commodityName = $commodity?->name_commodity ?? '-';
+            }
+
+            // Ambil nama pasar
+            $marketName = Market::find($marketId)?->name_market ?? '-';
+
+            // Ambil harga per bulan beserta admin
+            $pricesQuery = Price::query()
+                ->whereBetween('prices.date', [$startMonth, $endMonth])
+                ->when($r->komoditas, fn($q) => $q->where('prices.commodity_id', $r->komoditas))
+                ->where('prices.market_id', $marketId)
+                ->when($r->category, fn($q) => $q->whereHas('commodity', fn($q2) => $q2->where('category_id', $r->category)));
+
+            $prices = $pricesQuery
+                ->join('users', 'users.id_user', '=', 'prices.user_id')
+                ->select(
+                    DB::raw("TO_CHAR(prices.date, 'YYYY-MM') as bulan"),
+                    DB::raw('ROUND(AVG(prices.price)) as harga_rata'),
+                    DB::raw('MAX(users.name) as admin')
+                )
+                ->groupBy('bulan')
+                ->get()
+                ->keyBy('bulan');
+
+            // Merge periode bulan dengan harga
+            $data = collect();
+            foreach ($period as $bulan) {
+                $rowPrice = $prices[$bulan] ?? null;
+                $data->push((object)[
+                    'tanggal' => $bulan,
+                    'nama_commodity' => $commodityName,
+                    'nama_pasar' => $marketName,
+                    'harga_rata' => $rowPrice ? $rowPrice->harga_rata : null,
+                    'perubahan' => 0,
+                    'admin' => $rowPrice ? ($marketAll ? 'Petugas Pasar' : $rowPrice->admin) : '-',
+                ]);
+            }
+
+            // Hitung perubahan harga per bulan
+            $prev = null;
+            foreach ($data as $row) {
+                if ($row->harga_rata === null) {
+                    $row->perubahan = 0;
+                } else {
+                    if ($prev === null) {
+                        $row->perubahan = 0;
+                    } else {
+                        $row->perubahan = round((($row->harga_rata - $prev) / $prev) * 100, 2);
+                    }
+                    $prev = $row->harga_rata;
+                }
+            }
+
+            if ($export) return $data;
+            return response()->json($data);
+        }
+
+        // =====================================================================
+        // CUSTOM RANGE
+        // =====================================================================
+        if ($r->date == 'custom') {
+
+            if ($r->start && $r->end) {
+                $startDate = Carbon::parse($r->start);
+                $endDate = Carbon::parse($r->end);
+
+                // Buat array periode tanggal
+                $period = [];
+                for ($date = $startDate->copy(); $date <= $endDate; $date->addDay()) {
+                    $period[] = $date->format('Y-m-d');
+                }
+
+                // Ambil nama komoditas
+                $commodityName = '-';
+                if ($r->komoditas) {
+                    $commodity = \App\Models\Commodity::find($r->komoditas);
+                    $commodityName = $commodity?->name_commodity ?? '-';
+                }
+
+                $marketName = Market::find($marketId)?->name_market ?? '-';
+
+                // Ambil harga per tanggal beserta admin
+                $pricesQuery = Price::query()
+                    ->whereBetween('prices.date', [$startDate, $endDate])
+                    ->when($r->komoditas, fn($q) => $q->where('prices.commodity_id', $r->komoditas))
+                    ->where('prices.market_id', $marketId)
+                    ->when($r->category, fn($q) => $q->whereHas('commodity', fn($q2) => $q2->where('category_id', $r->category)));
+
+                $prices = $pricesQuery
+                    ->join('users', 'users.id_user', '=', 'prices.user_id')
+                    ->select(
+                        DB::raw('DATE(prices.date) as tanggal'),
+                        DB::raw('ROUND(AVG(prices.price)) as harga_rata'),
+                        DB::raw('MAX(users.name) as admin')
+                    )
+                    ->groupBy('tanggal')
+                    ->get()
+                    ->keyBy('tanggal');
+
+                // Merge periode tanggal dengan harga
+                $data = collect();
+                foreach ($period as $tanggal) {
+                    $rowPrice = $prices[$tanggal] ?? null;
+                    $data->push((object)[
+                        'tanggal' => $tanggal,
+                        'nama_commodity' => $commodityName,
+                        'nama_pasar' => $marketName,
+                        'harga_rata' => $rowPrice ? $rowPrice->harga_rata : null,
+                        'perubahan' => 0,
+                        'admin' => $rowPrice ? ($marketAll ? 'Petugas Pasar' : $rowPrice->admin) : '-',
+                    ]);
+                }
+
+                // Hitung perubahan harga
+                $prev = null;
+                foreach ($data as $row) {
+                    if ($row->harga_rata === null) {
+                        $row->perubahan = 0;
+                    } else {
+                        if ($prev === null) {
+                            $row->perubahan = 0;
+                        } else {
+                            $row->perubahan = round((($row->harga_rata - $prev) / $prev) * 100, 2);
+                        }
+                        $prev = $row->harga_rata;
+                    }
+                }
+
+                if ($export) return $data;
+                return response()->json($data);
+            }
+        }
+    }
+
     public function exportExcel(Request $r)
     {
         $r->merge(['export' => true]);
