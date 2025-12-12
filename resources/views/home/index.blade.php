@@ -7,21 +7,30 @@
 @endsection
 
 @section('jumbotron')
-    <div class="relative w-full h-screen bg-center bg-cover bg-no-repeat"
-        style="background-image: url('{{ asset('images/jumbotron.png') }}')">
-        <div class="absolute inset-0 bg-black/50"></div>
-        <div class="relative z-10 flex flex-col items-start justify-center h-full text-white pl-15">
+    <div class="relative w-full h-screen bg-center bg-no-repeat bg-cover"
+        style="background-image: url('{{ asset('images/wallpaper2.png') }}')">
+        <div class="absolute inset-0 bg-black/40"></div>
+
+        <div class="relative z-10 flex flex-col items-center justify-center h-full  text-white text-center px-5">
             <h1 class="text-4xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:5xl font-extrabold">
                 Harga Komoditas Bahan <br> Pangan
                 <span class="text-[#FB7A29]">Kota Yogyakarta</span>
             </h1>
+
             <p class="mt-2 font-medium text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl">
                 Hadirkan data harga pangan terkini dari seluruh pasar Yogyakarta. <br>
                 Bantu masyarakat dan pelaku usaha mengambil keputusan yang lebih bijak.
             </p>
+             <a href=""
+               class="mt-4 bg-[#FB7A29] text-white px-12 py-4 rounded-xl font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl 
+                      hover:bg-[#e86c21] transition-all shadow-md">
+                Lihat Harga
+            </a>
         </div>
+
     </div>
 @endsection
+
 
 @section('content')
     <div class="mt-8 px-15">
