@@ -6,13 +6,15 @@ window.Swal = Swal;
 import Swiper from "swiper";
 import "swiper/css";
 
+import ApexCharts from "apexcharts";
+window.ApexCharts = ApexCharts;
+
 import { Navigation, Autoplay } from "swiper/modules";
 import "swiper/css/navigation";
 
 createIcons({ icons });
 
 document.addEventListener("DOMContentLoaded", () => {
-
     // --- Modal Navbar Dashboard ---
     const notifIcon = document.getElementById("notifIcon");
     const userIcon = document.getElementById("userIcon");
@@ -34,10 +36,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     document.addEventListener("click", (e) => {
-        if (notifIcon && notifModal && !notifIcon.contains(e.target) && !notifModal.contains(e.target)) {
+        if (
+            notifIcon &&
+            notifModal &&
+            !notifIcon.contains(e.target) &&
+            !notifModal.contains(e.target)
+        ) {
             notifModal.classList.add("hidden");
         }
-        if (userIcon && userModal && !userIcon.contains(e.target) && !userModal.contains(e.target)) {
+        if (
+            userIcon &&
+            userModal &&
+            !userIcon.contains(e.target) &&
+            !userModal.contains(e.target)
+        ) {
             userModal.classList.add("hidden");
         }
     });
@@ -59,5 +71,4 @@ document.addEventListener("DOMContentLoaded", () => {
             },
         });
     }
-
 });
