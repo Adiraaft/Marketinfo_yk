@@ -21,8 +21,8 @@
                 Hadirkan data harga pangan terkini dari seluruh pasar Yogyakarta. <br>
                 Bantu masyarakat dan pelaku usaha mengambil keputusan yang lebih bijak.
             </p>
-             <a href=""
-               class="mt-4 bg-[#FB7A29] text-white px-12 py-4 rounded-xl font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl 
+            <a href="#hargaKomoditas"
+                class="mt-4 bg-[#FB7A29] text-white px-12 py-4 rounded-xl font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl 
                       hover:bg-[#e86c21] transition-all shadow-md">
                 Lihat Harga
             </a>
@@ -34,288 +34,187 @@
 
 @section('content')
     <div class="mt-8 px-15">
-        <h3 class="font-bold text-2xl sm:text-lg md:text-xl lg:2xl xl:3xl 2xl:4xl">Harga Barang Komoditas Bahan Pangan Kota
+        <h3 id="hargaKomoditas" class="font-bold text-2xl sm:text-lg md:text-xl lg:2xl xl:3xl 2xl:4xl">Harga Barang
+            Komoditas
+            Bahan Pangan Kota
             Yogyakarta</h3>
         <div class="my-7 py-6 border rounded-lg border-gray-300">
-            <div class="flex gap-4 mx-12 text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl">
-                <div>
-                    <label for="kategori" class="block">Pilih Kategori</label>
-                    <select id="kategori" name="kategori"
-                        class="border border-gray-300 rounded-lg p-1 md:w-60 w-auto focus:ring-blue-500 focus:border-blue-500">
-                        <option value="#">Semua Kategori</option>
-                        <option value="beras">Beras</option>
-                        <option value="cabai">Cabai</option>
-                        <option value="telur">Telur</option>
-                    </select>
+            <form action="{{ route('home.index') }}#commodity-section" class="flex justify-between" method="GET">
+                <div
+                    class="commodity-filter flex gap-4 mx-12 text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl">
+                    <div>
+                        <label for="kategori" class="block">Pilih Kategori</label>
+                        <select name="kategori"
+                            class="category-select border border-gray-300 rounded-lg p-1 md:w-60 w-auto focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Semua Kategori</option>
+                            @foreach ($categories as $c)
+                                <option value="{{ $c->id_category }}"
+                                    {{ request('kategori') == $c->id_category ? 'selected' : '' }}>{{ $c->name_category }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label for="commodity" class="block">Pilih Bahan Komoditas</label>
+                        <select name="commodity"
+                            class="commodity-select border border-gray-300 rounded-lg p-1 md:w-60 w-auto focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Semua Komoditas</option>
+                            @foreach ($commoditiesDropdown as $com)
+                                <option value="{{ $com->id_commodity }}" data-category="{{ $com->category_id }}"
+                                    {{ request('commodity') == $com->id_commodity ? 'selected' : '' }}>
+                                    {{ $com->name_commodity }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label for="market" class="block">Pilih Pasar</label>
+                        <select name="market" id="marketSelect"
+                            class="border border-gray-300 rounded-lg p-1 md:w-60 w-auto
+                            focus:ring-blue-500 focus:border-blue-500">
+
+                            {{-- MODE AVG --}}
+                            <option value="avg" {{ request('market', 'avg') == 'avg' ? 'selected' : '' }}>
+                                Rata-rata Kota Yogyakarta
+                            </option>
+
+                            {{-- SEMUA PASAR (BERAT → HANYA SAAT KOMODITAS DIPILIH) --}}
+                            <option value="all" id="allMarketOption" {{ request('market') == 'all' ? 'selected' : '' }}>
+                                Semua Pasar
+                            </option>
+
+                            {{-- PASAR TERTENTU (SELALU BOLEH) --}}
+                            @foreach ($markets as $market)
+                                <option value="{{ $market->id_market }}"
+                                    {{ request('market') == $market->id_market ? 'selected' : '' }}>
+                                    {{ $market->name_market }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                    </div>
+                    <input type="hidden" name="trend" value="{{ request('trend', 'all') }}">
+                    <button type="submit" class="p-2 w-10 h-10 rounded-lg bg-secondary self-end cursor-pointer">
+                        <i data-lucide="search" class="w-5 h-5 text-white"></i>
+                    </button>
                 </div>
-                <div>
-                    <label for="kategori" class="block">Pilih Bahan Komoditas</label>
-                    <select id="kategori" name="kategori"
-                        class="border border-gray-300 rounded-lg p-1 md:w-60 w-auto focus:ring-blue-500 focus:border-blue-500">
-                        <option value="#">Semua Komoditas</option>
-                        <option value="beras">Beras</option>
-                        <option value="cabai">Cabai</option>
-                        <option value="telur">Telur</option>
-                    </select>
+
+                <div class="flex text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg gap-4 items-center justify-center mr-10">
+                    <button class="flex items-center gap-1 text-red-500">
+                        <i data-lucide="move-up" class="w-4 h-4"></i>
+                        <p>Harga Naik</p>
+                    </button>
+                    <div class="flex items-center gap-1 text-green-500">
+                        <i data-lucide="move-down" class="w-4 h-4"></i>
+                        <p>Harga Turun</p>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <i data-lucide="minus" class="w-4 h-4"></i>
+                        <p>Harga Tetap</p>
+                    </div>
                 </div>
-                <button class="p-2 w-8 h-8 rounded-lg bg-secondary self-end cursor-pointer">
-                    <i data-lucide="search" class="place-self-center w-4 h-4 text-white"></i>
-                </button>
+            </form>
+            <hr id="commodity-section" class="mt-6 opacity-20">
+
+            <div class="my-6 mx-12">
+                {{-- INFO MODE AVG --}}
+                @if (!request('commodity'))
+                    <div
+                        class="flex items-center gap-2 p-2
+                   text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl
+                   border-2 bg-gray-200 w-fit rounded-lg border-secondary">
+                        <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
+                        <p>
+                            Menampilkan harga rata-rata di Kota Yogyakarta,
+                            pilih pasar dan barang untuk harga yang lebih akurat
+                        </p>
+                    </div>
+                @endif
+
+                {{-- FILTER HARGA --}}
+                @if (request('commodity'))
+                    <div class="flex gap-5
+                text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">
+
+                        {{-- HARGA TERENDAH --}}
+                        <a href="{{ route('home.index', request()->except('trend') + ['trend' => 'down']) }}#commodity-section"
+                            class="py-2 px-6 rounded-lg border-2
+                   border-green-500 text-green-600
+                   {{ request('trend') === 'down' ? 'bg-green-200' : '' }}">
+                            Harga Terendah
+                        </a>
+
+                        {{-- HARGA TERTINGGI --}}
+                        <a href="{{ route('home.index', request()->except('trend') + ['trend' => 'up']) }}#commodity-section"
+                            class="py-2 px-6 rounded-lg border-2
+                   border-red-500 text-red-600
+                   {{ request('trend') === 'up' ? 'bg-red-200' : '' }}">
+                            Harga Tertinggi
+                        </a>
+
+                    </div>
+                @endif
             </div>
-            <hr class="mt-6 opacity-20">
-            <div class="flex my-6 mx-12 w-auto gap-5 text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">
-                <button
-                    class="py-2 px-6 rounded-lg border-2 border-gray-300 active:bg-gray-300 hover:bg-gray-300 w-auto">Rata -
-                    Rata</button>
-                <button
-                    class="py-2 px-6 rounded-lg border-2 active:border-red-200 hover:border-red-200 border-gray-300 text-red-500 active:bg-red-200 hover:bg-red-200 w-auto">Harga
-                    Tertinggi</button>
-                <button
-                    class="py-2 px-6 rounded-lg border-2 active:border-green-200 hover:border-green-200 border-gray-300 text-green-500 active:bg-green-200 hover:bg-green-200 w-auto">Harga
-                    Terendah</button>
-            </div>
-            {{-- card --}}
-            <div
-                class="mx-12 mb-6 grid grid-cols-3 sm:grid md:grid md:grid-cols-2 lg:grid lg:grid-cols-3 xl:grid xl:grid-cols-3 2xl:grid 2xl:grid-cols-3 gap-9 sm:gap-4 md:gap-6 lg:gap-9 xl:gap-9 2xl:gap-9">
-                {{-- card 1 --}}
-                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
-                    {{-- Bagian Gambar --}}
-                    <div>
-                        <img src="{{ asset('images/tomat.png') }}" alt="#" class="w-full bg-clip-content p-4">
-                        {{-- Tampilan Desktop --}}
-                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
-                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Tomat
-                        </p>
-                        <div class="flex justify-start md:justify-center gap-2">
-                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
-                            <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </div>
-                        {{-- Tampilan Mobile --}}
-                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
+
+            <div id="commodity-wrapper">
+                {{-- card --}}
+                <div
+                    class="mx-12 mb-6 grid grid-cols-3 sm:grid md:grid md:grid-cols-2 lg:grid lg:grid-cols-3 xl:grid xl:grid-cols-3 2xl:grid 2xl:grid-cols-3 gap-9 sm:gap-4 md:gap-6 lg:gap-9 xl:gap-9 2xl:gap-9">
+                    @if (in_array($mode, ['ALL_AVG', 'ONE_AVG']))
+                        @foreach ($commodities as $item)
+                            @include('components.card-avg', ['item' => $item])
+                        @endforeach
+                    @endif
+
+                    @if ($mode === 'ALL_ONE_MARKET')
+                        @foreach ($commodities as $item)
+                            @include('components.card-market', ['item' => $item])
+                        @endforeach
+                    @endif
+
+                    @if ($mode === 'ONE_ALL_MARKET')
+                        @foreach ($commodities as $item)
+                            @foreach ($item->market_prices as $market)
+                                @include('components.card-market-compare', compact('item', 'market'))
+                            @endforeach
+                        @endforeach
+                    @endif
+
+                    @if ($mode === 'ONE_ONE_MARKET')
+                        @foreach ($commodities as $item)
+                            @include('components.card-market', ['item' => $item])
+                        @endforeach
+                    @endif
                 </div>
-                {{-- card 2 --}}
-                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
-                    {{-- Bagian Gambar --}}
-                    <div>
-                        <img src="{{ asset('images/bawangP.png') }}" alt="#" class="w-full bg-clip-content p-4">
-                        {{-- Tampilan Desktop --}}
-                        <div class="md:flex hidden text-red-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
-                            <i data-lucide="move-up" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
-                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">
-                            Bawang</p>
-                        <div class="flex justify-start md:justify-center gap-2">
-                            <p class="w-auto text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
-                            <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </div>
-                        {{-- Tampilan Mobile --}}
-                        <div class="flex md:hidden text-red-500 items-center text-xs mt-4 md:mb-6 gap-1">
-                            <i data-lucide="move-up" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
+
+
+                <div class="flex gap-2 text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs justify-center">
+                    @if ($commodities->onFirstPage())
+                        <button class="p-2 rounded-lg border-2 border-gray-300 opacity-40 cursor-not-allowed"> Sebelumnya
+                        </button>
+                    @else
+                        <a href="{{ $commodities->previousPageUrl() }}#commodity-section"> <button
+                                class="p-2 rounded-lg border-2 border-gray-300 hover:bg-gray-300"> Sebelumnya </button>
+                        </a>
+                        @endif {{-- Generate nomor halaman --}} @foreach ($commodities->getUrlRange(1, $commodities->lastPage()) as $page => $url)
+                            @if ($page == $commodities->currentPage())
+                                {{-- Halaman aktif --}} <button
+                                    class="py-2 px-3 rounded-lg border-2 border-gray-300 bg-slate-500 text-white">
+                                    {{ $page }} </button>
+                            @else
+                                <a href="{{ $url }}#commodity-section"> <button
+                                        class="py-2 px-3 rounded-lg border-2 border-gray-300 hover:bg-slate-500 hover:text-white">
+                                        {{ $page }} </button> </a>
+                            @endif
+                            @endforeach {{-- Tombol Next --}} @if ($commodities->hasMorePages())
+                                <a href="{{ $commodities->nextPageUrl() }}#commodity-section"> <button
+                                        class="p-2 rounded-lg border-2 border-gray-300 hover:bg-gray-300"> Selanjutnya
+                                    </button> </a>
+                            @else
+                                <button class="p-2 rounded-lg border-2 border-gray-300 opacity-40 cursor-not-allowed">
+                                    Selanjutnya </button>
+                            @endif
                 </div>
-                {{-- card 3 --}}
-                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
-                    {{-- Bagian Gambar --}}
-                    <div>
-                        <img src="{{ asset('images/pete.png') }}" alt="#" class="w-full bg-clip-content p-4">
-                        {{-- Tampilan Desktop --}}
-                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
-                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Pete
-                        </p>
-                        <div class="flex justify-start md:justify-center gap-2">
-                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
-                            <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </div>
-                        {{-- Tampilan Mobile --}}
-                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                </div>
-                {{-- card 4 --}}
-                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
-                    {{-- Bagian Gambar --}}
-                    <div>
-                        <img src="{{ asset('images/tomat.png') }}" alt="#" class="w-full bg-clip-content p-4">
-                        {{-- Tampilan Desktop --}}
-                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
-                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">
-                            Tomat</p>
-                        <div class="flex justify-start md:justify-center gap-2">
-                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
-                            <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </div>
-                        {{-- Tampilan Mobile --}}
-                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                </div>
-                {{-- card 5 --}}
-                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
-                    {{-- Bagian Gambar --}}
-                    <div>
-                        <img src="{{ asset('images/bawangP.png') }}" alt="#" class="w-full bg-clip-content p-4">
-                        {{-- Tampilan Desktop --}}
-                        <div class="md:flex hidden text-red-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
-                            <i data-lucide="move-up" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
-                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">
-                            Bawang</p>
-                        <div class="flex justify-start md:justify-center gap-2">
-                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
-                            <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </div>
-                        {{-- Tampilan Mobile --}}
-                        <div class="flex md:hidden text-red-500 items-center text-xs mt-4 md:mb-6 gap-1">
-                            <i data-lucide="move-up" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                </div>
-                {{-- card 6 --}}
-                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
-                    {{-- Bagian Gambar --}}
-                    <div>
-                        <img src="{{ asset('images/pete.png') }}" alt="#" class="w-full bg-clip-content p-4">
-                        {{-- Tampilan Desktop --}}
-                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
-                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Pete
-                        </p>
-                        <div class="flex justify-start md:justify-center gap-2">
-                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
-                            <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </div>
-                        {{-- Tampilan Mobile --}}
-                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                </div>
-                {{-- card 7 --}}
-                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
-                    {{-- Bagian Gambar --}}
-                    <div>
-                        <img src="{{ asset('images/tomat.png') }}" alt="#" class="w-full bg-clip-content p-4">
-                        {{-- Tampilan Desktop --}}
-                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
-                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">
-                            Tomat</p>
-                        <div class="flex justify-start md:justify-center gap-2">
-                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
-                            <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </div>
-                        {{-- Tampilan Mobile --}}
-                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                </div>
-                {{-- card 8 --}}
-                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
-                    {{-- Bagian Gambar --}}
-                    <div>
-                        <img src="{{ asset('images/bawangP.png') }}" alt="#" class="w-full bg-clip-content p-4">
-                        {{-- Tampilan Desktop --}}
-                        <div class="md:flex hidden text-red-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
-                            <i data-lucide="move-up" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
-                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">
-                            Bawang</p>
-                        <div class="flex justify-start md:justify-center gap-2">
-                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
-                            <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </div>
-                        {{-- Tampilan Mobile --}}
-                        <div class="flex md:hidden text-red-500 items-center text-xs mt-4 md:mb-6 gap-1">
-                            <i data-lucide="move-up" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                </div>
-                {{-- card 9 --}}
-                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
-                    {{-- Bagian Gambar --}}
-                    <div>
-                        <img src="{{ asset('images/pete.png') }}" alt="#" class="w-full bg-clip-content p-4">
-                        {{-- Tampilan Desktop --}}
-                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
-                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Pete
-                        </p>
-                        <div class="flex justify-start md:justify-center gap-2">
-                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
-                            <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </div>
-                        {{-- Tampilan Mobile --}}
-                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="flex gap-2 text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs justify-center">
-                <button class="p-2 rounded-lg border-2 border-gray-300 hover:bg-gray-300">Sebelumnya</button>
-                <button
-                    class="py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">1</button>
-                <button
-                    class="py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">2</button>
-                <button
-                    class="py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">3</button>
-                <button
-                    class="py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">...</button>
-                <button
-                    class="py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">10</button>
-                <button class="p-2 rounded-lg border-2 border-gray-300 hover:bg-gray-300">Selanjutnya</button>
             </div>
         </div>
     </div>
@@ -397,8 +296,6 @@
                 @endforeach
 
             </div>
-
-
         </div>
 
         <div class="flex mx-12 mt-6 justify-self-end">
@@ -409,8 +306,6 @@
     </div>
 
 
-
-
     <div class="mt-8 px-15">
         <h3 class="font-bold text-2xl sm:text-lg md:text-xl lg:2xl xl:3xl 2xl:4xl">Daftar Harga Bahan Pangan Pasar Kota
             Yogykarta</h3>
@@ -418,37 +313,38 @@
             <div
                 class="grid grid-rows-2 sm:grid sm:grid-rows-2 md:grid md:grid-rows-2 lg:grid lg:grid-rows-2 xl:flex 2xl:flex items-center justify-between mx-12 mr-8">
                 <!-- Filter dan Search -->
-                <div class="flex max-w-full gap-4 items-end">
-                    <div class="text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl">
+                <div class="commodity-filter flex max-w-full gap-4 items-end">
+                    <div>
                         <label for="pasar" class="block">Pilih Pasar</label>
                         <select id="pasar" name="pasar"
                             class="border border-gray-300 rounded-lg p-1 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="#">Semua Pasar</option>
-                            <option value="beringharjo">Pasar Beringharjo</option>
-                            <option value="kranggan">Pasar Kranggan</option>
-                            <option value="demangan">Pasar Demangan</option>
+                            <option value="">Semua Pasar</option>
+                            @foreach ($markets as $m)
+                                <option value="{{ $m->id_market }}">{{ $m->name_market }}</option>
+                            @endforeach
                         </select>
                     </div>
 
-                    <div class="text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl">
+                    <div>
                         <label for="kategori" class="block">Pilih Kategori</label>
-                        <select id="kategori" name="kategori"
-                            class="border border-gray-300 rounded-lg p-1 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="#">Semua Kategori</option>
-                            <option value="beras">Beras</option>
-                            <option value="cabai">Cabai</option>
-                            <option value="telur">Telur</option>
+                        <select id="category_id" name="kategori"
+                            class="category-select border border-gray-300 rounded-lg p-1 md:w-60 w-auto focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Semua Kategori</option>
+                            @foreach ($categories as $c)
+                                <option value="{{ $c->id_category }}">{{ $c->name_category }}</option>
+                            @endforeach
                         </select>
                     </div>
-
-                    <div class="text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl">
-                        <label for="komoditas" class="block">Pilih Bahan Komoditas</label>
-                        <select id="komoditas" name="komoditas"
-                            class="border border-gray-300 rounded-lg p-1 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="#">Semua Komoditas</option>
-                            <option value="beras">Beras</option>
-                            <option value="cabai">Cabai</option>
-                            <option value="telur">Telur</option>
+                    <div>
+                        <label for="commodity" class="block">Pilih Bahan Komoditas</label>
+                        <select id="commodity_id" name="commodity"
+                            class="commodity-select border border-gray-300 rounded-lg p-1 md:w-60 w-auto focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Semua Komoditas</option>
+                            @foreach ($commoditiesDropdown as $com)
+                                <option value="{{ $com->id_commodity }}" data-category="{{ $com->category_id }}">
+                                    {{ $com->name_commodity }}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -459,10 +355,10 @@
 
                 <!-- Indikator Harga -->
                 <div class="flex text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg gap-4 items-center justify-center">
-                    <div class="flex items-center gap-1 text-red-500">
+                    <button class="flex items-center gap-1 text-red-500">
                         <i data-lucide="move-up" class="w-4 h-4"></i>
                         <p>Harga Naik</p>
-                    </div>
+                    </button>
                     <div class="flex items-center gap-1 text-green-500">
                         <i data-lucide="move-down" class="w-4 h-4"></i>
                         <p>Harga Turun</p>
@@ -479,251 +375,6 @@
                 class="flex text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl my-6 mx-12 gap-2 p-2 border-2 bg-gray-200 w-fit rounded-lg border-secondary">
                 <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
                 <p>Menampilkan harga rata-rata di Kota Yogyakarta, pilih pasar dan barang untuk harga yang lebih akurat</p>
-            </div>
-            {{-- card --}}
-            <div
-                class="mx-12 mb-6 grid grid-cols-3 sm:grid md:grid md:grid-cols-2 lg:grid lg:grid-cols-3 xl:grid xl:grid-cols-3 2xl:grid 2xl:grid-cols-3 gap-9 sm:gap-4 md:gap-6 lg:gap-9 xl:gap-9 2xl:gap-9">
-                {{-- card 1 --}}
-                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
-                    {{-- Bagian Gambar --}}
-                    <div>
-                        <img src="{{ asset('images/tomat.png') }}" alt="#" class="w-full bg-clip-content p-4">
-                        {{-- Tampilan Desktop --}}
-                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
-                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">
-                            Tomat</p>
-                        <div class="flex justify-start md:justify-center gap-2">
-                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
-                            <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </div>
-                        {{-- Tampilan Mobile --}}
-                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                </div>
-                {{-- card 2 --}}
-                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
-                    {{-- Bagian Gambar --}}
-                    <div>
-                        <img src="{{ asset('images/bawangP.png') }}" alt="#" class="w-full bg-clip-content p-4">
-                        {{-- Tampilan Desktop --}}
-                        <div class="md:flex hidden text-red-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
-                            <i data-lucide="move-up" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
-                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">
-                            Bawang</p>
-                        <div class="flex justify-start md:justify-center gap-2">
-                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
-                            <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </div>
-                        {{-- Tampilan Mobile --}}
-                        <div class="flex md:hidden text-red-500 items-center text-xs mt-4 md:mb-6 gap-1">
-                            <i data-lucide="move-up" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                </div>
-                {{-- card 3 --}}
-                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
-                    {{-- Bagian Gambar --}}
-                    <div>
-                        <img src="{{ asset('images/pete.png') }}" alt="#" class="w-full bg-clip-content p-4">
-                        {{-- Tampilan Desktop --}}
-                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
-                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Pete
-                        </p>
-                        <div class="flex justify-start md:justify-center gap-2">
-                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
-                            <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </div>
-                        {{-- Tampilan Mobile --}}
-                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                </div>
-                {{-- card 4 --}}
-                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
-                    {{-- Bagian Gambar --}}
-                    <div>
-                        <img src="{{ asset('images/tomat.png') }}" alt="#" class="w-full bg-clip-content p-4">
-                        {{-- Tampilan Desktop --}}
-                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
-                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">
-                            Tomat</p>
-                        <div class="flex justify-start md:justify-center gap-2">
-                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
-                            <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </div>
-                        {{-- Tampilan Mobile --}}
-                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                </div>
-                {{-- card 5 --}}
-                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
-                    {{-- Bagian Gambar --}}
-                    <div>
-                        <img src="{{ asset('images/bawangP.png') }}" alt="#" class="w-full bg-clip-content p-4">
-                        {{-- Tampilan Desktop --}}
-                        <div class="md:flex hidden text-red-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
-                            <i data-lucide="move-up" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
-                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">
-                            Bawang</p>
-                        <div class="flex justify-start md:justify-center gap-2">
-                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
-                            <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </div>
-                        {{-- Tampilan Mobile --}}
-                        <div class="flex md:hidden text-red-500 items-center text-xs mt-4 md:mb-6 gap-1">
-                            <i data-lucide="move-up" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                </div>
-                {{-- card 6 --}}
-                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
-                    {{-- Bagian Gambar --}}
-                    <div>
-                        <img src="{{ asset('images/pete.png') }}" alt="#" class="w-full bg-clip-content p-4">
-                        {{-- Tampilan Desktop --}}
-                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
-                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Pete
-                        </p>
-                        <div class="flex justify-start md:justify-center gap-2">
-                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
-                            <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </div>
-                        {{-- Tampilan Mobile --}}
-                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                </div>
-                {{-- card 7 --}}
-                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
-                    {{-- Bagian Gambar --}}
-                    <div>
-                        <img src="{{ asset('images/tomat.png') }}" alt="#" class="w-full bg-clip-content p-4">
-                        {{-- Tampilan Desktop --}}
-                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
-                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">
-                            Tomat</p>
-                        <div class="flex justify-start md:justify-center gap-2">
-                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
-                            <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </div>
-                        {{-- Tampilan Mobile --}}
-                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                </div>
-                {{-- card 8 --}}
-                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
-                    {{-- Bagian Gambar --}}
-                    <div>
-                        <img src="{{ asset('images/bawangP.png') }}" alt="#" class="w-full bg-clip-content p-4">
-                        {{-- Tampilan Desktop --}}
-                        <div class="md:flex hidden text-red-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
-                            <i data-lucide="move-up" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
-                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">
-                            Bawang</p>
-                        <div class="flex justify-start md:justify-center gap-2">
-                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
-                            <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </div>
-                        {{-- Tampilan Mobile --}}
-                        <div class="flex md:hidden text-red-500 items-center text-xs mt-4 md:mb-6 gap-1">
-                            <i data-lucide="move-up" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                </div>
-                {{-- card 9 --}}
-                <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
-                    {{-- Bagian Gambar --}}
-                    <div>
-                        <img src="{{ asset('images/pete.png') }}" alt="#" class="w-full bg-clip-content p-4">
-                        {{-- Tampilan Desktop --}}
-                        <div class="md:flex hidden text-green-500 items-center text-xs md:mx-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                    <div class="md:mt-4 md:mr-4 md:pl-0 pl-4">
-                        <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">Pete
-                        </p>
-                        <div class="flex justify-start md:justify-center gap-2">
-                            <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">Rp. 11.000/kg</p>
-                            <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                        </div>
-                        {{-- Tampilan Mobile --}}
-                        <div class="flex md:hidden text-green-500 items-center text-xs mt-4 md:mb-6 gap-1">
-                            <i data-lucide="move-down" class="h-4 w-4"></i>
-                            <p class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs">2,5% (Rp 120)</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="flex gap-2 justify-center">
-                <button
-                    class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs p-2 rounded-lg border-2 border-gray-300 hover:bg-gray-300">Sebelumnya</button>
-                <button
-                    class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">1</button>
-                <button
-                    class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">2</button>
-                <button
-                    class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">3</button>
-                <button
-                    class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">...</button>
-                <button
-                    class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs py-2 px-3 rounded-lg border-2 border-gray-300 active:bg-slate-500 hover:bg-slate-500">10</button>
-                <button
-                    class="text-base sm:text-xs md:text-xs lg:text-xs xl:text-xs 2xl:text-xs p-2 rounded-lg border-2 border-gray-300 hover:bg-gray-300">Selanjutnya</button>
             </div>
         </div>
     </div>
@@ -768,13 +419,180 @@
                         </li>
                     @endforeach
                 </ul>
-
             </div>
         </div>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
 
+            @foreach ($commodities as $item)
+                @php
+                    $chartId = $item->id_commodity ?? ($item->id ?? $loop->index);
+                @endphp
 
+                @if (!empty($item->chart_prices) && count($item->chart_prices) >= 2)
+                    const el{{ $chartId }} = document.querySelector('#chart-{{ $chartId }}');
+
+                    if (el{{ $chartId }}) {
+                        new ApexCharts(el{{ $chartId }}, {
+                            chart: {
+                                type: 'area',
+                                height: 70,
+                                sparkline: {
+                                    enabled: true
+                                }
+                            },
+                            stroke: {
+                                curve: 'smooth',
+                                width: 2
+                            },
+                            fill: {
+                                type: 'gradient',
+                                gradient: {
+                                    opacityFrom: 0.35,
+                                    opacityTo: 0.05
+                                }
+                            },
+                            series: [{
+                                name: 'Harga',
+                                data: @json($item->chart_prices)
+                            }],
+                            xaxis: {
+                                type: 'datetime'
+                            },
+                            colors: [
+                                '{{ isset($item->trend) && $item->trend === 'up' ? '#ef4444' : '#22c55e' }}'
+                            ],
+                            tooltip: {
+                                x: {
+                                    format: 'dd MMMM yyyy'
+                                },
+                                y: {
+                                    formatter: val => 'Rp ' + val.toLocaleString('id-ID')
+                                }
+                            }
+                        }).render();
+                    }
+                @endif
+            @endforeach
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            document.querySelectorAll('.market-chart').forEach(el => {
+
+                const data = JSON.parse(el.dataset.chart || '[]');
+                if (!Array.isArray(data) || data.length < 2) return;
+
+                data.sort((a, b) => new Date(a.x) - new Date(b.x));
+
+                const first = Number(data[0].y);
+                const last = Number(data[data.length - 1].y);
+
+                console.log('FIRST:', first, 'LAST:', last);
+
+                let color = '#9ca3af';
+                if (last > first) color = '#ef4444'; // mahal
+                else if (last < first) color = '#22c55e'; // murah
+
+                el.innerHTML = '';
+
+                new ApexCharts(el, {
+                    chart: {
+                        type: 'area',
+                        height: 70,
+                        sparkline: {
+                            enabled: true
+                        }
+                    },
+                    stroke: {
+                        curve: 'smooth',
+                        width: 2
+                    },
+                    fill: {
+                        type: 'gradient',
+                        gradient: {
+                            opacityFrom: 0.35,
+                            opacityTo: 0.05
+                        }
+                    },
+                    series: [{
+                        name: 'Harga',
+                        data: data
+                    }],
+                    xaxis: {
+                        type: 'datetime'
+                    },
+                    tooltip: {
+                        y: {
+                            formatter: v => 'Rp ' + Number(v).toLocaleString('id-ID')
+                        }
+                    },
+                    colors: [color] // ✅ FIX FINAL
+                }).render();
+
+            });
+
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            document.querySelectorAll('.commodity-filter').forEach(wrapper => {
+
+                const categorySelect = wrapper.querySelector('.category-select');
+                const commoditySelect = wrapper.querySelector('.commodity-select');
+
+                const allOptions = Array.from(commoditySelect.options);
+
+                categorySelect.addEventListener('change', function() {
+                    const selectedCategory = String(this.value);
+
+                    commoditySelect.innerHTML = '';
+                    commoditySelect.appendChild(allOptions[0]); // Semua Komoditas
+
+                    allOptions.slice(1).forEach(option => {
+                        if (
+                            selectedCategory === '' ||
+                            String(option.dataset.category) === selectedCategory
+                        ) {
+                            commoditySelect.appendChild(option);
+                        }
+                    });
+                });
+                if (categorySelect.value !== '') {
+                    categorySelect.dispatchEvent(new Event('change'));
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const commoditySelect = document.querySelector('.commodity-select');
+            const allMarketOption = document.getElementById('allMarketOption');
+            const marketSelect = document.getElementById('marketSelect');
+
+            function toggleAllMarket() {
+                const hasCommodity = commoditySelect.value !== '';
+
+                // tampilkan SEMUA PASAR hanya jika komoditas dipilih
+                allMarketOption.hidden = !hasCommodity;
+
+                // jika komoditas dikosongkan & posisi di ALL → reset ke AVG
+                if (!hasCommodity && marketSelect.value === 'all') {
+                    marketSelect.value = 'avg';
+                }
+            }
+
+            commoditySelect.addEventListener('change', toggleAllMarket);
+            toggleAllMarket(); // init
+        });
+    </script>
 
 
 @endsection
