@@ -1,4 +1,4 @@
-<div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
+<div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl shadow-md">
     {{-- Gambar & Pasar --}}
     <div class="p-4 flex flex-col gap-5">
         <img src="{{ $item->image_url }}" alt="{{ $item->name_commodity }}" class="rounded-lg w-42 h-33 object-cover">

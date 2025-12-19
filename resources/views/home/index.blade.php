@@ -34,18 +34,18 @@
 
 @section('content')
     <div class="mt-8 px-15">
-        <h3 id="hargaKomoditas" class="font-bold text-2xl sm:text-lg md:text-xl lg:2xl xl:3xl 2xl:4xl">Harga Barang
+        <h3 id="hargaKomoditas" class="font-bold text-2xl sm:text-lg md:text-3xl lg:2xl xl:3xl 2xl:4xl">Harga Barang
             Komoditas
             Bahan Pangan Kota
             Yogyakarta</h3>
-        <div class="my-7 py-6 border rounded-lg border-gray-300">
+        <div class="my-7 py-6 border rounded-lg bg-white border-gray-300">
             <form action="{{ route('home.index') }}#commodity-section" class="flex justify-between" method="GET">
                 <div
                     class="commodity-filter flex gap-4 mx-12 text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl">
                     <div>
                         <label for="kategori" class="block">Pilih Kategori</label>
                         <select name="kategori"
-                            class="category-select border border-gray-300 rounded-lg p-1 md:w-60 w-auto focus:ring-blue-500 focus:border-blue-500">
+                            class="category-select border border-gray-400 bg-gray-100 rounded-lg p-1 md:w-60 w-auto focus:ring-blue-500 focus:border-blue-500">
                             <option value="">Semua Kategori</option>
                             @foreach ($categories as $c)
                                 <option value="{{ $c->id_category }}"
@@ -57,7 +57,7 @@
                     <div>
                         <label for="commodity" class="block">Pilih Bahan Komoditas</label>
                         <select name="commodity"
-                            class="commodity-select border border-gray-300 rounded-lg p-1 md:w-60 w-auto focus:ring-blue-500 focus:border-blue-500">
+                            class="commodity-select border border-gray-400 bg-gray-100 rounded-lg p-1 md:w-60 w-auto focus:ring-blue-500 focus:border-blue-500">
                             <option value="">Semua Komoditas</option>
                             @foreach ($commoditiesDropdown as $com)
                                 <option value="{{ $com->id_commodity }}" data-category="{{ $com->category_id }}"
@@ -70,7 +70,7 @@
                     <div>
                         <label for="market" class="block">Pilih Pasar</label>
                         <select name="market" id="marketSelect"
-                            class="border border-gray-300 rounded-lg p-1 md:w-60 w-auto
+                            class="border border-gray-400 bg-gray-100 rounded-lg p-1 md:w-60 w-auto
                             focus:ring-blue-500 focus:border-blue-500">
 
                             {{-- MODE AVG --}}
@@ -99,7 +99,8 @@
                     </button>
                 </div>
 
-                <div class="flex text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg gap-4 items-center justify-center mr-10">
+                <div
+                    class="flex text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg gap-4 items-center justify-center mr-10">
                     <button class="flex items-center gap-1 text-red-500">
                         <i data-lucide="move-up" class="w-4 h-4"></i>
                         <p>Harga Naik</p>
@@ -307,77 +308,134 @@
 
 
     <div class="mt-8 px-15">
-        <h3 class="font-bold text-2xl sm:text-lg md:text-xl lg:2xl xl:3xl 2xl:4xl">Daftar Harga Bahan Pangan Pasar Kota
-            Yogykarta</h3>
-        <div class="my-7 py-6 border rounded-lg border-gray-300">
-            <div
-                class="grid grid-rows-2 sm:grid sm:grid-rows-2 md:grid md:grid-rows-2 lg:grid lg:grid-rows-2 xl:flex 2xl:flex items-center justify-between mx-12 mr-8">
-                <!-- Filter dan Search -->
-                <div class="commodity-filter flex max-w-full gap-4 items-end">
-                    <div>
-                        <label for="pasar" class="block">Pilih Pasar</label>
-                        <select id="pasar" name="pasar"
-                            class="border border-gray-300 rounded-lg p-1 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Semua Pasar</option>
-                            @foreach ($markets as $m)
-                                <option value="{{ $m->id_market }}">{{ $m->name_market }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+        <h3 class="font-bold text-2xl sm:text-lg md:text-3xl lg:2xl xl:3xl 2xl:4xl">
+            Komparasi Harga Antar Pasar
+        </h3>
 
-                    <div>
-                        <label for="kategori" class="block">Pilih Kategori</label>
-                        <select id="category_id" name="kategori"
-                            class="category-select border border-gray-300 rounded-lg p-1 md:w-60 w-auto focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Semua Kategori</option>
-                            @foreach ($categories as $c)
-                                <option value="{{ $c->id_category }}">{{ $c->name_category }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label for="commodity" class="block">Pilih Bahan Komoditas</label>
-                        <select id="commodity_id" name="commodity"
-                            class="commodity-select border border-gray-300 rounded-lg p-1 md:w-60 w-auto focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Semua Komoditas</option>
-                            @foreach ($commoditiesDropdown as $com)
-                                <option value="{{ $com->id_commodity }}" data-category="{{ $com->category_id }}">
-                                    {{ $com->name_commodity }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+        <div class="my-7 flex flex-col lg:flex-row gap-6">
 
-                    <button class="p-2 w-8 h-8 rounded-lg bg-secondary cursor-pointer flex items-center justify-center">
-                        <i data-lucide="search" class="w-4 h-4 text-white"></i>
-                    </button>
+        
+            <div class="lg:w-80 bg-white border border-gray-300 rounded-lg p-6 shrink-0">
+                <h4 class="font-bold text-lg mb-4 text-gray-800">
+                    Tentukan data yang ingin ditampilkan
+                </h4>
+
+                {{-- PILIH PASAR --}}
+                <div class="mb-6">
+                    <label class="block font-semibold text-gray-700 mb-2">Pasar</label>
+                    <div class="space-y-2 max-h-48 overflow-y-auto border border-gray-300 rounded-lg p-3">
+                        @foreach ($markets as $market)
+                            <label
+                                class="flex items-center space-x-2 cursor-pointer hover:bg-blue-50 p-2 rounded transition">
+                                <input type="checkbox" name="comparison_markets[]" value="{{ $market->id_market }}"
+                                    data-market-name="{{ $market->name_market }}"
+                                    class="comparison-market-checkbox w-4 h-4 text-blue-600 rounded">
+                                <span class="text-sm text-gray-700">{{ $market->name_market }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">
+                        Pilih minimal 2 pasar (maksimal 5)
+                    </p>
                 </div>
 
-                <!-- Indikator Harga -->
-                <div class="flex text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg gap-4 items-center justify-center">
-                    <button class="flex items-center gap-1 text-red-500">
-                        <i data-lucide="move-up" class="w-4 h-4"></i>
-                        <p>Harga Naik</p>
-                    </button>
-                    <div class="flex items-center gap-1 text-green-500">
-                        <i data-lucide="move-down" class="w-4 h-4"></i>
-                        <p>Harga Turun</p>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <i data-lucide="minus" class="w-4 h-4"></i>
-                        <p>Harga Tetap</p>
-                    </div>
+                {{-- PILIH KOMODITAS --}}
+                <div class="mb-6">
+                    <label class="block font-semibold text-gray-700 mb-2">Komoditas</label>
+                    <select id="comp_commodity" class="w-full border border-gray-400 bg-gray-100 rounded-lg p-2">
+                        <option value="">Pilih Komoditas</option>
+                        @foreach ($commoditiesDropdown as $com)
+                            <option value="{{ $com->id_commodity }}">
+                                {{ $com->name_commodity }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
+
+                {{-- TANGGAL --}}
+                <div class="mb-6">
+                    <label class="block font-semibold text-gray-700 mb-2">Dari Tanggal</label>
+                    <input type="date" id="comp_date_from" value="{{ now()->subDays(6)->format('Y-m-d') }}"
+                        class="w-full border border-gray-400 bg-gray-100 rounded-lg p-2">
+                </div>
+
+                <div class="mb-6">
+                    <label class="block font-semibold text-gray-700 mb-2">Sampai Tanggal</label>
+                    <input type="date" id="comp_date_to" value="{{ now()->format('Y-m-d') }}"
+                        class="w-full border border-gray-400 bg-gray-100 rounded-lg p-2">
+                </div>
+
+                <button id="btn-compare"
+                    class="w-full bg-secondary hover:bg-blue-600 text-white font-semibold py-3 rounded-lg">
+                    Tampilkan
+                </button>
             </div>
 
-            <hr class="mt-6 opacity-20">
-            <div
-                class="flex text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl my-6 mx-12 gap-2 p-2 border-2 bg-gray-200 w-fit rounded-lg border-secondary">
-                <i data-lucide="circle-alert" class="w-5 h-5 text-white bg-secondary rounded-full"></i>
-                <p>Menampilkan harga rata-rata di Kota Yogyakarta, pilih pasar dan barang untuk harga yang lebih akurat</p>
+        
+            <div class="flex-1 bg-white border border-gray-300 rounded-lg p-8 min-h-[500px] relative">
+
+                {{-- INITIAL STATE --}}
+                <div id="comparison-initial"
+                    class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                    <i data-lucide="bar-chart-3" class="w-16 h-16 text-gray-300 mb-4"></i>
+                    <h4 class="text-xl font-semibold text-gray-600 mb-2">
+                        Belum ada data yang ditampilkan
+                    </h4>
+                    <p class="text-gray-500 max-w-sm">
+                        Pilih pasar dan komoditas di samping, lalu klik "Tampilkan"
+                    </p>
+                </div>
+
+                {{-- LOADING STATE --}}
+                <div id="comparison-loading" class="hidden absolute inset-0 flex flex-col items-center justify-center">
+                    <i data-lucide="loader-2" class="w-12 h-12 text-blue-500 animate-spin mb-4"></i>
+                    <p class="text-gray-600 font-medium">
+                        Memuat data perbandingan...
+                    </p>
+                </div>
+
+                {{-- RESULT STATE --}}
+                <div id="comparison-result" class="hidden">
+                    
+                    <div class="mb-6">
+                        <h3 id="comparison-title" class="text-2xl font-bold text-gray-800 mb-1"></h3>
+                        <p id="comparison-date-range" class="text-sm text-gray-600"></p>
+                    </div>
+
+                    
+                    <div class="border border-gray-200 rounded-lg p-4 mb-6">
+                        <div id="comparison-chart" class="h-[400px]"></div>
+                    </div>
+
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        
+                        <div class="bg-green-50 border-2 border-green-500 rounded-lg p-4">
+                            <p class="text-sm font-semibold text-green-700">Harga Termurah</p>
+                            <p id="stat-min-price" class="text-2xl font-bold text-green-600">-</p>
+                            <p id="stat-min-market" class="text-sm text-gray-700">-</p>
+                        </div>
+
+                        
+                        <div class="bg-red-50 border-2 border-red-500 rounded-lg p-4">
+                            <p class="text-sm font-semibold text-red-700">Harga Termahal</p>
+                            <p id="stat-max-price" class="text-2xl font-bold text-red-600">-</p>
+                            <p id="stat-max-market" class="text-sm text-gray-700">-</p>
+                        </div>
+
+                       
+                        <div class="bg-blue-50 border-2 border-blue-500 rounded-lg p-4">
+                            <p class="text-sm font-semibold text-blue-700">Selisih Harga</p>
+                            <p id="stat-diff-price" class="text-2xl font-bold text-blue-600">-</p>
+                            <p id="stat-diff-percent" class="text-sm text-gray-700">-</p>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
+
 
     <!-- LIST PASAR -->
     <div class="bg-white border rounded-lg border-gray-300 py-12 px-16 mx-15 mb-10">
@@ -591,6 +649,297 @@
 
             commoditySelect.addEventListener('change', toggleAllMarket);
             toggleAllMarket(); // init
+        });
+    </script>
+
+    {{-- SCRIPT KOMPARASI --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Checkbox limit (max 5)
+            const checkboxes = document.querySelectorAll('.comparison-market-checkbox');
+            const maxMarkets = 5;
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const checkedCount = document.querySelectorAll(
+                        '.comparison-market-checkbox:checked').length;
+
+                    if (checkedCount >= maxMarkets) {
+                        checkboxes.forEach(cb => {
+                            if (!cb.checked) cb.disabled = true;
+                        });
+                    } else {
+                        checkboxes.forEach(cb => cb.disabled = false);
+                    }
+                });
+            });
+
+            // Date validation (from <= to)
+            const dateFrom = document.getElementById('comp_date_from');
+            const dateTo = document.getElementById('comp_date_to');
+
+            dateFrom.addEventListener('change', function() {
+                if (this.value > dateTo.value) {
+                    dateTo.value = this.value;
+                }
+            });
+
+            dateTo.addEventListener('change', function() {
+                if (this.value < dateFrom.value) {
+                    dateFrom.value = this.value;
+                }
+            });
+
+            // Button Compare Click
+            const btnCompare = document.getElementById('btn-compare');
+            const compCommodity = document.getElementById('comp_commodity');
+
+            const initialState = document.getElementById('comparison-initial');
+            const loadingState = document.getElementById('comparison-loading');
+            const resultState = document.getElementById('comparison-result');
+
+            let comparisonChartInstance = null;
+
+            btnCompare.addEventListener('click', function() {
+                const commodityId = compCommodity.value;
+                const selectedMarkets = Array.from(document.querySelectorAll(
+                    '.comparison-market-checkbox:checked'));
+
+                // Validation
+                if (!commodityId) {
+                    alert('Pilih komoditas terlebih dahulu!');
+                    return;
+                }
+
+                if (selectedMarkets.length < 2) {
+                    alert('Pilih minimal 2 pasar untuk dibandingkan!');
+                    return;
+                }
+
+                const marketIds = selectedMarkets.map(m => m.value);
+                const from = dateFrom.value;
+                const to = dateTo.value;
+
+                console.log('Market IDs:', marketIds);
+                console.log('Commodity ID:', commodityId);
+
+                // Show loading & hide others
+                initialState.classList.add('hidden');
+                resultState.classList.add('hidden');
+                loadingState.classList.remove('hidden');
+
+                // Fetch data
+                const url =
+                    `{{ route('comparison.data') }}?commodity_id=${commodityId}&market_ids[]=${marketIds.join('&market_ids[]=')}&date_from=${from}&date_to=${to}`;
+
+                console.log('Fetching:', url);
+
+                fetch(url)
+                    .then(res => {
+                        console.log('Response status:', res.status);
+                        if (!res.ok) {
+                            throw new Error(`HTTP ${res.status}`);
+                        }
+                        return res.json();
+                    })
+                    .then(data => {
+                        console.log('Data received:', data);
+
+                        if (!data.success) {
+                            throw new Error(data.error || 'Unknown error');
+                        }
+
+                        loadingState.classList.add('hidden');
+                        initialState.classList.add('hidden');
+                        resultState.classList.remove('hidden');
+
+                        renderComparison(data);
+
+                        // Re-render Lucide icons after DOM update
+                        setTimeout(() => {
+                            lucide.createIcons();
+                        }, 100);
+                    })
+                    .catch(err => {
+                        console.error('Error:', err);
+                        loadingState.classList.add('hidden');
+                        resultState.classList.add('hidden');
+                        initialState.classList.remove('hidden');
+                        alert('Gagal memuat data: ' + err.message);
+                    });
+            });
+
+            function renderComparison(data) {
+                console.log('Rendering comparison...');
+
+                // Update title
+                document.getElementById('comparison-title').textContent =
+                    `Statistik Perbandingan Harga ${data.commodity_name}, ${data.unit}`;
+
+                document.getElementById('comparison-date-range').textContent =
+                    `${formatDate(data.date_from)} - ${formatDate(data.date_to)}`;
+
+                const markets = data.markets;
+                console.log('Markets data:', markets);
+
+                if (!markets || markets.length === 0) {
+                    alert('Tidak ada data untuk ditampilkan');
+                    return;
+                }
+
+                // Calculate min/max
+                const allPrices = markets.map(m => m.latest_price).filter(p => p !== null && p > 0);
+
+                if (allPrices.length === 0) {
+                    alert('Tidak ada data harga untuk periode ini');
+                    return;
+                }
+
+                const minPrice = Math.min(...allPrices);
+                const maxPrice = Math.max(...allPrices);
+
+                const minMarket = markets.find(m => m.latest_price === minPrice);
+                const maxMarket = markets.find(m => m.latest_price === maxPrice);
+
+                console.log('Min price:', minPrice, 'Max price:', maxPrice);
+
+                // Update statistics
+                document.getElementById('stat-min-price').textContent = `Rp ${minPrice.toLocaleString('id-ID')}`;
+                document.getElementById('stat-min-market').textContent = minMarket.market_name;
+
+                document.getElementById('stat-max-price').textContent = `Rp ${maxPrice.toLocaleString('id-ID')}`;
+                document.getElementById('stat-max-market').textContent = maxMarket.market_name;
+
+                const priceDiff = maxPrice - minPrice;
+                const percentDiff = ((priceDiff / minPrice) * 100).toFixed(1);
+                document.getElementById('stat-diff-price').textContent = `Rp ${priceDiff.toLocaleString('id-ID')}`;
+                document.getElementById('stat-diff-percent').textContent = `${percentDiff}% dari harga termurah`;
+
+                // Render chart
+                renderChart(markets);
+            }
+
+            function renderChart(markets) {
+                console.log('Rendering chart with markets:', markets);
+
+                const series = markets.map(market => {
+                    console.log(`${market.market_name} chart data:`, market.chart_data);
+                    return {
+                        name: market.market_name,
+                        data: market.chart_data || []
+                    };
+                });
+
+                console.log('Chart series:', series);
+
+                const options = {
+                    chart: {
+                        type: 'area',
+                        height: 400,
+                        toolbar: {
+                            show: true,
+                            tools: {
+                                download: true,
+                                zoom: true,
+                                pan: false
+                            }
+                        },
+                        zoom: {
+                            enabled: true
+                        },
+                        animations: {
+                            enabled: true
+                        }
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    stroke: {
+                        curve: 'smooth',
+                        width: 3
+                    },
+                    fill: {
+                        type: 'gradient',
+                        gradient: {
+                            opacityFrom: 0.6,
+                            opacityTo: 0.1,
+                        }
+                    },
+                    series: series,
+                    xaxis: {
+                        type: 'datetime',
+                        labels: {
+                            format: 'dd MMM',
+                            style: {
+                                fontSize: '12px'
+                            }
+                        }
+                    },
+                    yaxis: {
+                        labels: {
+                            formatter: val => 'Rp ' + Math.round(val).toLocaleString('id-ID'),
+                            style: {
+                                fontSize: '12px'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        x: {
+                            format: 'dd MMMM yyyy'
+                        },
+                        y: {
+                            formatter: val => 'Rp ' + Math.round(val).toLocaleString('id-ID')
+                        }
+                    },
+                    colors: ['#3B82F6', '#F59E0B', '#10B981', '#EF4444', '#8B5CF6'],
+                    legend: {
+                        position: 'bottom',
+                        horizontalAlign: 'center',
+                        fontSize: '14px',
+                        markers: {
+                            width: 12,
+                            height: 12,
+                            radius: 12
+                        }
+                    },
+                    grid: {
+                        borderColor: '#e5e7eb',
+                        strokeDashArray: 4
+                    }
+                };
+
+                // Destroy previous chart if exists
+                if (comparisonChartInstance) {
+                    console.log('Destroying previous chart...');
+                    comparisonChartInstance.destroy();
+                }
+
+                const chartElement = document.querySelector('#comparison-chart');
+                console.log('Chart element:', chartElement);
+
+                if (!chartElement) {
+                    console.error('Chart element not found!');
+                    return;
+                }
+
+                comparisonChartInstance = new ApexCharts(chartElement, options);
+
+                console.log('Rendering chart...');
+                comparisonChartInstance.render().then(() => {
+                    console.log('Chart rendered successfully!');
+                }).catch(err => {
+                    console.error('Chart render error:', err);
+                });
+            }
+
+            function formatDate(dateStr) {
+                const date = new Date(dateStr);
+                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                ];
+                return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+            }
         });
     </script>
 

@@ -1,4 +1,4 @@
-<div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl">
+<div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl shadow-md">
 
     {{-- Gambar & Trend Desktop --}}
     <div>

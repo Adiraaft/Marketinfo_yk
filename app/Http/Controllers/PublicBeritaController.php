@@ -491,4 +491,85 @@ class PublicBeritaController extends Controller
             'mode'
         ));
     }
+
+    public function getComparisonData(Request $request)
+    {
+        $commodityId = $request->commodity_id;
+        $marketIds = $request->market_ids;
+        $dateFrom = $request->date_from ?? now()->subDays(6)->toDateString();
+        $dateTo = $request->date_to ?? now()->toDateString();
+        
+        // Validation
+        if (!$commodityId || !$marketIds || !is_array($marketIds) || count($marketIds) < 2) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Pilih minimal 2 pasar dan 1 komoditas'
+            ], 400);
+        }
+
+        try {
+            $commodity = Commodity::with('unit')->findOrFail($commodityId);
+            
+            $comparisonData = [];
+            
+            foreach ($marketIds as $marketId) {
+                $market = Market::findOrFail($marketId);
+                
+                // Ambil harga terbaru dalam range tanggal
+                $latestDate = DB::table('prices')
+                    ->where('commodity_id', $commodityId)
+                    ->where('market_id', $marketId)
+                    ->whereBetween('date', [$dateFrom, $dateTo])
+                    ->max('date');
+                
+                $latestPrice = null;
+                if ($latestDate) {
+                    $latestPrice = DB::table('prices')
+                        ->where('commodity_id', $commodityId)
+                        ->where('market_id', $marketId)
+                        ->where('date', $latestDate)
+                        ->value('price');
+                }
+                
+                // Ambil data chart dalam range tanggal
+                $chartData = DB::table('prices')
+                    ->select('date', 'price')
+                    ->where('commodity_id', $commodityId)
+                    ->where('market_id', $marketId)
+                    ->whereBetween('date', [$dateFrom, $dateTo])
+                    ->orderBy('date')
+                    ->get()
+                    ->map(fn($r) => [
+                        'x' => $r->date,
+                        'y' => (int) $r->price
+                    ])
+                    ->values()
+                    ->toArray();
+                
+                $comparisonData[] = [
+                    'market_id' => $marketId,
+                    'market_name' => $market->name_market,
+                    'latest_price' => (int) $latestPrice,
+                    'latest_date' => $latestDate,
+                    'chart_data' => $chartData
+                ];
+            }
+            
+            return response()->json([
+                'success' => true,
+                'commodity_name' => $commodity->name_commodity,
+                'unit' => $commodity->unit->unit_name ?? 'kg',
+                'date_from' => $dateFrom,
+                'date_to' => $dateTo,
+                'markets' => $comparisonData
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Comparison Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
