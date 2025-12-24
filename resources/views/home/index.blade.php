@@ -175,9 +175,7 @@
 
                     @if ($mode === 'ONE_ALL_MARKET')
                         @foreach ($commodities as $item)
-                            @foreach ($item->market_prices as $market)
-                                @include('components.card-market-compare', compact('item', 'market'))
-                            @endforeach
+                            @include('components.card-market-compare', ['item' => $item])
                         @endforeach
                     @endif
 
@@ -307,14 +305,14 @@
     </div>
 
 
-    <div class="mt-8 px-15">
+    <div id="comparison-root" data-url="{{ route('comparison.data') }}" class="mt-8 px-15">
         <h3 class="font-bold text-2xl sm:text-lg md:text-3xl lg:2xl xl:3xl 2xl:4xl">
             Komparasi Harga Antar Pasar
         </h3>
 
         <div class="my-7 flex flex-col lg:flex-row gap-6">
 
-        
+
             <div class="lg:w-80 bg-white border border-gray-300 rounded-lg p-6 shrink-0">
                 <h4 class="font-bold text-lg mb-4 text-gray-800">
                     Tentukan data yang ingin ditampilkan
@@ -365,13 +363,12 @@
                         class="w-full border border-gray-400 bg-gray-100 rounded-lg p-2">
                 </div>
 
-                <button id="btn-compare"
-                    class="w-full bg-secondary hover:bg-blue-600 text-white font-semibold py-3 rounded-lg">
+                <button id="btn-compare" class="w-full bg-secondary text-white font-semibold py-3 rounded-lg">
                     Tampilkan
                 </button>
             </div>
 
-        
+
             <div class="flex-1 bg-white border border-gray-300 rounded-lg p-8 min-h-[500px] relative">
 
                 {{-- INITIAL STATE --}}
@@ -396,34 +393,34 @@
 
                 {{-- RESULT STATE --}}
                 <div id="comparison-result" class="hidden">
-                    
+
                     <div class="mb-6">
                         <h3 id="comparison-title" class="text-2xl font-bold text-gray-800 mb-1"></h3>
                         <p id="comparison-date-range" class="text-sm text-gray-600"></p>
                     </div>
 
-                    
+
                     <div class="border border-gray-200 rounded-lg p-4 mb-6">
                         <div id="comparison-chart" class="h-[400px]"></div>
                     </div>
 
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        
+
                         <div class="bg-green-50 border-2 border-green-500 rounded-lg p-4">
                             <p class="text-sm font-semibold text-green-700">Harga Termurah</p>
                             <p id="stat-min-price" class="text-2xl font-bold text-green-600">-</p>
                             <p id="stat-min-market" class="text-sm text-gray-700">-</p>
                         </div>
 
-                        
+
                         <div class="bg-red-50 border-2 border-red-500 rounded-lg p-4">
                             <p class="text-sm font-semibold text-red-700">Harga Termahal</p>
                             <p id="stat-max-price" class="text-2xl font-bold text-red-600">-</p>
                             <p id="stat-max-market" class="text-sm text-gray-700">-</p>
                         </div>
 
-                       
+
                         <div class="bg-blue-50 border-2 border-blue-500 rounded-lg p-4">
                             <p class="text-sm font-semibold text-blue-700">Selisih Harga</p>
                             <p id="stat-diff-price" class="text-2xl font-bold text-blue-600">-</p>
@@ -480,468 +477,4 @@
             </div>
         </div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-            @foreach ($commodities as $item)
-                @php
-                    $chartId = $item->id_commodity ?? ($item->id ?? $loop->index);
-                @endphp
-
-                @if (!empty($item->chart_prices) && count($item->chart_prices) >= 2)
-                    const el{{ $chartId }} = document.querySelector('#chart-{{ $chartId }}');
-
-                    if (el{{ $chartId }}) {
-                        new ApexCharts(el{{ $chartId }}, {
-                            chart: {
-                                type: 'area',
-                                height: 70,
-                                sparkline: {
-                                    enabled: true
-                                }
-                            },
-                            stroke: {
-                                curve: 'smooth',
-                                width: 2
-                            },
-                            fill: {
-                                type: 'gradient',
-                                gradient: {
-                                    opacityFrom: 0.35,
-                                    opacityTo: 0.05
-                                }
-                            },
-                            series: [{
-                                name: 'Harga',
-                                data: @json($item->chart_prices)
-                            }],
-                            xaxis: {
-                                type: 'datetime'
-                            },
-                            colors: [
-                                '{{ isset($item->trend) && $item->trend === 'up' ? '#ef4444' : '#22c55e' }}'
-                            ],
-                            tooltip: {
-                                x: {
-                                    format: 'dd MMMM yyyy'
-                                },
-                                y: {
-                                    formatter: val => 'Rp ' + val.toLocaleString('id-ID')
-                                }
-                            }
-                        }).render();
-                    }
-                @endif
-            @endforeach
-        });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-            document.querySelectorAll('.market-chart').forEach(el => {
-
-                const data = JSON.parse(el.dataset.chart || '[]');
-                if (!Array.isArray(data) || data.length < 2) return;
-
-                data.sort((a, b) => new Date(a.x) - new Date(b.x));
-
-                const first = Number(data[0].y);
-                const last = Number(data[data.length - 1].y);
-
-                console.log('FIRST:', first, 'LAST:', last);
-
-                let color = '#9ca3af';
-                if (last > first) color = '#ef4444'; // mahal
-                else if (last < first) color = '#22c55e'; // murah
-
-                el.innerHTML = '';
-
-                new ApexCharts(el, {
-                    chart: {
-                        type: 'area',
-                        height: 70,
-                        sparkline: {
-                            enabled: true
-                        }
-                    },
-                    stroke: {
-                        curve: 'smooth',
-                        width: 2
-                    },
-                    fill: {
-                        type: 'gradient',
-                        gradient: {
-                            opacityFrom: 0.35,
-                            opacityTo: 0.05
-                        }
-                    },
-                    series: [{
-                        name: 'Harga',
-                        data: data
-                    }],
-                    xaxis: {
-                        type: 'datetime'
-                    },
-                    tooltip: {
-                        y: {
-                            formatter: v => 'Rp ' + Number(v).toLocaleString('id-ID')
-                        }
-                    },
-                    colors: [color] // ✅ FIX FINAL
-                }).render();
-
-            });
-
-        });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-            document.querySelectorAll('.commodity-filter').forEach(wrapper => {
-
-                const categorySelect = wrapper.querySelector('.category-select');
-                const commoditySelect = wrapper.querySelector('.commodity-select');
-
-                const allOptions = Array.from(commoditySelect.options);
-
-                categorySelect.addEventListener('change', function() {
-                    const selectedCategory = String(this.value);
-
-                    commoditySelect.innerHTML = '';
-                    commoditySelect.appendChild(allOptions[0]); // Semua Komoditas
-
-                    allOptions.slice(1).forEach(option => {
-                        if (
-                            selectedCategory === '' ||
-                            String(option.dataset.category) === selectedCategory
-                        ) {
-                            commoditySelect.appendChild(option);
-                        }
-                    });
-                });
-                if (categorySelect.value !== '') {
-                    categorySelect.dispatchEvent(new Event('change'));
-                }
-            });
-        });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const commoditySelect = document.querySelector('.commodity-select');
-            const allMarketOption = document.getElementById('allMarketOption');
-            const marketSelect = document.getElementById('marketSelect');
-
-            function toggleAllMarket() {
-                const hasCommodity = commoditySelect.value !== '';
-
-                // tampilkan SEMUA PASAR hanya jika komoditas dipilih
-                allMarketOption.hidden = !hasCommodity;
-
-                // jika komoditas dikosongkan & posisi di ALL → reset ke AVG
-                if (!hasCommodity && marketSelect.value === 'all') {
-                    marketSelect.value = 'avg';
-                }
-            }
-
-            commoditySelect.addEventListener('change', toggleAllMarket);
-            toggleAllMarket(); // init
-        });
-    </script>
-
-    {{-- SCRIPT KOMPARASI --}}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-            // Checkbox limit (max 5)
-            const checkboxes = document.querySelectorAll('.comparison-market-checkbox');
-            const maxMarkets = 5;
-
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    const checkedCount = document.querySelectorAll(
-                        '.comparison-market-checkbox:checked').length;
-
-                    if (checkedCount >= maxMarkets) {
-                        checkboxes.forEach(cb => {
-                            if (!cb.checked) cb.disabled = true;
-                        });
-                    } else {
-                        checkboxes.forEach(cb => cb.disabled = false);
-                    }
-                });
-            });
-
-            // Date validation (from <= to)
-            const dateFrom = document.getElementById('comp_date_from');
-            const dateTo = document.getElementById('comp_date_to');
-
-            dateFrom.addEventListener('change', function() {
-                if (this.value > dateTo.value) {
-                    dateTo.value = this.value;
-                }
-            });
-
-            dateTo.addEventListener('change', function() {
-                if (this.value < dateFrom.value) {
-                    dateFrom.value = this.value;
-                }
-            });
-
-            // Button Compare Click
-            const btnCompare = document.getElementById('btn-compare');
-            const compCommodity = document.getElementById('comp_commodity');
-
-            const initialState = document.getElementById('comparison-initial');
-            const loadingState = document.getElementById('comparison-loading');
-            const resultState = document.getElementById('comparison-result');
-
-            let comparisonChartInstance = null;
-
-            btnCompare.addEventListener('click', function() {
-                const commodityId = compCommodity.value;
-                const selectedMarkets = Array.from(document.querySelectorAll(
-                    '.comparison-market-checkbox:checked'));
-
-                // Validation
-                if (!commodityId) {
-                    alert('Pilih komoditas terlebih dahulu!');
-                    return;
-                }
-
-                if (selectedMarkets.length < 2) {
-                    alert('Pilih minimal 2 pasar untuk dibandingkan!');
-                    return;
-                }
-
-                const marketIds = selectedMarkets.map(m => m.value);
-                const from = dateFrom.value;
-                const to = dateTo.value;
-
-                console.log('Market IDs:', marketIds);
-                console.log('Commodity ID:', commodityId);
-
-                // Show loading & hide others
-                initialState.classList.add('hidden');
-                resultState.classList.add('hidden');
-                loadingState.classList.remove('hidden');
-
-                // Fetch data
-                const url =
-                    `{{ route('comparison.data') }}?commodity_id=${commodityId}&market_ids[]=${marketIds.join('&market_ids[]=')}&date_from=${from}&date_to=${to}`;
-
-                console.log('Fetching:', url);
-
-                fetch(url)
-                    .then(res => {
-                        console.log('Response status:', res.status);
-                        if (!res.ok) {
-                            throw new Error(`HTTP ${res.status}`);
-                        }
-                        return res.json();
-                    })
-                    .then(data => {
-                        console.log('Data received:', data);
-
-                        if (!data.success) {
-                            throw new Error(data.error || 'Unknown error');
-                        }
-
-                        loadingState.classList.add('hidden');
-                        initialState.classList.add('hidden');
-                        resultState.classList.remove('hidden');
-
-                        renderComparison(data);
-
-                        // Re-render Lucide icons after DOM update
-                        setTimeout(() => {
-                            lucide.createIcons();
-                        }, 100);
-                    })
-                    .catch(err => {
-                        console.error('Error:', err);
-                        loadingState.classList.add('hidden');
-                        resultState.classList.add('hidden');
-                        initialState.classList.remove('hidden');
-                        alert('Gagal memuat data: ' + err.message);
-                    });
-            });
-
-            function renderComparison(data) {
-                console.log('Rendering comparison...');
-
-                // Update title
-                document.getElementById('comparison-title').textContent =
-                    `Statistik Perbandingan Harga ${data.commodity_name}, ${data.unit}`;
-
-                document.getElementById('comparison-date-range').textContent =
-                    `${formatDate(data.date_from)} - ${formatDate(data.date_to)}`;
-
-                const markets = data.markets;
-                console.log('Markets data:', markets);
-
-                if (!markets || markets.length === 0) {
-                    alert('Tidak ada data untuk ditampilkan');
-                    return;
-                }
-
-                // Calculate min/max
-                const allPrices = markets.map(m => m.latest_price).filter(p => p !== null && p > 0);
-
-                if (allPrices.length === 0) {
-                    alert('Tidak ada data harga untuk periode ini');
-                    return;
-                }
-
-                const minPrice = Math.min(...allPrices);
-                const maxPrice = Math.max(...allPrices);
-
-                const minMarket = markets.find(m => m.latest_price === minPrice);
-                const maxMarket = markets.find(m => m.latest_price === maxPrice);
-
-                console.log('Min price:', minPrice, 'Max price:', maxPrice);
-
-                // Update statistics
-                document.getElementById('stat-min-price').textContent = `Rp ${minPrice.toLocaleString('id-ID')}`;
-                document.getElementById('stat-min-market').textContent = minMarket.market_name;
-
-                document.getElementById('stat-max-price').textContent = `Rp ${maxPrice.toLocaleString('id-ID')}`;
-                document.getElementById('stat-max-market').textContent = maxMarket.market_name;
-
-                const priceDiff = maxPrice - minPrice;
-                const percentDiff = ((priceDiff / minPrice) * 100).toFixed(1);
-                document.getElementById('stat-diff-price').textContent = `Rp ${priceDiff.toLocaleString('id-ID')}`;
-                document.getElementById('stat-diff-percent').textContent = `${percentDiff}% dari harga termurah`;
-
-                // Render chart
-                renderChart(markets);
-            }
-
-            function renderChart(markets) {
-                console.log('Rendering chart with markets:', markets);
-
-                const series = markets.map(market => {
-                    console.log(`${market.market_name} chart data:`, market.chart_data);
-                    return {
-                        name: market.market_name,
-                        data: market.chart_data || []
-                    };
-                });
-
-                console.log('Chart series:', series);
-
-                const options = {
-                    chart: {
-                        type: 'area',
-                        height: 400,
-                        toolbar: {
-                            show: true,
-                            tools: {
-                                download: true,
-                                zoom: true,
-                                pan: false
-                            }
-                        },
-                        zoom: {
-                            enabled: true
-                        },
-                        animations: {
-                            enabled: true
-                        }
-                    },
-                    dataLabels: {
-                        enabled: false
-                    },
-                    stroke: {
-                        curve: 'smooth',
-                        width: 3
-                    },
-                    fill: {
-                        type: 'gradient',
-                        gradient: {
-                            opacityFrom: 0.6,
-                            opacityTo: 0.1,
-                        }
-                    },
-                    series: series,
-                    xaxis: {
-                        type: 'datetime',
-                        labels: {
-                            format: 'dd MMM',
-                            style: {
-                                fontSize: '12px'
-                            }
-                        }
-                    },
-                    yaxis: {
-                        labels: {
-                            formatter: val => 'Rp ' + Math.round(val).toLocaleString('id-ID'),
-                            style: {
-                                fontSize: '12px'
-                            }
-                        }
-                    },
-                    tooltip: {
-                        x: {
-                            format: 'dd MMMM yyyy'
-                        },
-                        y: {
-                            formatter: val => 'Rp ' + Math.round(val).toLocaleString('id-ID')
-                        }
-                    },
-                    colors: ['#3B82F6', '#F59E0B', '#10B981', '#EF4444', '#8B5CF6'],
-                    legend: {
-                        position: 'bottom',
-                        horizontalAlign: 'center',
-                        fontSize: '14px',
-                        markers: {
-                            width: 12,
-                            height: 12,
-                            radius: 12
-                        }
-                    },
-                    grid: {
-                        borderColor: '#e5e7eb',
-                        strokeDashArray: 4
-                    }
-                };
-
-                // Destroy previous chart if exists
-                if (comparisonChartInstance) {
-                    console.log('Destroying previous chart...');
-                    comparisonChartInstance.destroy();
-                }
-
-                const chartElement = document.querySelector('#comparison-chart');
-                console.log('Chart element:', chartElement);
-
-                if (!chartElement) {
-                    console.error('Chart element not found!');
-                    return;
-                }
-
-                comparisonChartInstance = new ApexCharts(chartElement, options);
-
-                console.log('Rendering chart...');
-                comparisonChartInstance.render().then(() => {
-                    console.log('Chart rendered successfully!');
-                }).catch(err => {
-                    console.error('Chart render error:', err);
-                });
-            }
-
-            function formatDate(dateStr) {
-                const date = new Date(dateStr);
-                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                ];
-                return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
-            }
-        });
-    </script>
-
-
 @endsection

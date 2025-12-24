@@ -85,7 +85,7 @@
                         </select>
                     </div>
 
-                    <button id="btnTampilkan" class="px-5 py-2 bg-secondary text-white rounded-lg shadow">
+                    <button id="btnTampilkan" class="px-5 py-2 bg-secondary text-white rounded-lg shadow cursor-pointer">
                         Tampilkan
                     </button>
                 </div>
@@ -267,5 +267,4 @@
 
         });
     </script>
-
 @endsection

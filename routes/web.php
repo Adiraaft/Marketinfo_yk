@@ -1,28 +1,32 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\CommodityController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\MarketController;
 use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\SatuanController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\PublicBeritaController;
-
-Route::get('/', function () {
-    return view('home.index');
-})->name('home.index');
-Route::get('/pasar', function () {
-    return view('pasar.pasar');
-})->name('pasar.pasar');
-Route::get('/detailkomoditas', function () {
-    return view('komoditas.detailkomoditas');
-})->name('detailkomoditas');
+use App\Http\Controllers\ReportController;
 
 
-Route::get('/berita', [PublicBeritaController::class, 'index'])->name('berita.index');
-Route::get('/berita/{id}', [PublicBeritaController::class, 'show'])->name('berita.show');
+
+// Dashboard Utama User
+Route::get('/', [PublicBeritaController::class, 'indexHome'])->name('home.index');
+Route::get('/comparison-data', [PublicBeritaController::class, 'getComparisonData'])->name('comparison.data');
+Route::get('/komoditas/{commodity}', [PublicBeritaController::class, 'detailCommodity'])->name('commodity.detail');
+Route::get('/komoditas/{commodity}/chart', [PublicBeritaController::class, 'getChartData'])->name('commodity.chart');
+
+// Halaman berita utama
+Route::get('/berita', [PublicBeritaController::class, 'indexBerita'])->name('berita.index');
+// Detail berita
+Route::get('/berita/{id}', [PublicBeritaController::class, 'detail'])->name('berita.detail');
+Route::get('/pasar', [MarketController::class, 'publicIndex'])->name('pasar.pasar');
+Route::get('/pasar/{id}', [MarketController::class, 'detail'])->name('pasar.detail');
 
 Route::get('/login', [AuthController::class, 'index'])->name('login');
 Route::post('/login/users', [AuthController::class, 'login'])->name('login.post');
@@ -31,6 +35,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
 
     Route::get('/dashboard', [SuperAdminController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/data-harga', [SuperAdminController::class, 'getPriceData']);
 
     Route::get('/berita', [BeritaController::class, 'index'])->name('berita.index');
     Route::get('/berita/create', [BeritaController::class, 'create'])->name('berita.create');
@@ -53,13 +58,20 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     route::put('/market/{id}', [MarketController::class, 'update'])->name('market.update');
     Route::delete('/market/{id}', [MarketController::class, 'destroy'])->name('market.destroy');
 
-    Route::get('/komoditas', function () {
-        return view('dashboard.komoditas');
-    })->name('komoditas');
+    Route::get('/komoditas', [CommodityController::class, 'index'])->name('komoditas');
+    Route::get('/komoditas/create', [CommodityController::class, 'create'])->name('komoditas.create');
+    Route::post('/komoditas/store', [CommodityController::class, 'store'])->name('komoditas.store');
+    Route::delete('/komoditas/{id}', [CommodityController::class, 'destroy'])->name('komoditas.destroy');
+    Route::get('komoditas/{id}/edit', [CommodityController::class, 'edit'])->name('komoditas.edit');
+    Route::put('komoditas/{id}', [CommodityController::class, 'update'])->name('komoditas.update');
 
-    Route::get('/laporan', function () {
-        return view('dashboard.laporan');
-    })->name('laporan');
+
+    Route::get('/laporan', [ReportController::class, 'index'])->name('laporan');
+    Route::get('/laporan/by-category/{id}', [ReportController::class, 'getCommoditiesByCategory']);
+    Route::get('/laporan/filter', [ReportController::class, 'filter']);
+    Route::get('/laporan/export/excel', [ReportController::class, 'exportExcel'])->name('laporan.export.excel');
+    Route::get('/laporan/export/pdf', [ReportController::class, 'exportPDF'])->name('laporan.export.pdf');
+
 
     Route::get('/setting', function () {
         return view('dashboard.setting');
@@ -80,15 +92,24 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
-    Route::get('/dashboard', function(){
-        return view('dashboardAdmin.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
-    Route::get('/manajemen', function(){
-        return view('dashboardAdmin.manajemen');
-    })->name('manajemen');
+    Route::get('/komoditas/{filter?}', [AdminController::class, 'komoditas'])->name('komoditas');
+    Route::post('/komoditas/store', [AdminController::class, 'store'])->name('komoditas.store');
+    Route::put('/komoditas/update/{id}', [AdminController::class, 'update'])->name('komoditas.update');
 
-    Route::get('/laporan', function(){
-        return view('dashboardAdmin.laporan');
-    })->name('laporan');
+    Route::get('/manajemen', [AdminController::class, 'index'])->name('manajemen');
+    Route::post('/manajemen/{id}/status', [AdminController::class, 'updateStatus'])->name('manajemen.status');
+
+    Route::get('/laporan', [ReportController::class, 'indexAdmin'])->name('laporan');
+    Route::get('/laporan/by-category/{id}', [ReportController::class, 'getCommoditiesByCategory']);
+    Route::get('/laporan/filter', [ReportController::class, 'filterAdmin']);
+    Route::get('/laporan/export/excel', [ReportController::class, 'exportExcel'])->name('laporan.export.excel');
+    Route::get('/laporan/export/pdf', [ReportController::class, 'exportPDF'])->name('laporan.export.pdf');
+
+    Route::get('account/setting', [AdminController::class, 'editProfile'])
+        ->name('account.edit');
+
+    Route::put('account/setting/{id}', [AdminController::class, 'updateProfile'])
+        ->name('account.update');
 });
