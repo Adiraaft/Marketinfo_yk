@@ -75,22 +75,21 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 //chart
-document.addEventListener("DOMContentLoaded", () => {
+window.initSparklineCharts = function () {
     document.querySelectorAll(".sparkline-chart").forEach((el) => {
+        // cegah render ulang
+        if (el.dataset.rendered === "1") return;
+
         const data = JSON.parse(el.dataset.prices || "[]");
         if (!Array.isArray(data) || data.length < 2) return;
 
         let trend = el.dataset.trend;
 
-        // AUTO trend (market-compare)
         if (trend === "auto") {
             const len = data.length;
             const prev = Number(data[len - 2].y);
             const last = Number(data[len - 1].y);
-
-            if (last > prev) trend = "up";
-            else if (last < prev) trend = "down";
-            else trend = "flat";
+            trend = last > prev ? "up" : last < prev ? "down" : "flat";
         }
 
         let color = "#9ca3af";
@@ -114,11 +113,39 @@ document.addEventListener("DOMContentLoaded", () => {
             tooltip: {
                 x: { format: "dd MMMM yyyy" },
                 y: {
-                    formatter: (v) => "Rp " + Number(v).toLocaleString("id-ID"),
+                    formatter: (v) =>
+                        "Rp " + Number(v).toLocaleString("id-ID"),
                 },
             },
         }).render();
+
+        el.dataset.rendered = "1";
     });
+};
+
+/* ======================================================
+   DOM READY
+====================================================== */
+document.addEventListener("DOMContentLoaded", () => {
+    // init sparkline pertama kali
+    initSparklineCharts();
+
+    // init lucide
+    createIcons({ icons });
+
+    // swiper
+    if (document.querySelector(".mySwiper")) {
+        new Swiper(".mySwiper", {
+            modules: [Navigation, Autoplay],
+            loop: true,
+            autoplay: { delay: 3000 },
+            speed: 800,
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+        });
+    }
 });
 
 document.addEventListener("DOMContentLoaded", function () {

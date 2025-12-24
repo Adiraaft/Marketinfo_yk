@@ -21,11 +21,11 @@
                 Hadirkan data harga pangan terkini dari seluruh pasar Yogyakarta. <br>
                 Bantu masyarakat dan pelaku usaha mengambil keputusan yang lebih bijak.
             </p>
-            <a href="#hargaKomoditas"
+            <button onclick="scrollToSection()"
                 class="mt-4 bg-[#FB7A29] text-white px-12 py-4 rounded-xl font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl 
                       hover:bg-[#e86c21] transition-all shadow-md">
                 Lihat Harga
-            </a>
+            </button>
         </div>
 
     </div>
@@ -39,7 +39,7 @@
             Bahan Pangan Kota
             Yogyakarta</h3>
         <div class="my-7 py-6 border rounded-lg bg-white border-gray-300">
-            <form action="{{ route('home.index') }}#commodity-section" class="flex justify-between" method="GET">
+            <form id="filterForm" action="{{ route('home.index') }}" class="flex justify-between" method="GET">
                 <div
                     class="commodity-filter flex gap-4 mx-12 text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl">
                     <div>
@@ -93,7 +93,7 @@
                         </select>
 
                     </div>
-                    <input type="hidden" name="trend" value="{{ request('trend', 'all') }}">
+                    <input type="hidden" name="trend" id="trendInput" value="{{ request('trend', 'all') }}">
                     <button type="submit" class="p-2 w-10 h-10 rounded-lg bg-secondary self-end cursor-pointer">
                         <i data-lucide="search" class="w-5 h-5 text-white"></i>
                     </button>
@@ -101,7 +101,7 @@
 
                 <div
                     class="flex text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg gap-4 items-center justify-center mr-10">
-                    <button class="flex items-center gap-1 text-red-500">
+                    <button type="button" class="flex items-center gap-1 text-red-500">
                         <i data-lucide="move-up" class="w-4 h-4"></i>
                         <p>Harga Naik</p>
                     </button>
@@ -117,7 +117,7 @@
             </form>
             <hr id="commodity-section" class="mt-6 opacity-20">
 
-            <div class="my-6 mx-12">
+            <div id="commodity-info-wrapper" class="my-6 mx-12">
                 {{-- INFO MODE AVG --}}
                 @if (!request('commodity'))
                     <div
@@ -138,20 +138,20 @@
                 text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">
 
                         {{-- HARGA TERENDAH --}}
-                        <a href="{{ route('home.index', request()->except('trend') + ['trend' => 'down']) }}#commodity-section"
+                        <button type="button" onclick="applyTrendFilter('down')"
                             class="py-2 px-6 rounded-lg border-2
                    border-green-500 text-green-600
                    {{ request('trend') === 'down' ? 'bg-green-200' : '' }}">
                             Harga Terendah
-                        </a>
+                        </button>
 
                         {{-- HARGA TERTINGGI --}}
-                        <a href="{{ route('home.index', request()->except('trend') + ['trend' => 'up']) }}#commodity-section"
+                        <button type="button" onclick="applyTrendFilter('up')"
                             class="py-2 px-6 rounded-lg border-2
                    border-red-500 text-red-600
                    {{ request('trend') === 'up' ? 'bg-red-200' : '' }}">
                             Harga Tertinggi
-                        </a>
+                        </button>
 
                     </div>
                 @endif
@@ -192,27 +192,34 @@
                         <button class="p-2 rounded-lg border-2 border-gray-300 opacity-40 cursor-not-allowed"> Sebelumnya
                         </button>
                     @else
-                        <a href="{{ $commodities->previousPageUrl() }}#commodity-section"> <button
-                                class="p-2 rounded-lg border-2 border-gray-300 hover:bg-gray-300"> Sebelumnya </button>
-                        </a>
-                        @endif {{-- Generate nomor halaman --}} @foreach ($commodities->getUrlRange(1, $commodities->lastPage()) as $page => $url)
-                            @if ($page == $commodities->currentPage())
-                                {{-- Halaman aktif --}} <button
-                                    class="py-2 px-3 rounded-lg border-2 border-gray-300 bg-slate-500 text-white">
-                                    {{ $page }} </button>
-                            @else
-                                <a href="{{ $url }}#commodity-section"> <button
-                                        class="py-2 px-3 rounded-lg border-2 border-gray-300 hover:bg-slate-500 hover:text-white">
-                                        {{ $page }} </button> </a>
-                            @endif
-                            @endforeach {{-- Tombol Next --}} @if ($commodities->hasMorePages())
-                                <a href="{{ $commodities->nextPageUrl() }}#commodity-section"> <button
-                                        class="p-2 rounded-lg border-2 border-gray-300 hover:bg-gray-300"> Selanjutnya
-                                    </button> </a>
-                            @else
-                                <button class="p-2 rounded-lg border-2 border-gray-300 opacity-40 cursor-not-allowed">
-                                    Selanjutnya </button>
-                            @endif
+                        <button onclick="goToPage('{{ $commodities->previousPageUrl() }}')"
+                            class="p-2 rounded-lg border-2 border-gray-300 hover:bg-gray-300"> Sebelumnya </button>
+                    @endif
+
+                    {{-- Generate nomor halaman --}}
+                    @foreach ($commodities->getUrlRange(1, $commodities->lastPage()) as $page => $url)
+                        @if ($page == $commodities->currentPage())
+                            {{-- Halaman aktif --}}
+                            <button class="py-2 px-3 rounded-lg border-2 border-gray-300 bg-slate-500 text-white">
+                                {{ $page }}
+                            </button>
+                        @else
+                            <button onclick="goToPage('{{ $url }}')"
+                                class="py-2 px-3 rounded-lg border-2 border-gray-300 hover:bg-slate-500 hover:text-white">
+                                {{ $page }}
+                            </button>
+                        @endif
+                    @endforeach
+
+                    {{-- Tombol Next --}}
+                    @if ($commodities->hasMorePages())
+                        <button onclick="goToPage('{{ $commodities->nextPageUrl() }}')"
+                            class="p-2 rounded-lg border-2 border-gray-300 hover:bg-gray-300"> Selanjutnya </button>
+                    @else
+                        <button class="p-2 rounded-lg border-2 border-gray-300 opacity-40 cursor-not-allowed">
+                            Selanjutnya
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>
@@ -444,9 +451,11 @@
             class="flex sm:grid sm:grid-cols-1 md:grid md:grid-cols-1 lg:grid lg:grid-cols-2 xl:grid xl:grid-cols-2 2xl:grid 2xl:grid-cols-2 gap-8">
 
             <!-- MAP -->
-            <div class="rounded-2xl overflow-hidden shadow-lg border border-gray-200"> <iframe
+            <div class="rounded-2xl overflow-hidden shadow-lg border border-gray-200">
+                <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.0526399756865!2d110.36608747469724!3d-7.784727177294295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a578c00000000%3A0x9e3b99aafab678c7!2sPasar%20Beringharjo!5e0!3m2!1sid!2sid!4v1690800000000!5m2!1sid!2sid"
-                    width="100%" height="500" allowfullscreen="" loading="lazy" class="w-full h-[500px]"> </iframe>
+                    width="100%" height="500" allowfullscreen="" loading="lazy" class="w-full h-[500px]">
+                </iframe>
             </div>
 
             <!-- LIST PASAR DINAMIS -->
@@ -477,4 +486,80 @@
             </div>
         </div>
     </div>
+
+    {{-- ============================================
+         AJAX JAVASCRIPT - NO PAGE RELOAD
+         ============================================ --}}
+    <script>
+        function loadCommodities(url) {
+            const wrapper = document.getElementById('commodity-wrapper');
+            const infoWrapper = document.getElementById('commodity-info-wrapper');
+
+            wrapper.style.opacity = '0.5';
+            wrapper.style.pointerEvents = 'none';
+
+            fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(res => {
+                    if (!res.ok) throw new Error('Fetch error');
+                    return res.text();
+                })
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+
+                    const newWrapper = doc.getElementById('commodity-wrapper');
+                    const newInfoWrapper = doc.getElementById('commodity-info-wrapper');
+
+                    if (!newWrapper) return;
+
+                    // replace DOM
+                    wrapper.innerHTML = newWrapper.innerHTML;
+
+                    if (newInfoWrapper && infoWrapper) {
+                        infoWrapper.innerHTML = newInfoWrapper.innerHTML;
+                    }
+
+                    // update url
+                    window.history.pushState({}, '', url);
+
+                    wrapper.style.opacity = '1';
+                    wrapper.style.pointerEvents = 'auto';
+
+                    // 🔥 RE-INIT ICON
+                    if (window.lucide) {
+                        lucide.createIcons();
+                    }
+
+                    // 🔥 RE-INIT SPARKLINE (INI WAJIB)
+                    if (window.initSparklineCharts) {
+                        initSparklineCharts();
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    wrapper.style.opacity = '1';
+                    wrapper.style.pointerEvents = 'auto';
+                    alert('Gagal memuat data');
+                });
+        }
+
+        document.getElementById('filterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const params = new URLSearchParams(new FormData(this)).toString();
+            loadCommodities(`{{ route('home.index') }}?${params}`);
+        });
+
+        function goToPage(url) {
+            loadCommodities(url);
+        }
+
+        window.addEventListener('popstate', () => {
+            loadCommodities(window.location.href);
+        });
+    </script>
+
 @endsection
