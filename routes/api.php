@@ -39,8 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/units', [UnitController::class, 'index']);
     Route::get('/prices', [PriceController::class, 'index']);
     Route::get('/price/all', [PriceController::class, 'allPrices']);
-    Route::get('/commodity/{id}/prices', [PriceController::class, 'detailByCommodity']);
-
+    Route::get('/price/commodity/{id}', [PriceController::class, 'detailByCommodity']);
 });
 // endpoint login
 Route::post('/login-mobile', [AuthController::class, 'login']);

@@ -49,7 +49,7 @@ public function index(Request $request)
                     'category_id'    => $item->category_id,
                     'category_name'  => $item->category->name_category ?? null,
                     'image'          => $item->image
-                        ? url('storage/commodities/' . $item->image)
+                        ? url('storage/commoditiy_images/' . $item->image)
                         : null,
                 ];
             });
