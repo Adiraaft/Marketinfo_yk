@@ -36,62 +36,64 @@ class AdminController extends Controller
         $selectedDate = $request->tanggal ?? now()->toDateString();
         $yesterdayDate = \Carbon\Carbon::parse($selectedDate)->subDay()->toDateString();
 
-        // Ambil semua komoditas aktif di market (SAMA seperti komoditas.blade.php)
-        $commodities = Commodity::whereHas('commodityMarkets', function ($q) use ($marketId) {
+        $adminCount = User::where('role', 'admin')
+            ->where('market_id', $marketId)
+            ->count();
+
+        $commodityCount = Commodity::whereHas('commodityMarkets', function ($q) use ($marketId) {
             $q->where('market_id', $marketId)->where('status', 'aktif');
-        })
-            ->with([
-                'commodityMarkets' => function ($q) use ($marketId) {
-                    $q->where('market_id', $marketId);
-                },
-                'category',
-                'unit'
-            ])
-            ->get();
+        })->count();
+
+        $updatedCommodityIds = Price::where('market_id', $marketId)
+            ->where('date', $selectedDate)
+            ->distinct()
+            ->pluck('commodity_id');
+
+        $prices = Price::where('market_id', $marketId)
+            ->where('date', $selectedDate)
+            ->with(['commodity.unit'])
+            ->get()
+            ->groupBy('commodity_id');
 
         $latestPrices = [];
-        $belumUpdate = [];
 
-        foreach ($commodities as $item) {
-            $pivot = $item->commodityMarkets->first();
+        foreach ($prices as $commodityId => $rows) {
 
-            if (!$pivot) continue;
+            $todayAvg = $rows->avg('price');
 
-            // ✅ Filter di collection (SAMA seperti komoditas.blade.php)
-            $todayPrices = optional($pivot->prices)->where('date', $selectedDate);
-            $yesterdayPrices = optional($pivot->prices)->where('date', $yesterdayDate);
+            // ambil harga terakhir sebelum tanggal yg dipilih
+            $yesterdayAvg = Price::where('market_id', $marketId)
+                ->where('commodity_id', $commodityId)
+                ->where('date', '<', $selectedDate)
+                ->orderBy('date', 'desc')
+                ->value('price');
 
-            // Hitung rata-rata
-            $todayAvg = $todayPrices->avg('price');
-            $yesterdayAvg = $yesterdayPrices->avg('price');
+            $commodity = $rows->first()->commodity;
 
-            if ($todayAvg) {
-                // Hitung perubahan harga
-                $change = 0;
-                if ($yesterdayAvg) {
-                    $change = $todayAvg - $yesterdayAvg;
-                }
-
-                $latestPrices[] = [
-                    'commodity' => $item,
-                    'pivot' => $pivot,
-                    'today_price' => $todayAvg,
-                    'yesterday_price' => $yesterdayAvg,
-                    'change' => $change,
-                ];
-            } else {
-                $belumUpdate[] = [
-                    'name' => $item->name_commodity,
-                ];
-            }
+            $latestPrices[] = [
+                'commodity' => $commodity,
+                'today_price' => $todayAvg,
+                'yesterday_price' => $yesterdayAvg,
+                'change' => $yesterdayAvg ? $todayAvg - $yesterdayAvg : 0,
+            ];
         }
+        $belumUpdate = Commodity::whereHas('commodityMarkets', function ($q) use ($marketId) {
+            $q->where('market_id', $marketId)->where('status', 'aktif');
+        })
+            ->whereNotIn('id_commodity', $updatedCommodityIds)
+            ->select('name_commodity')
+            ->get()
+            ->map(fn($c) => ['name' => $c->name_commodity]);
 
         return view('dashboardAdmin.dashboard', [
             'latestPrices' => $latestPrices,
             'belumUpdate' => $belumUpdate,
             'selectedDate' => $selectedDate,
+            'adminCount' => $adminCount,
+            'commodityCount' => $commodityCount,
         ]);
     }
+
 
     public function updateStatus(Request $request, $id)
     {
@@ -119,37 +121,50 @@ class AdminController extends Controller
             }, 'category', 'unit'])
             ->get();
 
+        $prices = Price::where('market_id', $marketId)
+            ->where('date', $selectedDate)
+            ->get()
+            ->groupBy('commodity_id');
+
+        $commodities = $commodities->map(function ($c) use ($prices, $marketId, $selectedDate) {
+
+            $rows = $prices[$c->id_commodity] ?? collect();
+
+            $c->today_avg   = $rows->avg('price');
+            $c->today_count = $rows->count();
+            $c->is_updated  = $rows->isNotEmpty();
+
+            if ($c->is_updated) {
+                $pivot = $c->commodityMarkets->first();
+
+                $c->edit_payload = [
+                    'id' => $pivot->id,
+                    'commodityId' => $pivot->commodity_id,
+                    'marketId' => $pivot->market_id,
+                    'name' => $c->name_commodity,
+                    'prices' => $rows->pluck('price')->map(fn($p) => (int) $p)->toArray(),
+                    'date' => $selectedDate,
+                ];
+            }
+
+            return $c;
+        });
+
         // ========== FILTER KATEGORI ==========
         if ($request->kategori && $request->kategori != '#') {
             $commodities = $commodities->where('category_id', $request->kategori);
         }
 
         // ========== HITUNG TOTAL ==========
-        $countAll = $commodities->count();
+        $countAll   = $commodities->count();
+        $countSudah = $commodities->where('is_updated', true)->count();
+        $countBelum = $commodities->where('is_updated', false)->count();
 
-        $countSudah = $commodities->filter(function ($item) use ($selectedDate) {
-            $pivot = $item->commodityMarkets->first();
-            return optional(optional($pivot)->prices)
-                ->where('date', $selectedDate)
-                ->first();
-        })->count();
-
-        $countBelum = $commodities->filter(function ($item) use ($selectedDate) {
-            $pivot = $item->commodityMarkets->first();
-            return !optional(optional($pivot)->prices)
-                ->where('date', $selectedDate)
-                ->first();
-        })->count();
 
         // ========== FILTER STATUS (TAB) ==========
-        $filtered = $commodities->filter(function ($item) use ($filter, $selectedDate) {
-            $pivot = $item->commodityMarkets->first();
-            $price = optional(optional($pivot)->prices)
-                ->where('date', $selectedDate)
-                ->first();
-
-            if ($filter === 'belum-update') return !$price;
-            if ($filter === 'sudah-update') return $price;
+        $filtered = $commodities->filter(function ($item) use ($filter) {
+            if ($filter === 'belum-update') return !$item->is_updated;
+            if ($filter === 'sudah-update') return $item->is_updated;
             return true;
         });
 
@@ -256,7 +271,7 @@ class AdminController extends Controller
         if ($request->password) {
             $user->password = Hash::make($request->password);
         }
-        
+
         // Upload Foto jika ada
         if ($request->hasFile('image')) {
 

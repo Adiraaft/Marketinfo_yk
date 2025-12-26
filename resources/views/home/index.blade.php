@@ -7,29 +7,46 @@
 @endsection
 
 @section('jumbotron')
-    <div class="relative w-full h-screen bg-center bg-no-repeat bg-cover"
+    <div class="relative w-full h-[100svh] bg-center bg-no-repeat bg-cover will-change-transform"
         style="background-image: url('{{ asset('images/wallpaper2.png') }}')">
-        <div class="absolute inset-0 bg-black/40"></div>
 
-        <div class="relative z-10 flex flex-col items-center justify-center h-full  text-white text-center px-5">
-            <h1 class="text-4xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:5xl font-extrabold">
-                Harga Komoditas Bahan <br> Pangan
-                <span class="text-[#FB7A29]">Kota Yogyakarta</span>
+        <div class="absolute inset-0 bg-black/50"></div>
+
+        <div
+            class="relative z-10 flex flex-col items-center justify-center min-h-screen
+                text-white text-center px-4 sm:px-6 lg:px-8">
+
+            {{-- JUDUL --}}
+            <h1
+                class="font-extrabold leading-tight
+                   text-2xl sm:text-3xl md:text-3xl lg:text-3xl xl:text-4xl">
+                Harga Komoditas Bahan
+                <span class="hidden sm:inline"><br></span>
+                Pangan
+                <span class="text-[#FB7A29] block sm:inline">
+                    Kota Yogyakarta
+                </span>
             </h1>
 
-            <p class="mt-2 font-medium text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl">
-                Hadirkan data harga pangan terkini dari seluruh pasar Yogyakarta. <br>
+            {{-- DESKRIPSI --}}
+            <p class="mt-3 max-w-xl font-medium leading-relaxed
+                  text-sm md:text-base">
+                Hadirkan data harga pangan terkini dari seluruh pasar Yogyakarta.
+                <span class="hidden sm:inline"><br></span>
                 Bantu masyarakat dan pelaku usaha mengambil keputusan yang lebih bijak.
             </p>
+
+            {{-- BUTTON --}}
             <button onclick="scrollToSection()"
-                class="mt-4 bg-[#FB7A29] text-white px-12 py-4 rounded-xl font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl 
-                      hover:bg-[#e86c21] transition-all shadow-md">
+                class="mt-6 bg-[#FB7A29] hover:bg-[#e86c21]
+                   text-white font-bold rounded-xl shadow-md transition
+                   px-6 py-3 text-sm md:text-base">
                 Lihat Harga
             </button>
         </div>
-
     </div>
 @endsection
+
 
 
 @section('content')

@@ -5,13 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Berita;
 use App\Models\Category;
 use App\Models\Commodity;
-use App\Models\CommodityMarket;
 use App\Models\Market; // <- WAJIB
 use App\Models\Price;
 use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class PublicBeritaController extends Controller
 {
@@ -88,7 +88,6 @@ class PublicBeritaController extends Controller
                 fn($c) => $c->trend === $trend
             );
         }
-
         // =============================
         // PAGINATION
         // =============================
@@ -194,41 +193,76 @@ class PublicBeritaController extends Controller
 
     private function allAvg()
     {
-        $commodities = Commodity::orderBy('id_commodity')->get();
+        return Cache::remember('home_all_avg', 60, function () {
 
-        $latestDates = DB::table('prices')
-            ->selectRaw('commodity_id, MAX(date) as date')
-            ->groupBy('commodity_id');
+            $commodities = Commodity::orderBy('id_commodity')->get();
 
-        $latestPrices = DB::table('prices as p')
-            ->joinSub($latestDates, 'ld', function ($j) {
-                $j->on('p.commodity_id', '=', 'ld.commodity_id')
-                    ->on('p.date', '=', 'ld.date');
-            })
-            ->selectRaw('p.commodity_id, ROUND(AVG(p.price)) as avg_price, ld.date')
-            ->groupBy('p.commodity_id', 'ld.date')
-            ->get()
-            ->keyBy('commodity_id');
+            $latestDates = DB::table('prices')
+                ->selectRaw('commodity_id, MAX(date) as date')
+                ->groupBy('commodity_id');
 
-        foreach ($commodities as $item) {
-            $item->image_url = $item->image
-                ? asset('storage/commodity_images/' . $item->image)
-                : asset('images/no-image.png');
+            $latestPrices = DB::table('prices as p')
+                ->joinSub($latestDates, 'ld', function ($j) {
+                    $j->on('p.commodity_id', '=', 'ld.commodity_id')
+                        ->on('p.date', '=', 'ld.date');
+                })
+                ->selectRaw('p.commodity_id, ROUND(AVG(p.price)) as avg_price, ld.date')
+                ->groupBy('p.commodity_id', 'ld.date')
+                ->get()
+                ->keyBy('commodity_id');
 
-            $latest = $latestPrices[$item->id_commodity] ?? null;
-            $item->avg_price = $latest->avg_price ?? null;
-            $item->price_date = $latest->date ?? null;
+            $chartRows = DB::table('prices')
+                ->selectRaw('commodity_id, date, ROUND(AVG(price)) as price')
+                ->whereBetween('date', [
+                    now()->subDays(6)->toDateString(),
+                    now()->toDateString()
+                ])
+                ->groupBy('commodity_id', 'date')
+                ->orderBy('date')
+                ->get()
+                ->groupBy('commodity_id');
 
-            $chart = $this->getAvgChart($item->id_commodity);
 
-            $item->chart_prices = $chart->count() >= 2 ? $chart : collect();
-            $item->trend = $this->calcTrend($item->chart_prices);
+            foreach ($commodities as $c) {
 
-            [$item->price_diff, $item->price_percent] =
-                $this->calcDiffPercent($item->chart_prices);
-        }
+                // IMAGE
+                $c->image_url = $c->image
+                    ? asset('storage/commodity_images/' . $c->image)
+                    : asset('images/no-image.png');
 
-        return $commodities;
+                // HARGA TERAKHIR
+                $latest = $latestPrices[$c->id_commodity] ?? null;
+                $c->avg_price  = $latest->avg_price ?? null;
+                $c->price_date = $latest->date ?? null;
+
+                // CHART
+                $chart = $chartRows[$c->id_commodity] ?? collect();
+                $c->chart_prices = $chart->map(fn($r) => [
+                    'x' => $r->date,
+                    'y' => (int) $r->price
+                ])->values();
+
+                // TREND + DIFF + PERCENT
+                if ($c->chart_prices->count() >= 2) {
+                    $first = $c->chart_prices->first()['y'];
+                    $last  = $c->chart_prices->last()['y'];
+
+                    $diff = $last - $first;
+
+                    $c->trend = $diff > 0 ? 'up' : ($diff < 0 ? 'down' : 'flat');
+                    $c->price_diff = abs($diff);
+                    $c->price_percent = $first > 0
+                        ? round(abs($diff / $first) * 100, 1)
+                        : 0;
+                } else {
+                    $c->trend = 'flat';
+                    $c->price_diff = null;
+                    $c->price_percent = null;
+                }
+            }
+
+            return $commodities;
+        });
     }
 
     private function oneAvg($commodityId)
@@ -240,63 +274,81 @@ class PublicBeritaController extends Controller
 
     private function allOneMarket($marketId)
     {
-        $commodities = Commodity::with('unit')->get();
+        return Cache::remember("home_market_$marketId", 60, function () use ($marketId) {
 
-        // ambil tanggal terbaru per komoditas DI PASAR INI
-        $latestDates = DB::table('prices')
-            ->where('market_id', $marketId)
-            ->selectRaw('commodity_id, MAX(date) as date')
-            ->groupBy('commodity_id');
+            $commodities = Commodity::with('unit')->get();
 
-        $latestPrices = DB::table('prices as p')
-            ->joinSub($latestDates, 'ld', function ($j) {
-                $j->on('p.commodity_id', '=', 'ld.commodity_id')
-                    ->on('p.date', '=', 'ld.date');
-            })
-            ->where('p.market_id', $marketId)
-            ->selectRaw('p.commodity_id, ROUND(AVG(p.price)) as price, ld.date')
-            ->groupBy('p.commodity_id', 'ld.date')
-            ->get()
-            ->keyBy('commodity_id');
+            // ambil tanggal terbaru per komoditas DI PASAR INI
+            $latestDates = DB::table('prices')
+                ->where('market_id', $marketId)
+                ->selectRaw('commodity_id, MAX(date) as date')
+                ->groupBy('commodity_id');
 
-        foreach ($commodities as $c) {
+            $latestPrices = DB::table('prices as p')
+                ->joinSub($latestDates, 'ld', function ($j) {
+                    $j->on('p.commodity_id', '=', 'ld.commodity_id')
+                        ->on('p.date', '=', 'ld.date');
+                })
+                ->where('p.market_id', $marketId)
+                ->selectRaw('p.commodity_id, ROUND(AVG(p.price)) as price, ld.date')
+                ->groupBy('p.commodity_id', 'ld.date')
+                ->get()
+                ->keyBy('commodity_id');
 
-            $c->market_id = $marketId;
+            $chartRows = DB::table('prices')
+                ->where('market_id', $marketId)
+                ->whereBetween('date', [
+                    now()->subDays(6)->toDateString(),
+                    now()->toDateString()
+                ])
+                ->selectRaw('commodity_id, date, ROUND(AVG(price)) as price')
+                ->groupBy('commodity_id', 'date')
+                ->orderBy('date')
+                ->get()
+                ->groupBy('commodity_id');
 
-            $latest = $latestPrices[$c->id_commodity] ?? null;
-            // IMAGE
-            $c->image_url = $c->image
-                ? asset('storage/commodity_images/' . $c->image)
-                : asset('images/no-image.png');
+            foreach ($commodities as $c) {
 
-            // HARGA MARKET (BUKAN AVG)
-            $c->market_price = $latest->price ?? null;
-            $c->price_date   = $latest->date ?? null;
+                $c->market_id = $marketId;
 
-            // 🔥 WAJIB: ambil chart SETELAH where market
-            $chart = $this->getChart($c->id_commodity, $marketId);
+                $latest = $latestPrices[$c->id_commodity] ?? null;
+                // IMAGE
+                $c->image_url = $c->image
+                    ? asset('storage/commodity_images/' . $c->image)
+                    : asset('images/no-image.png');
 
-            $c->chart = $chart;
-            $c->trend = $this->calcTrend($chart);
+                // HARGA MARKET (BUKAN AVG)
+                $c->market_price = $latest->price ?? null;
+                $c->price_date   = $latest->date ?? null;
 
-            // HITUNG DIFF & PERCENT (konsisten)
-            if ($chart->count() >= 2) {
-                $first = $chart->first()['y'];
-                $last  = $chart->last()['y'];
+                // chart
+                $chart = $chartRows[$c->id_commodity] ?? collect();
+                $c->chart = $chart->map(fn($r) => [
+                    'x' => $r->date,
+                    'y' => (int) $r->price
+                ])->values();
 
-                $diff = $last - $first;
+                // TREND + DIFF
+                if ($c->chart->count() >= 2) {
+                    $first = $c->chart->first()['y'];
+                    $last  = $c->chart->last()['y'];
 
-                $c->price_diff = abs($diff);
-                $c->price_percent = $first > 0
-                    ? round(abs($diff / $first) * 100, 1)
-                    : 0;
-            } else {
-                $c->price_diff = null;
-                $c->price_percent = null;
+                    $diff = $last - $first;
+
+                    $c->trend = $diff > 0 ? 'up' : ($diff < 0 ? 'down' : 'flat');
+                    $c->price_diff = abs($diff);
+                    $c->price_percent = $first > 0
+                        ? round(abs($diff / $first) * 100, 1)
+                        : 0;
+                } else {
+                    $c->trend = 'flat';
+                    $c->price_diff = null;
+                    $c->price_percent = null;
+                }
             }
-        }
 
-        return $commodities;
+            return $commodities;
+        });
     }
 
     private function oneOneMarket($commodityId, $marketId)

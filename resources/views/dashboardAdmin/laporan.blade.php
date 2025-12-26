@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Home')
+@section('title', 'Dashboard Laporan')
 
 @section('content')
     <div class="mt-7 px-15">

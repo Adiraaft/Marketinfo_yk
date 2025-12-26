@@ -1,10 +1,10 @@
 @extends('layouts.admin')
 
-@section('title', 'Home')
+@section('title', 'Dashboard Petugas Pasar')
 
 @section('content')
     <div class="mt-7 mx-15 mb-10">
-        <div class="grid grid-cols-3 gap-6">
+        <div class="grid grid-cols-3 auto-rows-min gap-6">
             <div class="flex items-center gap-10 bg-white pl-10 py-7 rounded-lg">
                 <span class="p-3 bg-secondary rounded-full">
                     <i data-lucide="map-pinned" class="text-white"></i>
@@ -23,7 +23,7 @@
                 </span>
                 <div class="space-y-2">
                     <h3 class="text-2xl font-bold">
-                        {{ \App\Models\User::where('role', 'admin')->where('market_id', auth()->user()->market_id)->count() }}
+                        {{ $adminCount }}
                     </h3>
                     <p class="text-xs font-light">Petugas Pasar</p>
                 </div>
@@ -34,9 +34,7 @@
                 </span>
                 <div class="space-y-2">
                     <h3 class="text-2xl font-bold">
-                        {{ \App\Models\Commodity::whereHas('commodityMarkets', function ($q) {
-                            $q->where('market_id', auth()->user()->market_id)->where('status', 'aktif');
-                        })->count() }}
+                        {{ $commodityCount }}
                     </h3>
                     <p class="text-xs font-light">Komoditas Aktif</p>
                 </div>
@@ -66,7 +64,8 @@
 
 
             <!-- Tabel Harga Terbaru -->
-            <div class="col-span-2 row-span-2 flex flex-col gap-6 bg-white pl-10 py-7 pr-10 rounded-lg shadow">
+            <div
+                class="col-span-2 row-span-2 flex flex-col gap-6 bg-white pl-10 py-7 pr-10 rounded-lg shadow overflow-y-auto max-h-[780px]">
                 <div class="flex justify-between items-center">
                     <h2 class="text-lg font-bold text-gray-800">
                         Tabel Harga Terbaru
@@ -121,7 +120,7 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <!-- Komoditas Belum Update -->
             <div class="bg-white px-10 pb-10 pt-3 rounded-lg max-h-80 overflow-y-auto">
                 <h2 class="text-lg font-bold text-gray-800 mb-4">Komoditas Belum Update Hari Ini</h2>
@@ -191,29 +190,30 @@
             for (let i = 1; i <= totalDays; i++) {
                 const day = document.createElement("div");
                 day.textContent = i;
-                
+
                 // Check apakah ini tanggal yang sedang dipilih
-                const isSelected = i === selectedDate.getDate() && 
-                                 month === selectedDate.getMonth() && 
-                                 year === selectedDate.getFullYear();
-                
+                const isSelected = i === selectedDate.getDate() &&
+                    month === selectedDate.getMonth() &&
+                    year === selectedDate.getFullYear();
+
                 // Check apakah ini hari ini
-                const isToday = i === today.getDate() && 
-                               month === today.getMonth() && 
-                               year === today.getFullYear();
-                
+                const isToday = i === today.getDate() &&
+                    month === today.getMonth() &&
+                    year === today.getFullYear();
+
                 day.className = "p-2 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors text-sm " +
-                    (isSelected ? "bg-secondary text-white font-bold" : 
-                     isToday ? "bg-blue-200 text-blue-800 font-semibold" : "");
-                
+                    (isSelected ? "bg-secondary text-white font-bold" :
+                        isToday ? "bg-blue-200 text-blue-800 font-semibold" : "");
+
                 // Event listener untuk klik tanggal
                 day.addEventListener("click", () => {
-                    const clickedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-                    
+                    const clickedDate =
+                        `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+
                     // Redirect ke URL dengan parameter tanggal
                     window.location.href = `{{ route('admin.dashboard') }}?tanggal=${clickedDate}`;
                 });
-                
+
                 calendarGrid.appendChild(day);
             }
         }

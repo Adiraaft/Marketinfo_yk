@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Home')
+@section('title', 'Setting Akun')
 
 @section('content')
     <div class="mt-7 px-15">
@@ -8,7 +8,6 @@
             <div>
                 <h3 class="font-bold text-2xl text-secondary">Setting</h3>
             </div>
-
         </div>
 
         <!-- Wrapper utama -->

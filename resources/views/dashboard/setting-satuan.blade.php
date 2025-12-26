@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Dashboard')
+@section('title', 'Dashboard Setting Satuan')
 
 @section('content')
     <div class="mt-7 px-15">

@@ -1,5 +1,7 @@
 @extends('layouts.admin')
 
+@section('title', 'Dashboard Tambah Petugas')
+
 @section('content')
     <div class="mx-15 mt-6 mb-10">
         <a href="{{ route('superadmin.petugas') }}" class="text-blue-500 hover:underline mt-3 inline-block">

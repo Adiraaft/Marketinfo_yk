@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Home')
+@section('title', 'Dashboard Update Harga')
 
 @section('content')
     <div class="my-7 px-15">
@@ -99,84 +99,36 @@
                                     </td>
                                     <td class="py-2 px-4">{{ $c->category->name_category ?? '-' }}</td>
                                     <td class="py-2 px-4">{{ $c->unit->name_unit ?? '-' }}</td>
-
-                                    @php
-                                        // Ambil semua price hari ini
-                                        $todayPrices = optional(optional($pivot)->prices)->where('date', $selectedDate);
-
-                                        // Hitung rata-rata harga hari ini
-                                        $todayAverage = $todayPrices->avg('price');
-                                    @endphp
                                     <td class="py-2 px-4">
-                                        {{ $todayAverage ? number_format($todayAverage, 0, ',', '.') : '-' }}
+                                        {{ $c->today_avg ? number_format($c->today_avg, 0, ',', '.') : '-' }}
                                     </td>
-
-                                    @php
-                                        $totalInput = optional(optional($pivot)->prices)
-                                            ->where('date', $selectedDate)
-                                            ->count();
-                                    @endphp
-
-                                    <td class="py-2 px-4 ">{{ $totalInput }}</td>
-
-                                    @php
-                                        $todayPrice = optional(optional($pivot)->prices)
-                                            ->where('date', $selectedDate)
-                                            ->first();
-                                    @endphp
-
+                                    <td class="py-2 px-4 ">{{ $c->today_count }}</td>
                                     <td class="py-2 px-4">
-                                        @if ($todayPrice)
-                                            <span class="text-green-400">
-                                                Sudah Update
-                                            </span>
+                                        @if ($c->is_updated)
+                                            <span class="text-green-400">Sudah Update</span>
                                         @else
-                                            <span class="text-red-400">
-                                                Belum Update
-                                            </span>
+                                            <span class="text-red-400">Belum Update</span>
                                         @endif
                                     </td>
 
                                     <td class="py-2 px-4">
-                                        @if ($pivot)
-                                            {{-- Jika hari ini sudah ada harga → tombol Edit --}}
-                                            @if ($todayPrice)
-                                                @php
-                                                    $todayPricesArray = optional(optional($pivot)->prices)
-                                                        ->where('date', $selectedDate)
-                                                        ->pluck('price')
-                                                        ->map(fn($p) => (int) $p)
-                                                        ->toArray();
-
-                                                    $editPayload = [
-                                                        'id' => $pivot->id, // pivot id
-                                                        'commodityId' => $pivot->commodity_id,
-                                                        'marketId' => $pivot->market_id,
-                                                        'name' => $c->name_commodity,
-                                                        'prices' => $todayPricesArray,
-                                                        'date' => $selectedDate,
-                                                    ];
-                                                @endphp
-
-                                                <button type="button" class="text-blue-600 hover:underline"
-                                                    onclick="openPriceModal('edit', JSON.parse(this.getAttribute('data-item')))"
-                                                    data-item='{{ json_encode($editPayload, JSON_UNESCAPED_UNICODE) }}'>
-                                                    Edit Harga
-                                                </button>
-                                            @else
-                                                <button type="button"
-                                                    onclick="openPriceModal('store', {
+                                        @if ($c->is_updated)
+                                            <button type="button" class="text-blue-600 hover:underline"
+                                                onclick="openPriceModal('edit', JSON.parse(this.getAttribute('data-item')))"
+                                                data-item='@json($c->edit_payload)'>
+                                                Edit Harga
+                                            </button>
+                                        @else
+                                            <button type="button"
+                                                onclick="openPriceModal('store', {
                                                     pivotId: {{ $pivot->id }},
                                                     commodityId: {{ $pivot->commodity_id }},
                                                     marketId: {{ $pivot->market_id }},
                                                     name: '{{ addslashes($c->name_commodity) }}'
                                                 })"
-                                                    class="text-blue-600 hover:underline">
-                                                    Update Harga
-                                                </button>
-                                            @endif
-                                        @else
-                                            <span class="text-gray-400 text-xs">No Data</span>
+                                                class="text-blue-600 hover:underline">
+                                                Update Harga
+                                            </button>
                                         @endif
                                     </td>
                                 </tr>

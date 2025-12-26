@@ -1,5 +1,7 @@
 @extends('layouts.admin')
 
+@section('title', 'Dashboard Setting Petugas')
+
 @section('content')
     <div class="mx-15 mt-6 mb-10">
 

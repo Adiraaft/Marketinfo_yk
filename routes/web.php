@@ -13,8 +13,6 @@ use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\PublicBeritaController;
 use App\Http\Controllers\ReportController;
 
-
-
 // Dashboard Utama User
 Route::get('/', [PublicBeritaController::class, 'indexHome'])->name('home.index');
 Route::get('/comparison-data', [PublicBeritaController::class, 'getComparisonData'])->name('comparison.data');
