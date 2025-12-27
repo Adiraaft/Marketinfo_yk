@@ -57,6 +57,7 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('supe
     Route::delete('/market/{id}', [MarketController::class, 'destroy'])->name('market.destroy');
 
     Route::get('/komoditas', [CommodityController::class, 'index'])->name('komoditas');
+    Route::get('/komoditas/{id}/detail', [CommodityController::class, 'detail'])->name('komoditas.detail');
     Route::get('/komoditas/create', [CommodityController::class, 'create'])->name('komoditas.create');
     Route::post('/komoditas/store', [CommodityController::class, 'store'])->name('komoditas.store');
     Route::delete('/komoditas/{id}', [CommodityController::class, 'destroy'])->name('komoditas.destroy');

@@ -91,17 +91,13 @@
                                 </td>
 
                                 {{-- Rata-rata Harga (jika belum ada → '-') --}}
-                                <td class="py-2 px-4">
-                                    @if (isset($c->average_price))
-                                        Rp {{ number_format($c->average_price, 0, ',', '.') }}
-                                    @else
-                                        -
-                                    @endif
+                                <td>
+                                    {{ $c->latest_avg ? number_format($c->latest_avg, 0, ',', '.') : '-' }}
                                 </td>
 
                                 {{-- Terakhir Update --}}
                                 <td class="py-2 px-4">
-                                    {{ $c->updated_at ? $c->updated_at->format('d M Y') : '-' }}
+                                    {{ $c->latest_date ? \Carbon\Carbon::parse($c->latest_date)->format('d M Y') : '-' }}
                                 </td>
 
                                 {{-- Aksi --}}
@@ -280,6 +276,44 @@
         </div>
     </div>
 
+    <!-- Modal Detail Harga Komoditas -->
+    <div id="modalDetail"
+        class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-150">
+
+        <div class="bg-white w-[600px] rounded-xl shadow-lg p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-secondary">
+                    Detail Harga Komoditas
+                </h2>
+                <button onclick="closeDetail()" class="text-gray-400 hover:text-black text-xl">
+                    &times;
+                </button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm border">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="p-2 border">Pasar</th>
+                            <th class="p-2 border">Harga</th>
+                            <th class="p-2 border">Tanggal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detailBody">
+                        <!-- diisi via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex justify-end mt-4">
+                <button onclick="closeDetail()" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+
     {{-- sweetalert --}}
     @if (session('success'))
         <script type="module">
@@ -412,5 +446,55 @@
         });
     </script>
 
+    <script>
+        function openDetail(id) {
+            fetch(`/superadmin/komoditas/${id}/detail`)
+                .then(res => {
+                    if (!res.ok) throw new Error('Gagal ambil data');
+                    return res.json();
+                })
+                .then(data => {
+                    let html = '';
+
+                    if (data.length === 0) {
+                        html = `
+                    <tr>
+                        <td colspan="3" class="text-center p-3 text-gray-500">
+                            Belum ada data harga
+                        </td>
+                    </tr>
+                `;
+                    } else {
+                        data.forEach(item => {
+                            html += `
+                        <tr>
+                            <td class="p-2 border">${item.market.name_market}</td>
+                            <td class="p-2 border">
+                                Rp ${Number(item.price).toLocaleString('id-ID')}
+                            </td>
+                            <td class="p-2 border">${item.date}</td>
+                        </tr>
+                    `;
+                        });
+                    }
+
+                    document.getElementById('detailBody').innerHTML = html;
+
+                    const modal = document.getElementById('modalDetail');
+                    modal.classList.remove('hidden');
+                    setTimeout(() => modal.classList.remove('opacity-0'), 10);
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Gagal memuat detail harga');
+                });
+        }
+
+        function closeDetail() {
+            const modal = document.getElementById('modalDetail');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 150);
+        }
+    </script>
 
 @endsection
