@@ -7,19 +7,18 @@
 @endsection
 
 @section('jumbotron')
-    <div class="relative w-full h-[100svh] bg-center bg-no-repeat bg-cover will-change-transform"
+    <div class="relative w-full h-svh bg-center bg-no-repeat bg-cover"
         style="background-image: url('{{ asset('images/wallpaper2.png') }}')">
 
         <div class="absolute inset-0 bg-black/50"></div>
 
         <div
-            class="relative z-10 flex flex-col items-center justify-center min-h-screen
-                text-white text-center px-4 sm:px-6 lg:px-8">
+            class="relative z-10 flex flex-col items-center justify-center h-full
+               text-white text-center px-4 sm:px-6 lg:px-8">
 
             {{-- JUDUL --}}
-            <h1
-                class="font-extrabold leading-tight
-                   text-2xl sm:text-3xl md:text-3xl lg:text-3xl xl:text-4xl">
+            <h1 class="font-extrabold leading-tight
+                   text-2xl sm:text-3xl md:text-3xl xl:text-3xl">
                 Harga Komoditas Bahan
                 <span class="hidden sm:inline"><br></span>
                 Pangan
@@ -43,26 +42,28 @@
                    px-6 py-3 text-sm md:text-base">
                 Lihat Harga
             </button>
+
         </div>
     </div>
 @endsection
 
-
-
 @section('content')
-    <div class="mt-8 px-15">
-        <h3 id="hargaKomoditas" class="font-bold text-2xl sm:text-lg md:text-3xl lg:2xl xl:3xl 2xl:4xl">Harga Barang
-            Komoditas
+    <div class="mt-16 sm:mt-20 lg:mt-24 px-4 sm:px-6 lg:px-10">
+        <h3 id="hargaKomoditas" class="font-bold leading-tight
+           text-lg sm:text-xl md:text-2xl lg:text-2xl">
+            Harga Barang Komoditas
             Bahan Pangan Kota
-            Yogyakarta</h3>
-        <div class="my-7 py-6 border rounded-lg bg-white border-gray-300">
-            <form id="filterForm" action="{{ route('home.index') }}" class="flex justify-between" method="GET">
+            Yogyakarta
+        </h3>
+        <div class="my-8 py-4 sm:py-6 border rounded-lg bg-white border-gray-300">
+            <form id="filterForm" action="{{ route('home.index') }}"
+                class="flex flex-col gap-4 xl:flex-row xl:justify-between" method="GET">
                 <div
-                    class="commodity-filter flex gap-4 mx-12 text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl">
+                    class="commodity-filter flex flex-col gap-4 px-4 text-sm md:text-base xl:items-end lg:flex-row xl:px-8">
                     <div>
-                        <label for="kategori" class="block">Pilih Kategori</label>
+                        <label for="kategori" class="block lg:text-sm">Pilih Kategori</label>
                         <select name="kategori"
-                            class="category-select border border-gray-400 bg-gray-100 rounded-lg p-1 md:w-60 w-auto focus:ring-blue-500 focus:border-blue-500">
+                            class="category-select border border-gray-400 bg-gray-100 rounded-lg p-1 w-full md:w-50 lg:text-sm focus:ring-blue-500 focus:border-blue-500">
                             <option value="">Semua Kategori</option>
                             @foreach ($categories as $c)
                                 <option value="{{ $c->id_category }}"
@@ -72,9 +73,9 @@
                         </select>
                     </div>
                     <div>
-                        <label for="commodity" class="block">Pilih Bahan Komoditas</label>
+                        <label for="commodity" class="block lg:text-sm">Pilih Bahan Komoditas</label>
                         <select name="commodity"
-                            class="commodity-select border border-gray-400 bg-gray-100 rounded-lg p-1 md:w-60 w-auto focus:ring-blue-500 focus:border-blue-500">
+                            class="commodity-select border border-gray-400 bg-gray-100 rounded-lg p-1 w-full md:w-50 lg:text-sm focus:ring-blue-500 focus:border-blue-500">
                             <option value="">Semua Komoditas</option>
                             @foreach ($commoditiesDropdown as $com)
                                 <option value="{{ $com->id_commodity }}" data-category="{{ $com->category_id }}"
@@ -85,10 +86,9 @@
                         </select>
                     </div>
                     <div>
-                        <label for="market" class="block">Pilih Pasar</label>
+                        <label for="market" class="block lg:text-sm">Pilih Pasar</label>
                         <select name="market" id="marketSelect"
-                            class="border border-gray-400 bg-gray-100 rounded-lg p-1 md:w-60 w-auto
-                            focus:ring-blue-500 focus:border-blue-500">
+                            class="border border-gray-400 bg-gray-100 rounded-lg p-1 w-full md:w-50 lg:text-sm focus:ring-blue-500 focus:border-blue-500">
 
                             {{-- MODE AVG --}}
                             <option value="avg" {{ request('market', 'avg') == 'avg' ? 'selected' : '' }}>
@@ -108,26 +108,26 @@
                                 </option>
                             @endforeach
                         </select>
-
                     </div>
+
                     <input type="hidden" name="trend" id="trendInput" value="{{ request('trend', 'all') }}">
-                    <button type="submit" class="p-2 w-10 h-10 rounded-lg bg-secondary self-end cursor-pointer">
-                        <i data-lucide="search" class="w-5 h-5 text-white"></i>
+                    <button type="submit"
+                        class="mt-2 lg:mt-0 px-4 py-2 rounded-lg bg-secondary cursor-pointer text-white font-medium w-full xl:text-sm md:w-auto lg:px-3">
+                        Tampilkan
                     </button>
                 </div>
 
-                <div
-                    class="flex text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg gap-4 items-center justify-center mr-10">
-                    <button type="button" class="flex items-center gap-1 text-red-500">
-                        <i data-lucide="move-up" class="w-4 h-4"></i>
+                <div class="flex mt-3 gap-2 items-center px-4 text-sm md:text-base xl:justify-center">
+                    <div class="flex items-center gap-2 text-red-500 xl:text-xs">
+                        <i data-lucide="move-up" class="w-4 h-4 md:w-5 md:h-5"></i>
                         <p>Harga Naik</p>
-                    </button>
-                    <div class="flex items-center gap-1 text-green-500">
-                        <i data-lucide="move-down" class="w-4 h-4"></i>
+                    </div>
+                    <div class="flex items-center gap-2 text-green-500 xl:text-xs">
+                        <i data-lucide="move-down" class="w-4 h-4 md:w-5 md:h-5"></i>
                         <p>Harga Turun</p>
                     </div>
-                    <div class="flex items-center gap-1">
-                        <i data-lucide="minus" class="w-4 h-4"></i>
+                    <div class="flex items-center gap-2 xl:text-xs">
+                        <i data-lucide="minus" class="w-4 h-4 md:w-5 md:h-5"></i>
                         <p>Harga Tetap</p>
                     </div>
                 </div>
