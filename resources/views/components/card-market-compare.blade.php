@@ -7,27 +7,28 @@
 @endphp
 
 <a href="{{ $detailUrl }}">
-    <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl shadow-md">
+    <div class="md:flex grid pb-4 min-w-full border border-gray-300 rounded-2xl shadow-md">
         {{-- Gambar & Pasar --}}
-        <div class="p-4 flex flex-col gap-5">
-            <img src="{{ $item->image_url }}" alt="{{ $item->name_commodity }}" class="rounded-lg w-42 h-33 object-cover">
+        <div class="p-4 flex flex-col gap-5 md:w-40 flex-shrink-0">
+            <img src="{{ $item->image_url }}" alt="{{ $item->name_commodity }}"
+                class="w-40 h-32 md:w-36 md:h-28 xl:w-40 xl:h-24 rounded-lg object-cover">
 
             <div class="flex gap-2 items-center">
-                <i data-lucide="map-pin"></i>
-                <p class="font-bold">{{ $item->market_name }}</p>
+                <i data-lucide="map-pin" class="hidden md:inline-block"></i>
+                <p class="font-bold text-sm">{{ $item->market_name }}</p>
             </div>
         </div>
 
         {{-- Konten --}}
         <div class="md:mt-4 md:mr-4 md:pl-0 pl-4 flex-1">
 
-            <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">
+            <p class="font-bold md:mt-4">
                 {{ $item->name_commodity }}
             </p>
 
             {{-- Harga --}}
             <div class="flex justify-start gap-2 items-center mt-1">
-                <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">
+                <p class="text-xs md:text-sm xl:text-base">
                     Rp{{ number_format($item->avg_price ?? 0, 0, ',', '.') }}
                     <span class="text-sm">
                         /{{ $item->unit->name_unit ?? '-' }}
@@ -51,7 +52,11 @@
             </div>
 
             {{-- Chart --}}
-            <div class="sparkline-chart mt-4 w-full h-16" data-prices='@json($item->chart ?? [])' data-trend="auto">
+            <div class="sparkline-chart mt-3 w-33 h-10 md:w-45 md:h-12 overflow-hidden"
+                data-prices='@json($item->chart ?? [])' data-trend="auto">
+            </div>
+            <div id="chart-tooltip"
+                class="absolute bg-white p-2 rounded-xl shadow-lg text-sm hidden z-50 transition-all duration-150 ease-in-out pointer-events-none">
             </div>
         </div>
     </div>

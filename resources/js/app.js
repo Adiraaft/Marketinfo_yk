@@ -76,6 +76,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 //chart
 window.initSparklineCharts = function () {
+    const tooltipEl = document.getElementById("chart-tooltip");
+
     document.querySelectorAll(".sparkline-chart").forEach((el) => {
         // cegah render ulang
         if (el.dataset.rendered === "1") return;
@@ -111,13 +113,72 @@ window.initSparklineCharts = function () {
             xaxis: { type: "datetime" },
             colors: [color],
             tooltip: {
+                enabled: true,
+                shared: true,
+                custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+                    const value = series[seriesIndex][dataPointIndex];
+                    const date = new Date(
+                        w.globals.seriesX[seriesIndex][dataPointIndex]
+                    );
+
+                    const options = {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                    };
+                    const formattedDate = date.toLocaleDateString(
+                        "id-ID",
+                        options
+                    );
+
+                    const formatted = `<div class="flex flex-col gap-1">
+                        <span class="font-semibold ${
+                            trend === "up"
+                                ? "text-red-500"
+                                : trend === "down"
+                                ? "text-green-500"
+                                : "text-gray-700"
+                        }">
+                            Rp ${Number(value).toLocaleString("id-ID")}
+                        </span>
+                        <span class="text-gray-500 text-xs">${formattedDate}</span>
+                    </div>`;
+
+                    tooltipEl.innerHTML = formatted;
+
+                    const rect = el.getBoundingClientRect();
+                    const tooltipWidth = tooltipEl.offsetWidth;
+                    const viewportWidth = window.innerWidth;
+
+                    // default: tooltip kanan chart
+                    let left = rect.right + 10;
+                    let top = rect.top + window.scrollY;
+
+                    // cek jika tooltip keluar viewport di mobile
+                    if (left + tooltipWidth > viewportWidth - 10) {
+                        left = rect.right - tooltipWidth; // posisikan tetap di kanan chart
+                        // pastikan vertikal tetap sejajar chart
+                        top = rect.top + window.scrollY;
+                    }
+
+                    // set posisi
+                    tooltipEl.style.left = left + "px";
+                    tooltipEl.style.top = top + "px";
+                    tooltipEl.classList.remove("hidden");
+
+                    return ""; // hilangkan tooltip default
+                },
                 x: { format: "dd MMMM yyyy" },
                 y: {
-                    formatter: (v) =>
-                        "Rp " + Number(v).toLocaleString("id-ID"),
+                    formatter: (v) => "Rp " + Number(v).toLocaleString("id-ID"),
                 },
             },
         }).render();
+
+        // hide tooltip saat mouse leave
+        el.addEventListener("mouseleave", () => {
+            tooltipEl.classList.add("hidden");
+        });
 
         el.dataset.rendered = "1";
     });

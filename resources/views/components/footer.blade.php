@@ -1,5 +1,5 @@
 <div class="bg-primary w-full h-auto text-white px-4 sm:px-8 md:px-15 pt-8 sm:pt-10 md:pt-11 pb-6 sm:pb-5 md:pb-4">
-    <h3 class="font-bold text-lg sm:text-xl md:text-2xl">Dashboard Harga Komoditas Pasar</h3>
+    <h3 class="font-bold text-lg lg:text-2xl">Dashboard Harga Komoditas Pasar</h3>
 
     <div class="flex gap-2 mt-6 items-start">
         <i data-lucide="locate-fixed" class="w-5 h-5 text-white mt-1"></i>

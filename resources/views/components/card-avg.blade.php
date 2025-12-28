@@ -1,10 +1,10 @@
 <a href="{{ route('commodity.detail', $item->id_commodity) }}">
-    <div class="md:flex grid pb-4 min-w-full border border-gray-300 h-auto rounded-2xl shadow-md">
+    <div class="md:flex pb-4 min-w-full border border-gray-300 rounded-2xl shadow-md">
         {{-- Gambar & Trend Desktop --}}
-        <div>
+        <div class="md:w-40 flex-shrink-0">
             <div class="p-4">
                 <img src="{{ $item->image_url }}" alt="{{ $item->name_commodity }}"
-                    class="rounded-lg w-42 h-33 object-cover">
+                    class="w-40 h-32 md:w-36 md:h-28 xl:w-40 xl:h-24 rounded-lg object-cover">
             </div>
 
             @if (!empty($item->trend))
@@ -26,7 +26,7 @@
         <div class="md:mt-4 md:mr-4 md:pl-0 pl-4 flex-1">
 
             {{-- Nama Komoditas --}}
-            <p class="font-bold text-xl sm:text-xs md:text-sm lg:text-base xl:text-lg 2xl:text-xl md:mt-4">
+            <p class="font-bold text-xs md:text-sm lg:text-base md:mt-4">
                 {{ $item->name_commodity }}
             </p>
 
@@ -41,7 +41,7 @@
             {{-- Harga --}}
             @if (!is_null($item->avg_price))
                 <div class="flex justify-start gap-2 items-center mt-1">
-                    <p class="text-lg sm:text-xs md:text-sm xl:text-base 2xl:text-lg">
+                    <p class="text-xs md:text-sm xl:text-base">
                         Rp{{ number_format($item->avg_price, 0, ',', '.') }}
                         <span class="text-sm">
                             /{{ $item->unit->name_unit ?? '-' }}
@@ -68,8 +68,11 @@
             @endif
 
             {{-- Chart --}}
-            <div class="sparkline-chart mt-4 w-full h-16" data-prices='@json($item->chart_prices ?? [])'
-                data-trend="{{ $item->trend ?? 'flat' }}"></div>
+            <div class="sparkline-chart mt-3 w-33 h-10 md:w-45 md:h-12 overflow-hidden"
+                data-prices='@json($item->chart_prices ?? [])' data-trend="{{ $item->trend ?? 'flat' }}"></div>
+            <div id="chart-tooltip"
+                class="absolute bg-white p-2 rounded-xl shadow-lg text-sm hidden z-50 transition-all duration-150 ease-in-out pointer-events-none">
+            </div>
 
             {{-- Trend Mobile --}}
             @if (!empty($item->trend))
