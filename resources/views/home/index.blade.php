@@ -136,7 +136,7 @@
 
             <div id="commodity-info-wrapper" class="my-6 mx-4 lg:mx-8">
                 {{-- INFO MODE AVG --}}
-                @if (!request('commodity'))
+                @if ($mode !== 'ONE_ALL_MARKET')
                     <div
                         class="flex items-center gap-2 p-2 text-xs sm:text-xs md:text-sm border-2 bg-gray-200 w-fit rounded-lg border-secondary">
                         <i data-lucide="circle-alert"
@@ -148,26 +148,25 @@
                     </div>
                 @endif
 
-                {{-- FILTER HARGA --}}
-                @if (request('commodity'))
+                {{-- FILTER HARGA (KHUSUS ONE ALL MARKET) --}}
+                @if ($mode === 'ONE_ALL_MARKET')
                     <div class="flex justify-center gap-2 md:gap-5 md:justify-start sm:text-xs md:text-sm">
 
                         {{-- HARGA TERENDAH --}}
                         <button type="button" onclick="applyTrendFilter('down')"
                             class="py-1 px-3 xl:py-2 xl:px-6 rounded-lg border-2
-                   border-green-500 text-green-600
-                   {{ request('trend') === 'down' ? 'bg-green-200' : '' }}">
+            border-green-500 text-green-600
+            {{ request('trend') === 'down' ? 'bg-green-200' : '' }}">
                             Harga Terendah
                         </button>
 
                         {{-- HARGA TERTINGGI --}}
                         <button type="button" onclick="applyTrendFilter('up')"
                             class="py-1 px-3 xl:py-2 xl:px-6 rounded-lg border-2
-                   border-red-500 text-red-600
-                   {{ request('trend') === 'up' ? 'bg-red-200' : '' }}">
+            border-red-500 text-red-600
+            {{ request('trend') === 'up' ? 'bg-red-200' : '' }}">
                             Harga Tertinggi
                         </button>
-
                     </div>
                 @endif
             </div>
@@ -560,5 +559,17 @@
             loadCommodities(window.location.href);
         });
     </script>
+
+    <script>
+        function applyTrendFilter(trend) {
+            const url = new URL(window.location.href);
+
+            url.searchParams.set('trend', trend);
+            url.searchParams.delete('page');
+
+            loadCommodities(url.toString());
+        }
+    </script>
+
 
 @endsection
