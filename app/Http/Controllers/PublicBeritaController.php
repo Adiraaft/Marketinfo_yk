@@ -83,11 +83,24 @@ class PublicBeritaController extends Controller
         // =============================
         // FILTER TREND (AMAN)
         // =============================
-        if (in_array($trend, ['up', 'down'])) {
-            $commodities = $commodities->filter(
-                fn($c) => $c->trend === $trend
-            );
+        if ($mode === 'ONE_ALL_MARKET' && in_array($trend, ['up', 'down'])) {
+
+            $commodities = $commodities->sort(function ($a, $b) use ($trend) {
+
+                $priceA = $a->avg_price ?? PHP_INT_MAX;
+                $priceB = $b->avg_price ?? PHP_INT_MAX;
+
+                // TERENDAH → TERTINGGI
+                if ($trend === 'down') {
+                    return $priceA <=> $priceB;
+                }
+
+                // TERTINGGI → TERENDAH
+                return $priceB <=> $priceA;
+            })->values();
         }
+
+
         // =============================
         // PAGINATION
         // =============================
@@ -211,16 +224,25 @@ class PublicBeritaController extends Controller
                 ->get()
                 ->keyBy('commodity_id');
 
-            $chartRows = DB::table('prices')
-                ->selectRaw('commodity_id, date, ROUND(AVG(price)) as price')
-                ->whereBetween('date', [
-                    now()->subDays(6)->toDateString(),
-                    now()->toDateString()
-                ])
-                ->groupBy('commodity_id', 'date')
-                ->orderBy('date')
+            $chartRows = DB::table('prices as p')
+                ->join(
+                    DB::raw('(
+                        SELECT commodity_id, date
+                        FROM prices
+                        ORDER BY date DESC
+                    ) as t'),
+                    function ($join) {
+                        $join->on('p.commodity_id', '=', 't.commodity_id')
+                            ->on('p.date', '=', 't.date');
+                    }
+                )
+                ->selectRaw('p.commodity_id, p.date, ROUND(AVG(p.price)) as price')
+                ->groupBy('p.commodity_id', 'p.date')
+                ->orderBy('p.date')
                 ->get()
-                ->groupBy('commodity_id');
+                ->groupBy('commodity_id')
+                ->map(fn($rows) => $rows->take(-7)->values());
+
 
 
             foreach ($commodities as $c) {
@@ -329,16 +351,18 @@ class PublicBeritaController extends Controller
                 ])->values();
 
                 // TREND + DIFF
-                if ($c->chart->count() >= 2) {
-                    $first = $c->chart->first()['y'];
-                    $last  = $c->chart->last()['y'];
+                $lastTwo = $c->chart->take(-2)->values();
 
-                    $diff = $last - $first;
+                if ($lastTwo->count() === 2) {
+                    $prev = $lastTwo[0]['y'];
+                    $last = $lastTwo[1]['y'];
+
+                    $diff = $last - $prev;
 
                     $c->trend = $diff > 0 ? 'up' : ($diff < 0 ? 'down' : 'flat');
                     $c->price_diff = abs($diff);
-                    $c->price_percent = $first > 0
-                        ? round(abs($diff / $first) * 100, 1)
+                    $c->price_percent = $prev > 0
+                        ? round(abs($diff / $prev) * 100, 1)
                         : 0;
                 } else {
                     $c->trend = 'flat';
@@ -390,6 +414,16 @@ class PublicBeritaController extends Controller
                 $chart = $this->getChart($commodityId, $m->id_market);
             }
 
+            $trend = 'flat';
+
+            if ($chart->count() >= 2) {
+                $first = $chart->first()['y'];
+                $last  = $chart->last()['y'];
+
+                if ($last > $first) $trend = 'up';
+                elseif ($last < $first) $trend = 'down';
+            }
+
             $cards->push((object)[
                 'id_commodity' => $commodity->id_commodity,
                 'market_id'    => $m->id_market,
@@ -404,7 +438,7 @@ class PublicBeritaController extends Controller
                 'price_date'     => $latestDate,
                 'chart'          => $chart,
 
-                'trend'          => 'auto',
+                'trend'          => $trend,
             ]);
         }
 
